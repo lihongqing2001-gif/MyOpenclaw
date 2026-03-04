@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>OpenClaw 自监控面板</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen">
+  <div id="app" class="max-w-7xl mx-auto px-4 py-6">
+    <div class="flex items-center justify-between mb-6">
+      <h1 class="text-2xl font-bold">OpenClaw 自监控面板</h1>
+      <div class="text-sm text-slate-400">每 2 秒刷新 | {{ now }}</div>
+    </div>
+
+    <div class="grid md:grid-cols-4 gap-3 mb-6">
+      <div class="bg-slate-900 border border-slate-800 rounded-xl p-4">
+        <div class="text-slate-400 text-xs">Active Tasks</div>
+        <div class="text-2xl font-semibold">{{ activeTasks.length }}</div>
+      </div>
+      <div class="bg-slate-900 border border-slate-800 rounded-xl p-4">
+        <div class="text-slate-400 text-xs">Agents</div>
+        <div class="text-2xl font-semibold">{{ agentStatus.length }}</div>
+      </div>
+      <div class="bg-slate-900 border border-slate-800 rounded-xl p-4">
+        <div class="text-slate-400 text-xs">Global Tokens</div>
+        <div class="text-2xl font-semibold">{{ tokenStats.global?.total_tokens || 0 }}</div>
+      </div>
+      <div class="bg-slate-900 border border-slate-800 rounded-xl p-4">
+        <div class="text-slate-400 text-xs">Blocked</div>
+        <div class="text-2xl font-semibold">{{ blockedCount }}</div>
+      </div>
+    </div>
+
+    <div class="grid lg:grid-cols-2 gap-4">
+      <section class="bg-slate-900 border border-slate-800 rounded-xl p-4">
+        <h2 class="text-lg font-semibold mb-3">Agent 状态</h2>
+        <div class="space-y-2">
+          <div v-for="a in agentStatus" :key="a.agent_id" class="p-3 rounded-lg bg-slate-800/60">
+            <div class="flex items-center justify-between">
+              <div>
+                <div class="font-medium">{{ a.agent_id }}</div>
+                <div class="text-xs text-slate-400">{{ a.activity }} · {{ a.request_id || '-' }}</div>
+              </div>
+              <span class="text-xs px-2 py-1 rounded" :class="statusClass(a.status)">{{ a.status || 'idle' }}</span>
+            </div>
+            <div class="mt-2 h-2 bg-slate-700 rounded">
+              <div class="h-2 rounded bg-cyan-500" :style="{ width: (a.progress_percent || 0) + '%' }"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="bg-slate-900 border border-slate-800 rounded-xl p-4">
+        <h2 class="text-lg font-semibold mb-3">任务队列</h2>
+        <div class="space-y-2">
+          <div v-for="t in activeTasks" :key="t.id" class="p-3 rounded-lg bg-slate-800/60">
+            <div class="flex items-center justify-between gap-2">
+              <div class="font-medium truncate">{{ t.request_id }} · {{ t.agent_id }}</div>
+              <span class="text-xs px-2 py-1 rounded" :class="difficultyClass(t.difficulty)">{{ t.difficulty }}</span>
+            </div>
+            <div class="text-sm text-slate-300 mt-1">{{ t.task_desc }}</div>
+            <div class="text-xs text-slate-400 mt-1">Tokens: {{ t.total_tokens }} · Status: {{ t.status }}</div>
+            <div class="mt-2 h-2 bg-slate-700 rounded">
+              <div class="h-2 rounded bg-emerald-500" :style="{ width: (t.progress_percent || 0) + '%' }"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <script>
+    const { createApp } = Vue;
+    createApp({
+      data() {
+        return {
+          api: 'http://127.0.0.1:8000',
+          now: '-',
+          agentStatus: [],
+          activeTasks: [],
+          tokenStats: { global: { total_tokens: 0 }, by_agent: [] }
+        }
+      },
+      computed: {
+        blockedCount() {
+          return this.activeTasks.filter(x => x.status === 'blocked').length;
+        }
+      },
+      methods: {
+        async load() {
+          const [a, t, s] = await Promise.all([
+            fetch(this.api + '/api/agents/status').then(r => r.json()),
+            fetch(this.api + '/api/tasks/active').then(r => r.json()),
+            fetch(this.api + '/api/stats/tokens').then(r => r.json())
+          ]);
+          this.agentStatus = a;
+          this.activeTasks = t;
+          this.tokenStats = s;
+          this.now = new Date().toLocaleString();
+        },
+        statusClass(st) {
+          if (st === 'blocked') return 'bg-red-900 text-red-200';
+          if (st === 'in_progress') return 'bg-amber-900 text-amber-200';
+          if (st === 'assigned') return 'bg-indigo-900 text-indigo-200';
+          if (st === 'done') return 'bg-emerald-900 text-emerald-200';
+          return 'bg-slate-700 text-slate-200';
+        },
+        difficultyClass(df) {
+          if (df === 'complex') return 'bg-rose-900 text-rose-200';
+          if (df === 'medium') return 'bg-amber-900 text-amber-200';
+          return 'bg-emerald-900 text-emerald-200';
+        }
+      },
+      async mounted() {
+        try { await fetch(this.api + '/api/mock/seed', { method: 'POST' }); } catch (_) {}
+        await this.load();
+        setInterval(this.load, 2000);
+      }
+    }).mount('#app');
+  </script>
+</body>
+</html>
