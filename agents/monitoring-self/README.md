@@ -1,6 +1,23 @@
 # OpenClaw Self-Monitoring Panel
 
-## Run backend
+## MVP toolkit (one-click)
+
+```bash
+cd /Users/liumobei/.openclaw/workspace/agents/monitoring-self
+./install.sh
+```
+
+Common commands:
+
+```bash
+./monitor-kit doctor
+./monitor-kit setup
+./monitor-kit start
+./monitor-kit status
+./monitor-kit stop
+```
+
+## Manual backend run (optional)
 cd /Users/liumobei/.openclaw/workspace/agents/monitoring-self/backend
 python3 -m venv .venv
 source .venv/bin/activate

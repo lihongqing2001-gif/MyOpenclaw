@@ -1,0 +1,7 @@
+{
+  "owner": "董事长",
+  "default_seed_agent": "designer-v1",
+  "default_difficulty": "medium",
+  "host": "127.0.0.1",
+  "port": 8000
+}

@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+set -euo pipefail
+ROOT="$(cd "$(dirname "$0")" && pwd)"
+PY="$ROOT/backend/.venv/bin/python"
+if [ ! -x "$PY" ]; then
+  echo "venv missing. run: $ROOT/install.sh" >&2
+  exit 2
+fi
+exec "$PY" "$ROOT/toolkit/monitor_kit.py" "$@"
