@@ -13,3 +13,14 @@ open /Users/liumobei/.openclaw/workspace/agents/monitoring-self/frontend/index.h
 ## Notes
 - Frontend polls backend every 2 seconds.
 - Seed data endpoint is called automatically once at page load.
+
+## Phase-2 Real Data Integration
+Import real handoff logs from workspace COMM_LOG into monitor DB:
+
+```bash
+cd /Users/liumobei/.openclaw/workspace/agents/monitoring-self/backend
+source .venv/bin/activate
+python ingest_comm_log.py
+```
+
+Then refresh dashboard page.
