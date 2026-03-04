@@ -17,34 +17,26 @@ export function Shell({
 }) {
   return (
     <div className={`shell ${fullBleed ? "shell-full" : ""}`}>
-      {!fullBleed ? (
-        <aside className="nav">
-          <div className="brand">Mission Control</div>
-          <nav className="nav-links">
-            {tabs.map((tab) => (
-              <Link
-                className={`nav-link ${activeTab === tab.key ? "active" : ""}`}
-                href={`/?tab=${tab.key}`}
-                key={tab.key}
-              >
-                {tab.label}
-              </Link>
-            ))}
-          </nav>
-        </aside>
-      ) : (
-        <div className="nav-mini">
+      <header className={`topbar ${fullBleed ? "topbar-float" : ""}`}>
+        <div className="brand">
+          <span className="brand-mark">MC</span>
+          <div>
+            <div className="brand-title">Mission Control</div>
+            <div className="brand-subtitle">Local command layer</div>
+          </div>
+        </div>
+        <nav className="tabs">
           {tabs.map((tab) => (
             <Link
-              className={`nav-pill ${activeTab === tab.key ? "active" : ""}`}
+              className={`tab ${activeTab === tab.key ? "active" : ""}`}
               href={`/?tab=${tab.key}`}
               key={tab.key}
             >
               {tab.label}
             </Link>
           ))}
-        </div>
-      )}
+        </nav>
+      </header>
       <main className={`main ${fullBleed ? "main-full" : ""}`}>{children}</main>
     </div>
   );

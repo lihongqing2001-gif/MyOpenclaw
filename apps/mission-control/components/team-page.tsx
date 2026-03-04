@@ -1,115 +1,98 @@
 "use client";
 
-import { useQuery } from "convex/react";
-import { makeFunctionReference } from "convex/server";
+import { teamMembers, type TeamMember } from "@/data/local";
 
-type TeamMember = {
-  _id: string;
-  name: string;
-  role: string;
-  group: "Developers" | "Writers" | "Designers" | "Operations";
-};
-
-const listTeamRef = makeFunctionReference<"query", Record<string, never>, TeamMember[]>("team:list");
 const groups: TeamMember["group"][] = ["Developers", "Writers", "Designers", "Operations"];
-const hasConvex = Boolean(process.env.NEXT_PUBLIC_CONVEX_URL);
-const fallbackMembers: TeamMember[] = [
-  { _id: "local-dev-1", name: "Builder", role: "Platform integration", group: "Developers" },
-  { _id: "local-dev-2", name: "Fixer", role: "Reliability + ops tooling", group: "Developers" },
-  { _id: "local-writer-1", name: "Scribe", role: "Docs + handoffs", group: "Writers" },
-  { _id: "local-des-1", name: "Lens", role: "UI polish + narrative", group: "Designers" },
-  { _id: "local-ops-1", name: "Guardian", role: "Monitoring + response", group: "Operations" }
-];
 
 function TeamDetail({ member }: { member: TeamMember }) {
   return (
-    <article className="card detail-card">
+    <article className="detail-card">
       <div className="detail-header">
-        <strong>{member.name}</strong>
+        <div>
+          <p className="detail-kicker">{member.group}</p>
+          <h2>{member.name}</h2>
+        </div>
         <a className="detail-back" href="/?tab=team">
           Back
         </a>
       </div>
-      <p>{member.role}</p>
-      <p className="label">Group: {member.group}</p>
-      <div className="detail-meta">ID: {member._id}</div>
+      <p className="detail-summary">{member.role}</p>
+      <div className="meta-row">
+        <span>Focus: {member.focus}</span>
+        <span>Status: {member.status}</span>
+      </div>
+      <div className="tag-row">
+        {member.skills.map((skill) => (
+          <span className="tag" key={skill}>
+            {skill}
+          </span>
+        ))}
+      </div>
     </article>
   );
 }
 
-function TeamWithConvex({ selectedId }: { selectedId?: string }) {
-  const members = useQuery(listTeamRef, {}) ?? [];
-  const selected = selectedId ? members.find((member) => member._id === selectedId) : undefined;
-
-  return (
-    <section className="panel stack">
-      <div>
-        <h1>Team</h1>
-        <p className="label">中枢 coordinates specialists below by function.</p>
-      </div>
-      {selected ? <TeamDetail member={selected} /> : null}
-      <article className="card">
-        <strong>中枢</strong>
-        <p className="label">Orchestrator for planning, prioritization, and final decisions.</p>
-      </article>
-      {groups.map((group) => (
-        <article className="card" key={group}>
-          <strong>{group}</strong>
-          <div className="stack">
-            {members
-              .filter((member) => member.group === group)
-              .map((member) => (
-                <div key={member._id} className="detail-item">
-                  <div>{member.name}</div>
-                  <div className="label">{member.role}</div>
-                  <a className="detail-link" href={`/?tab=team&memberId=${member._id}`}>
-                    View details
-                  </a>
-                </div>
-              ))}
-          </div>
-        </article>
-      ))}
-    </section>
-  );
-}
-
-function TeamFallback({ selectedId }: { selectedId?: string }) {
-  const selected = selectedId ? fallbackMembers.find((member) => member._id === selectedId) : undefined;
-
-  return (
-    <section className="panel stack">
-      <div>
-        <h1>Team</h1>
-        <p className="label">Convex is not configured. Showing local fallback roster.</p>
-      </div>
-      {selected ? <TeamDetail member={selected} /> : null}
-      <article className="card">
-        <strong>中枢</strong>
-        <p className="label">Orchestrator for planning, prioritization, and final decisions.</p>
-      </article>
-      {groups.map((group) => (
-        <article className="card" key={group}>
-          <strong>{group}</strong>
-          <div className="stack">
-            {fallbackMembers
-              .filter((member) => member.group === group)
-              .map((member) => (
-                <div key={member._id} className="detail-item">
-                  <div>{member.name}</div>
-                  <div className="label">{member.role}</div>
-                  <a className="detail-link" href={`/?tab=team&memberId=${member._id}`}>
-                    View details
-                  </a>
-                </div>
-              ))}
-          </div>
-        </article>
-      ))}
-    </section>
-  );
-}
-
 export function TeamPage({ selectedId }: { selectedId?: string }) {
-  return hasConvex ? <TeamWithConvex selectedId={selectedId} /> : <TeamFallback selectedId={selectedId} />;
+  const selected = selectedId
+    ? teamMembers.find((member) => member.id === selectedId)
+    : teamMembers[0];
+
+  return (
+    <section className="panel">
+      <div className="page-header">
+        <div>
+          <p className="page-kicker">Team Atlas</p>
+          <h1>Specialists aligned by focus, ready on demand.</h1>
+          <p className="page-subtitle">Local roster with clear ownership and current focus.</p>
+        </div>
+      </div>
+
+      <div className="split-grid">
+        <div className="stack">
+          <article className="hero-card">
+            <div>
+              <p className="detail-kicker">Orchestrator</p>
+              <h2>中枢</h2>
+              <p className="detail-summary">Planning, prioritization, and final decisions.</p>
+            </div>
+            <div className="meta-row">
+              <span>Status: active</span>
+              <span>Focus: strategy + arbitration</span>
+            </div>
+          </article>
+
+          {groups.map((group) => (
+            <section key={group} className="list-card">
+              <div className="list-card-header">
+                <div>
+                  <h3>{group}</h3>
+                  <p>Primary coverage for {group.toLowerCase()} workflows.</p>
+                </div>
+              </div>
+              <div className="grid-list">
+                {teamMembers
+                  .filter((member) => member.group === group)
+                  .map((member) => (
+                    <div className="grid-item" key={member.id}>
+                      <div>
+                        <h4>{member.name}</h4>
+                        <p>{member.role}</p>
+                      </div>
+                      <div className="meta-row">
+                        <span>{member.focus}</span>
+                        <span>{member.status}</span>
+                      </div>
+                      <a className="detail-link" href={`/?tab=team&memberId=${member.id}`}>
+                        View details
+                      </a>
+                    </div>
+                  ))}
+              </div>
+            </section>
+          ))}
+        </div>
+        {selected ? <TeamDetail member={selected} /> : null}
+      </div>
+    </section>
+  );
 }
