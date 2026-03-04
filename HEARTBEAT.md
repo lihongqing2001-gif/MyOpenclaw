@@ -24,3 +24,8 @@
 
 6) Quiet hours
 - 23:00-08:00 only alert on failures or urgent blockers
+
+7) Control and recovery guardrails
+- Check context waterline via session status; if >70%, create checkpoint file
+- If >85% or drift detected, execute `agents/policy/RECOVERY_PLAYBOOK.md`
+- Ensure each in-flight spawned task has dashboard linkage; auto-repair if missing
