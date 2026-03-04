@@ -120,3 +120,5 @@ state = {
 }
 state_path.write_text(json.dumps(state, ensure_ascii=False, indent=2), encoding='utf-8')
 PY
+
+"$WS/scripts/seed/auto-rebuild.sh" || true

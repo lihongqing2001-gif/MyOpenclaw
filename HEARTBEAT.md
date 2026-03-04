@@ -39,3 +39,7 @@
 - Check context waterline via session status; if >70%, create checkpoint file
 - If >85% or drift detected, execute `agents/policy/RECOVERY_PLAYBOOK.md`
 - Ensure each in-flight spawned task has dashboard linkage; auto-repair if missing
+
+10) Seed auto-rebuild
+- Run `scripts/seed/auto-rebuild.sh` to keep seed package in sync
+- Log rebuilds to `agents/reviews/seed-rebuild-YYYYMMDD.md`
