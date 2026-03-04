@@ -6,14 +6,14 @@ import { TeamPage } from "@/components/team-page";
 export default function Home({
   searchParams
 }: {
-  searchParams: { tab?: "operations" | "memory" | "team" };
+  searchParams: { tab?: "operations" | "memory" | "team"; memoryId?: string; memberId?: string };
 }) {
   const tab = searchParams.tab ?? "operations";
 
   return (
-    <Shell activeTab={tab}>
-      {tab === "memory" ? <MemoryPage /> : null}
-      {tab === "team" ? <TeamPage /> : null}
+    <Shell activeTab={tab} fullBleed={tab === "operations"}>
+      {tab === "memory" ? <MemoryPage selectedId={searchParams.memoryId} /> : null}
+      {tab === "team" ? <TeamPage selectedId={searchParams.memberId} /> : null}
       {tab === "operations" ? <OperationsPage /> : null}
     </Shell>
   );
