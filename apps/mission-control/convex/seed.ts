@@ -1,6 +1,6 @@
-import { mutationGeneric } from "convex/server";
+import { mutationGeneric as mutation } from "convex/server";
 
-export const bootstrap = mutationGeneric({
+export const bootstrap = mutation({
   args: {},
   handler: async (ctx) => {
     const memoryCount = (await ctx.db.query("memories").collect()).length;
@@ -8,25 +8,13 @@ export const bootstrap = mutationGeneric({
       await ctx.db.insert("memories", {
         title: "Incident Playbook",
         summary: "Escalation path and rollback checklist for production incidents.",
-        source: "operations",
-        type: "runbook",
-        tags: ["incident", "escalation"],
+        tags: ["operations", "incident"],
         createdAt: Date.now()
       });
       await ctx.db.insert("memories", {
-        title: "Release Cadence Decision",
+        title: "Release Cadence",
         summary: "Ship weekly on Wednesdays; hotfix window remains same-day.",
-        source: "product",
-        type: "decision",
         tags: ["release", "process"],
-        createdAt: Date.now()
-      });
-      await ctx.db.insert("memories", {
-        title: "Monitoring Migration Retrospective",
-        summary: "Mirror metrics in Mission Control before cutting over dashboards.",
-        source: "engineering",
-        type: "retrospective",
-        tags: ["monitoring", "migration"],
         createdAt: Date.now()
       });
     }
@@ -36,11 +24,6 @@ export const bootstrap = mutationGeneric({
       await ctx.db.insert("teamMembers", {
         name: "Builder-01",
         role: "Backend systems",
-        group: "Developers"
-      });
-      await ctx.db.insert("teamMembers", {
-        name: "Builder-02",
-        role: "Frontend delivery",
         group: "Developers"
       });
       await ctx.db.insert("teamMembers", {

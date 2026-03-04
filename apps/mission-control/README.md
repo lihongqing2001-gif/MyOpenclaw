@@ -1,18 +1,16 @@
 # Mission Control
 
-Mission Control is a Next.js + Convex app with three pages:
+Phase-1 scaffold for a new Mission Control app using Next.js App Router and Convex.
 
-- Operations: reads live monitoring data from `http://127.0.0.1:8000`
-- Memory: searchable/filterable memory records from Convex
-- Team: `中枢` plus grouped subagents from Convex data
+## What is included
 
-## Prerequisites
+- Operations page with migration note and link to existing monitoring panel
+- Memory page with search UI backed by Convex query (`memories:list`)
+- Team page with `中枢` plus grouped subagents from Convex query (`team:list`)
+- Convex schema with `memories`, `teamMembers`, `tasks`, and `events`
+- Convex seed mutation (`seed:bootstrap`) for starter records
 
-- Node.js 18+
-- Running monitoring backend at `http://127.0.0.1:8000`
-- Convex account/project (for persistent Memory/Team data)
-
-## Local setup
+## Setup
 
 1. Install dependencies:
 
@@ -20,46 +18,29 @@ Mission Control is a Next.js + Convex app with three pages:
 npm install
 ```
 
-2. Configure env:
+2. Copy env file and set values:
 
 ```bash
 cp .env.example .env.local
 ```
 
-Set:
+- `NEXT_PUBLIC_CONVEX_URL` should point to your Convex deployment URL.
+- `MONITORING_PANEL_URL` should point to the current monitoring panel.
 
-- `NEXT_PUBLIC_CONVEX_URL` to your Convex deployment URL
-- `NEXT_PUBLIC_MONITORING_API_URL` (default `http://127.0.0.1:8000`)
-- `MONITORING_PANEL_URL` (optional external panel link)
-
-3. Start Convex (first time and local development):
-
-```bash
-npx convex dev
-```
-
-4. Seed demo data (optional but recommended once):
-
-```bash
-npx convex run seed:bootstrap
-```
-
-5. Run the app:
+3. Start Next.js:
 
 ```bash
 npm run dev
 ```
 
-Then open `http://localhost:3000`.
-
-## Build and checks
+4. Optional Convex bootstrap after deployment:
 
 ```bash
-npm run lint
-npm run build
+npx convex deploy
+npx convex run seed:bootstrap
 ```
 
 ## Notes
 
-- If `NEXT_PUBLIC_CONVEX_URL` is empty, Memory/Team pages still render with local fallback seed records.
-- Mission Control only reads from the monitoring backend and does not change files in `agents/monitoring-self`.
+- If `NEXT_PUBLIC_CONVEX_URL` is not set, the app still renders using local fallback seeded content.
+- This app is isolated under `apps/mission-control` and does not modify monitoring code in `agents/monitoring-self`.

@@ -5,14 +5,9 @@ export default defineSchema({
   memories: defineTable({
     title: v.string(),
     summary: v.string(),
-    source: v.string(),
-    type: v.string(),
     tags: v.array(v.string()),
     createdAt: v.number()
-  })
-    .index("by_created_at", ["createdAt"])
-    .index("by_source", ["source"])
-    .index("by_type", ["type"]),
+  }).index("by_created_at", ["createdAt"]),
   teamMembers: defineTable({
     name: v.string(),
     role: v.string(),

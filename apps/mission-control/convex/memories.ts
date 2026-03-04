@@ -1,81 +1,58 @@
-import { queryGeneric } from "convex/server";
+import { queryGeneric as query } from "convex/server";
 import { v } from "convex/values";
 
-type MemoryRecord = {
+type MemoryItem = {
   _id: string;
   title: string;
   summary: string;
-  source: string;
-  type: string;
   tags: string[];
 };
 
-const seededMemories: MemoryRecord[] = [
+const seededMemories: MemoryItem[] = [
   {
     _id: "seed-memory-1",
     title: "Incident Playbook",
     summary: "Escalation path and rollback checklist for production incidents.",
-    source: "operations",
-    type: "runbook",
-    tags: ["incident", "escalation"]
+    tags: ["operations", "incident"]
   },
   {
     _id: "seed-memory-2",
-    title: "Release Cadence Decision",
+    title: "Release Cadence",
     summary: "Ship weekly on Wednesdays; hotfix window remains same-day.",
-    source: "product",
-    type: "decision",
     tags: ["release", "process"]
   },
   {
     _id: "seed-memory-3",
-    title: "Monitoring Migration Retrospective",
+    title: "Monitoring Migration",
     summary: "Mirror metrics in Mission Control before cutting over dashboards.",
-    source: "engineering",
-    type: "retrospective",
     tags: ["monitoring", "migration"]
   }
 ];
 
-export const list = queryGeneric({
-  args: {
-    search: v.optional(v.string()),
-    source: v.optional(v.string()),
-    type: v.optional(v.string())
-  },
+export const list = query({
+  args: { search: v.optional(v.string()) },
   handler: async (ctx, args) => {
     const rows = await ctx.db.query("memories").withIndex("by_created_at").order("desc").collect();
-    const source: MemoryRecord[] =
+    const source: MemoryItem[] =
       rows.length > 0
         ? rows.map((row) => ({
-            _id: row._id,
+            _id: String(row._id),
             title: row.title,
             summary: row.summary,
-            source: row.source,
-            type: row.type,
             tags: row.tags
           }))
         : seededMemories;
 
     const term = args.search?.trim().toLowerCase();
+    if (!term) {
+      return source;
+    }
 
-    return source.filter((memory) => {
-      if (args.source && memory.source !== args.source) {
-        return false;
-      }
-      if (args.type && memory.type !== args.type) {
-        return false;
-      }
-      if (!term) {
-        return true;
-      }
-      return (
+    return source.filter(
+      (memory) =>
         memory.title.toLowerCase().includes(term) ||
         memory.summary.toLowerCase().includes(term) ||
-        memory.source.toLowerCase().includes(term) ||
-        memory.type.toLowerCase().includes(term) ||
         memory.tags.some((tag) => tag.toLowerCase().includes(term))
-      );
-    });
+    );
   }
 });
