@@ -83,12 +83,13 @@ def _sync():
 
 
 def _demand_summary():
-    rows = _rows(
+    rows_all = _rows(
         """
-        SELECT id, progress_percent, priority_weight, risk_weight, time_weight
+        SELECT id, title, progress_percent, priority_weight, risk_weight, time_weight
         FROM main_tasks
         """
     )
+    rows = [r for r in rows_all if not _is_self_improvement_task(r.get("title", ""))]
     if not rows:
         return {"total_main_tasks": 0, "done_main_tasks": 0, "satisfaction_percent": 0}
 
@@ -173,7 +174,14 @@ def _snapshot():
         ORDER BY updated_at DESC
         """
     )
-    self_improvement_tasks = [m for m in main_tasks_all if _is_self_improvement_task(m.get("title", ""))]
+    self_improvement_tasks = _rows(
+        """
+        SELECT id, title, owner, status, progress_percent, updated_at
+        FROM main_tasks
+        ORDER BY updated_at DESC
+        """
+    )
+    self_improvement_tasks = [m for m in self_improvement_tasks if _is_self_improvement_task(m.get("title", ""))]
     main_tasks = [m for m in main_tasks_all if not _is_self_improvement_task(m.get("title", ""))]
 
     total = _rows("SELECT COALESCE(SUM(total_tokens), 0) AS total_tokens FROM token_log")[0]
