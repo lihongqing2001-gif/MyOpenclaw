@@ -29,3 +29,20 @@ Optional demo seed:
 ```bash
 curl -X POST http://127.0.0.1:8000/api/mock/seed
 ```
+
+## Main Task APIs
+Create a main task:
+
+```bash
+curl -X POST http://127.0.0.1:8000/api/main-tasks \
+  -H 'Content-Type: application/json' \
+  -d '{"title":"监控面板主任务","owner":"董事长"}'
+```
+
+Update main task progress:
+
+```bash
+curl -X PATCH http://127.0.0.1:8000/api/main-tasks/1 \
+  -H 'Content-Type: application/json' \
+  -d '{"status":"in_progress","progress_percent":70}'
+```

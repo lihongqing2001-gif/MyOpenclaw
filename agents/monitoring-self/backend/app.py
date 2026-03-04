@@ -5,6 +5,7 @@ from pathlib import Path
 
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel
 
 from ingest_comm_log import DB_PATH, sync_all
 from monitor import AgentMonitor
@@ -12,7 +13,7 @@ from monitor import AgentMonitor
 BASE_DIR = Path(__file__).resolve().parent
 
 monitor = AgentMonitor(str(DB_PATH))
-app = FastAPI(title="OpenClaw Agent Monitor API", version="0.3.0")
+app = FastAPI(title="OpenClaw Agent Monitor API", version="0.4.0")
 
 app.add_middleware(
     CORSMiddleware,
@@ -21,6 +22,16 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
+class MainTaskCreate(BaseModel):
+    title: str
+    owner: str = "董事长"
+
+
+class MainTaskUpdate(BaseModel):
+    status: str
+    progress_percent: int
 
 
 def _rows(query: str, args: tuple = ()): 
@@ -59,6 +70,7 @@ def _snapshot():
         SELECT
             t.id,
             t.request_id,
+            t.main_task_id,
             t.agent_id,
             t.task_desc,
             t.difficulty,
@@ -73,6 +85,26 @@ def _snapshot():
         ORDER BY t.updated_at DESC
         """
     )
+    main_tasks = _rows(
+        """
+        SELECT id, title, owner, status, progress_percent, updated_at
+        FROM main_tasks
+        WHERE status IN ('assigned', 'in_progress', 'blocked')
+        ORDER BY updated_at DESC
+        """
+    )
+    summary = _rows(
+        """
+        SELECT
+          COUNT(*) AS total,
+          SUM(CASE WHEN status='done' THEN 1 ELSE 0 END) AS done
+        FROM main_tasks
+        """
+    )[0]
+    total_main = int(summary.get("total") or 0)
+    done_main = int(summary.get("done") or 0)
+    satisfaction = int(round((done_main / total_main) * 100)) if total_main else 0
+
     total = _rows("SELECT COALESCE(SUM(total_tokens), 0) AS total_tokens FROM token_log")[0]
     by_agent = _rows(
         """
@@ -83,12 +115,46 @@ def _snapshot():
         ORDER BY total_tokens DESC
         """
     )
-    return {"agents": agents, "tasks": tasks, "tokens": {"global": total, "by_agent": by_agent}}
+    return {
+        "agents": agents,
+        "tasks": tasks,
+        "main_tasks": main_tasks,
+        "demand": {
+            "total_main_tasks": total_main,
+            "done_main_tasks": done_main,
+            "satisfaction_percent": satisfaction,
+        },
+        "tokens": {"global": total, "by_agent": by_agent},
+    }
 
 
 @app.post("/api/sync")
 def api_sync():
     return _sync()
+
+
+@app.post("/api/main-tasks")
+def create_main_task(payload: MainTaskCreate):
+    mid = monitor.create_main_task(payload.title, owner=payload.owner)
+    return {"main_task_id": mid}
+
+
+@app.patch("/api/main-tasks/{main_task_id}")
+def update_main_task(main_task_id: int, payload: MainTaskUpdate):
+    monitor.update_main_task(main_task_id, payload.status, payload.progress_percent)
+    return {"ok": True}
+
+
+@app.get("/api/main-tasks")
+def list_main_tasks():
+    _sync()
+    return _snapshot()["main_tasks"]
+
+
+@app.get("/api/demand/summary")
+def demand_summary():
+    _sync()
+    return _snapshot()["demand"]
 
 
 @app.get("/api/agents/status")
@@ -100,28 +166,7 @@ def agents_status():
 @app.get("/api/tasks/active")
 def tasks_active():
     _sync()
-    tasks = _snapshot()["tasks"]
-    if tasks:
-        return tasks
-    return _rows(
-        """
-        SELECT
-            t.id,
-            t.request_id,
-            t.agent_id,
-            t.task_desc,
-            t.difficulty,
-            t.status,
-            t.progress_percent,
-            COALESCE(SUM(l.total_tokens), 0) AS total_tokens,
-            t.updated_at
-        FROM tasks t
-        LEFT JOIN token_log l ON l.task_id = t.id
-        GROUP BY t.id
-        ORDER BY t.updated_at DESC
-        LIMIT 12
-        """
-    )
+    return _snapshot()["tasks"]
 
 
 @app.get("/api/stats/tokens")
