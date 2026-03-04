@@ -9,34 +9,38 @@ const tabs = [
 export function Shell({
   activeTab,
   children,
-  fullBleed = false
+  fullBleed = false,
+  hideTopbar = false
 }: {
   activeTab: string;
   children: React.ReactNode;
   fullBleed?: boolean;
+  hideTopbar?: boolean;
 }) {
   return (
-    <div className={`shell ${fullBleed ? "shell-full" : ""}`}>
-      <header className={`topbar ${fullBleed ? "topbar-float" : ""}`}>
-        <div className="brand">
-          <span className="brand-mark">MC</span>
-          <div>
-            <div className="brand-title">Mission Control</div>
-            <div className="brand-subtitle">Local command layer</div>
+    <div className={`shell ${fullBleed ? "shell-full" : ""} ${hideTopbar ? "shell-no-top" : ""}`}>
+      {hideTopbar ? null : (
+        <header className={`topbar ${fullBleed ? "topbar-float" : ""}`}>
+          <div className="brand">
+            <span className="brand-mark">MC</span>
+            <div>
+              <div className="brand-title">Mission Control</div>
+              <div className="brand-subtitle">Local command layer</div>
+            </div>
           </div>
-        </div>
-        <nav className="tabs">
-          {tabs.map((tab) => (
-            <Link
-              className={`tab ${activeTab === tab.key ? "active" : ""}`}
-              href={`/?tab=${tab.key}`}
-              key={tab.key}
-            >
-              {tab.label}
-            </Link>
-          ))}
-        </nav>
-      </header>
+          <nav className="tabs">
+            {tabs.map((tab) => (
+              <Link
+                className={`tab ${activeTab === tab.key ? "active" : ""}`}
+                href={`/?tab=${tab.key}`}
+                key={tab.key}
+              >
+                {tab.label}
+              </Link>
+            ))}
+          </nav>
+        </header>
+      )}
       <main className={`main ${fullBleed ? "main-full" : ""}`}>{children}</main>
     </div>
   );

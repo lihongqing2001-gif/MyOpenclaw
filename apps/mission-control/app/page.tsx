@@ -10,11 +10,13 @@ export default function Home({
 }) {
   const tab = searchParams.tab ?? "operations";
 
+  const isOps = tab === "operations";
+
   return (
-    <Shell activeTab={tab} fullBleed={tab === "operations"}>
+    <Shell activeTab={tab} fullBleed={isOps} hideTopbar={isOps}>
       {tab === "memory" ? <MemoryPage selectedId={searchParams.memoryId} /> : null}
       {tab === "team" ? <TeamPage selectedId={searchParams.memberId} /> : null}
-      {tab === "operations" ? <OperationsPage /> : null}
+      {tab === "operations" ? <OperationsPage activeTab={tab} /> : null}
     </Shell>
   );
 }
