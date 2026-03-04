@@ -1,0 +1,24 @@
+{
+  "tools": {
+    "agentToAgent": {
+      "enabled": true
+    }
+  },
+  "agents": {
+    "designer": {
+      "agentDir": "<WORKSPACE>/agents/workspaces/designer"
+    },
+    "admin": {
+      "agentDir": "<WORKSPACE>/agents/workspaces/admin"
+    },
+    "engineer": {
+      "agentDir": "<WORKSPACE>/agents/workspaces/engineer"
+    },
+    "executor": {
+      "agentDir": "<WORKSPACE>/agents/workspaces/executor"
+    },
+    "life-assistant": {
+      "agentDir": "<WORKSPACE>/agents/workspaces/life-assistant"
+    }
+  }
+}

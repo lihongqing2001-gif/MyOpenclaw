@@ -35,6 +35,48 @@ Export and import toolkit config + patch:
 ./monitor-kit import ./toolkit/exports
 ```
 
+## 迁移到新的 OpenClaw 实例
+
+1) 在新实例中拷贝 `agents/monitoring-self` 目录并执行安装：
+
+```bash
+cd <NEW_WORKSPACE>/agents/monitoring-self
+./install.sh
+```
+
+2) 生成或导入配置：
+
+```bash
+./monitor-kit setup
+# 或
+./monitor-kit import ./toolkit/exports
+```
+
+3) 运行体检并按提示补齐缺失项：
+
+```bash
+./monitor-kit doctor --fix
+./monitor-kit doctor
+```
+
+4) 应用 OpenClaw 配置补丁（手工合并到 openclaw.json）：
+
+- 自动生成: `toolkit/openclaw.patch.json`
+- 模板参考: `toolkit/openclaw.patch.template.json`
+
+5) 启动并验证：
+
+```bash
+./monitor-kit start
+curl http://127.0.0.1:8000/api/health
+```
+
+## 常见问题排查
+
+- 端口占用: `lsof -i :8000`，改 `toolkit/config.json` 的 `port` 后重启。
+- venv 缺失: 重新执行 `./install.sh`。
+- 数据库锁: 先 `./monitor-kit stop`，确认无旧进程后再 `./monitor-kit start`。
+
 ## Manual backend run (optional)
 cd /Users/liumobei/.openclaw/workspace/agents/monitoring-self/backend
 python3 -m venv .venv
