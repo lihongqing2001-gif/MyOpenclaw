@@ -27,3 +27,10 @@
 - intent: 落地并执行会话控制SOP（分发、验收、回填、恢复）
 - status: IN_PROGRESS
 - run_id: manual-sop-rollout
+
+## REQ-SOP-20260305-001-R1
+- from_agent: 中枢
+- to_agent: admin-v1
+- intent: 落地并执行会话控制SOP（分发、验收、回填、恢复）
+- status: IN_PROGRESS
+- run_id: manual-sop-rollout-r1
