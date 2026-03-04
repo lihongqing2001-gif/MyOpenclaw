@@ -23,3 +23,6 @@ Build a stable and auditable multi-agent system with clear ownership, boundaries
 
 ## State Model
 NEW -> ACK -> IN_PROGRESS -> REVIEW -> DONE -> VERIFIED -> ARCHIVED
+
+## Self-Evolution Loop
+Follow `agents/evolution/SELF_EVOLUTION_LOOP.md` for continuous improvement and knowledge promotion.
