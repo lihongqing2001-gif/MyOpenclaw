@@ -13,8 +13,10 @@ class AgentMonitor:
         self._init_db()
 
     def _conn(self) -> sqlite3.Connection:
-        conn = sqlite3.connect(self.db_path)
+        conn = sqlite3.connect(self.db_path, timeout=5)
         conn.row_factory = sqlite3.Row
+        conn.execute("PRAGMA journal_mode=WAL")
+        conn.execute("PRAGMA busy_timeout=5000")
         return conn
 
     def _now(self) -> str:
@@ -243,6 +245,8 @@ class AgentMonitor:
         activity: Optional[str] = None,
     ) -> None:
         ts = self._now()
+        event_agent = "system"
+        event_rid = None
         with self._conn() as conn:
             row_task = conn.execute("SELECT approved, request_id FROM tasks WHERE id=?", (task_id,)).fetchone()
             if row_task and int(row_task["approved"]) == 0 and status in ("in_progress", "done"):
@@ -251,6 +255,8 @@ class AgentMonitor:
             conn.execute("UPDATE tasks SET status=?, progress_percent=?, updated_at=? WHERE id=?", (status, progress_percent, ts, task_id))
             row = conn.execute("SELECT agent_id, main_task_id, request_id FROM tasks WHERE id=?", (task_id,)).fetchone()
             if row:
+                event_agent = row["agent_id"]
+                event_rid = row["request_id"]
                 conn.execute(
                     """
                     INSERT INTO agent_status (agent_id, activity, current_task_id, updated_at)
@@ -283,7 +289,7 @@ class AgentMonitor:
                         (main_status, avg_progress, ts, row["main_task_id"]),
                     )
 
-                self.log_event("task_progress", row["agent_id"], f"task={task_id} status={status} progress={progress_percent}", request_id=row["request_id"])
+        self.log_event("task_progress", event_agent, f"task={task_id} status={status} progress={progress_percent}", request_id=event_rid)
 
     def log_token_usage(self, task_id: int, prompt_tokens: int, completion_tokens: int) -> None:
         ts = self._now()
