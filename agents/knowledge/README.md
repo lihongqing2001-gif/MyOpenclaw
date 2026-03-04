@@ -1,5 +1,9 @@
 # Knowledge Base Layers
 
+Core Charter:
+- `agents/knowledge/KB_CHARTER.md`
+- `agents/knowledge/L1-playbooks/KNOWLEDGE_CAPTURE_PLAYBOOK.md`
+
 ## L0-overview
 Decision principles, governance, architecture maps.
 
