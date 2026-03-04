@@ -7,6 +7,7 @@ IDENTITY.md
 README.md
 auth-profiles.json
 models.json
+# openclaw.json may be absent; build script skips missing entries
 openclaw.json
 skills
 agents/knowledge
