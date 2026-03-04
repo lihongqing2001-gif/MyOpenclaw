@@ -1,5 +1,11 @@
 # OpenClaw Self-Monitoring Panel
 
+## 教程目录
+
+- `tutorials/01-quick-start.md`
+- `tutorials/02-migrate-to-new-openclaw.md`
+- `tutorials/03-operations-and-troubleshooting.md`
+
 ## MVP toolkit (one-click)
 
 ```bash
