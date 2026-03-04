@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Agent 监控面板</title>
+  <style>
+    :root {
+      --bg: #f5f7f2;
+      --panel: #ffffff;
+      --ink: #1f2a1f;
+      --muted: #5a6b5a;
+      --ok: #1a8f4d;
+      --warn: #cc8a00;
+      --err: #c0342b;
+      --line: #dbe4d7;
+      --accent: #2f6d5f;
+    }
+    body {
+      margin: 0;
+      font-family: "Avenir Next", "PingFang SC", "Noto Sans SC", sans-serif;
+      color: var(--ink);
+      background: radial-gradient(1000px 500px at 10% -10%, #eaf3ea 20%, transparent 60%), var(--bg);
+    }
+    .wrap { max-width: 1080px; margin: 0 auto; padding: 18px; }
+    .head { display: flex; justify-content: space-between; align-items: baseline; }
+    .title { font-size: 28px; font-weight: 700; }
+    .stamp { color: var(--muted); font-size: 13px; }
+    .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin: 14px 0 18px; }
+    .card, .panel { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 14px; }
+    .k { color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: .04em; }
+    .v { font-size: 28px; margin-top: 6px; font-weight: 700; }
+    .panels { display: grid; grid-template-columns: 1.4fr 1fr; gap: 12px; }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { text-align: left; padding: 8px 6px; border-bottom: 1px dashed var(--line); font-size: 13px; }
+    th { color: var(--muted); font-size: 12px; }
+    .pill { padding: 2px 9px; border-radius: 99px; font-size: 12px; }
+    .READY { background: #e8f6ee; color: var(--ok); }
+    .BUSY { background: #fff5df; color: var(--warn); }
+    .BLOCKED, .BROKEN { background: #fde9e7; color: var(--err); }
+    .UNKNOWN { background: #eef1f2; color: #566; }
+    .foot { margin-top: 12px; font-size: 12px; color: var(--muted); }
+    .btn { border: 1px solid var(--accent); color: var(--accent); padding: 6px 10px; border-radius: 8px; text-decoration: none; font-size: 12px; }
+    @media (max-width: 800px) {
+      .grid { grid-template-columns: 1fr 1fr; }
+      .panels { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="head">
+      <div class="title">Agent 监控面板</div>
+      <div>
+        <a class="btn" href="#" onclick="location.reload();return false;">刷新页面</a>
+      </div>
+    </div>
+    <div class="stamp" id="stamp">加载中...</div>
+
+    <div class="grid" id="metricGrid"></div>
+
+    <div class="panels">
+      <div class="panel">
+        <h3>Agent 运行状态</h3>
+        <table>
+          <thead>
+            <tr><th>Agent</th><th>角色</th><th>状态</th><th>风险</th><th>当前请求</th></tr>
+          </thead>
+          <tbody id="agentBody"></tbody>
+        </table>
+      </div>
+      <div class="panel">
+        <h3>最近任务流</h3>
+        <table>
+          <thead>
+            <tr><th>request_id</th><th>from -> to</th><th>status</th></tr>
+          </thead>
+          <tbody id="flowBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="foot">数据源：agents/registry/registry.yaml + agents/workspaces/*/STATE.json + agents/runs/COMM_LOG.md</div>
+  </div>
+
+  <script src="./data/dashboard-data.js"></script>
+  <script>
+    const d = window.DASHBOARD_DATA || {metrics:{},agents:[],handoffs:[]};
+    document.getElementById('stamp').textContent = '更新时间: ' + (d.metrics.updated_at || '-');
+    const metrics = [
+      ['Total Agents', d.metrics.total_agents || 0],
+      ['Ready', d.metrics.ready_agents || 0],
+      ['Blocked', d.metrics.blocked_agents || 0],
+      ['Handoffs', d.metrics.total_handoffs || 0]
+    ];
+    document.getElementById('metricGrid').innerHTML = metrics.map(([k,v]) =>
+      `<div class="card"><div class="k">${k}</div><div class="v">${v}</div></div>`).join('');
+
+    document.getElementById('agentBody').innerHTML = (d.agents || []).map(a => {
+      const st = a.runtime_status || 'UNKNOWN';
+      return `<tr>
+        <td>${a.name || a.agent_id}</td>
+        <td>${a.role || '-'}</td>
+        <td><span class="pill ${st}">${st}</span></td>
+        <td>${a.risk_level || '-'}</td>
+        <td>${a.current_request || '-'}</td>
+      </tr>`;
+    }).join('');
+
+    document.getElementById('flowBody').innerHTML = (d.handoffs || []).slice().reverse().map(h =>
+      `<tr><td>${h.request_id || '-'}</td><td>${h.from_agent || '-'} -> ${h.to_agent || '-'}</td><td>${h.status || '-'}</td></tr>`
+    ).join('');
+  </script>
+</body>
+</html>
