@@ -1,4 +1,4 @@
-import { query } from "convex/server";
+import { queryGeneric } from "convex/server";
 
 const seededTeam = [
   { _id: "seed-team-1", name: "Builder-01", role: "Backend systems", group: "Developers" },
@@ -8,7 +8,7 @@ const seededTeam = [
   { _id: "seed-team-5", name: "Ops-01", role: "Deployments and monitoring", group: "Operations" }
 ] as const;
 
-export const list = query({
+export const list = queryGeneric({
   args: {},
   handler: async (ctx) => {
     const rows = await ctx.db.query("teamMembers").withIndex("by_group").collect();
