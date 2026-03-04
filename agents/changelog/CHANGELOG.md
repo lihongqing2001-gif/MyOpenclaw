@@ -9,3 +9,5 @@
   - growth-strategist-v1
   - qa-auditor-v1
 - Added workspace artifacts (manifest/state/inbox/outbox/runbook) for all baseline agents
+- Added baseline aliases map for quick role routing (m/管/设/工/E/生)
+- Added and published new entities: admin-v1, engineer-v1, executor-v1, life-assistant-v1

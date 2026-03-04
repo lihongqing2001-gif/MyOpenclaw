@@ -1,0 +1,27 @@
+version: 1
+updated_at: "2026-03-04T21:05:00+08:00"
+aliases:
+  - key: m
+    display: main
+    slug: main
+    target: default
+  - key: 管
+    display: 管理员
+    slug: admin
+    target: admin-v1
+  - key: 设
+    display: 设计师
+    slug: designer
+    target: design-architect-v1
+  - key: 工
+    display: 工程师
+    slug: engineer
+    target: engineer-v1
+  - key: E
+    display: Executor
+    slug: executor
+    target: executor-v1
+  - key: 生
+    display: 生活助理
+    slug: life-assistant
+    target: life-assistant-v1
