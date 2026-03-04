@@ -5,13 +5,13 @@ from pathlib import Path
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+from ingest_comm_log import DB_PATH, sync_all
 from monitor import AgentMonitor
 
 BASE_DIR = Path(__file__).resolve().parent
-DB_PATH = BASE_DIR.parent / "data" / "monitor.db"
 
 monitor = AgentMonitor(str(DB_PATH))
-app = FastAPI(title="OpenClaw Agent Monitor API", version="0.1.0")
+app = FastAPI(title="OpenClaw Agent Monitor API", version="0.2.0")
 
 app.add_middleware(
     CORSMiddleware,
@@ -22,7 +22,7 @@ app.add_middleware(
 )
 
 
-def _rows(query: str, args: tuple = ()):
+def _rows(query: str, args: tuple = ()): 
     import sqlite3
 
     with sqlite3.connect(str(DB_PATH)) as conn:
@@ -31,8 +31,18 @@ def _rows(query: str, args: tuple = ()):
         return [dict(r) for r in cur.fetchall()]
 
 
+def _sync():
+    return sync_all(monitor, db_path=DB_PATH)
+
+
+@app.post("/api/sync")
+def api_sync():
+    return _sync()
+
+
 @app.get("/api/agents/status")
 def agents_status():
+    _sync()
     return _rows(
         """
         SELECT
@@ -54,6 +64,7 @@ def agents_status():
 
 @app.get("/api/tasks/active")
 def tasks_active():
+    _sync()
     return _rows(
         """
         SELECT
@@ -77,6 +88,7 @@ def tasks_active():
 
 @app.get("/api/stats/tokens")
 def stats_tokens():
+    _sync()
     total = _rows("SELECT COALESCE(SUM(total_tokens), 0) AS total_tokens FROM token_log")[0]
     by_agent = _rows(
         """

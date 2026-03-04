@@ -114,9 +114,12 @@
         }
       },
       async mounted() {
-        try { await fetch(this.api + '/api/mock/seed', { method: 'POST' }); } catch (_) {}
+        try { await fetch(this.api + '/api/sync', { method: 'POST' }); } catch (_) {}
         await this.load();
-        setInterval(this.load, 2000);
+        setInterval(async () => {
+          try { await fetch(this.api + '/api/sync', { method: 'POST' }); } catch (_) {}
+          await this.load();
+        }, 2000);
       }
     }).mount('#app');
   </script>
