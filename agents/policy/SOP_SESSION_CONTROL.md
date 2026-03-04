@@ -61,3 +61,9 @@ Recovery doc: `agents/policy/RECOVERY_PLAYBOOK.md`
 - Verified: command/output evidence
 - Risk: unresolved issues
 - Next: single clear next action
+
+## Autonomous Assurance (No Silent Stall)
+- Heartbeat writes `delivery-YYYYMMDD.md` for completed deliveries from timeline.
+- Heartbeat writes `escalation-YYYYMMDD.md` when active tasks are stale (no progress over threshold).
+- Escalation includes request_id, idle minutes, owner agent, and required follow-up.
+- Re-alert uses cooldown to avoid spam while preventing silent deadlocks.

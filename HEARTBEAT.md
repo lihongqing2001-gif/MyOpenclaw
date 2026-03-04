@@ -27,10 +27,15 @@
 - Append concise completion report to `agents/reviews/delivery-YYYYMMDD.md`
 - Include: what delivered, verification status, commit reference if available
 
-7) Quiet hours
+7) Slow-progress escalation
+- Detect active tasks with no update beyond threshold and append to `agents/reviews/escalation-YYYYMMDD.md`
+- Escalate with request_id, idle minutes, owner agent, and required follow-up
+- Re-alert only after cooldown to avoid spam
+
+8) Quiet hours
 - 23:00-08:00 only alert on failures or urgent blockers
 
-8) Control and recovery guardrails
+9) Control and recovery guardrails
 - Check context waterline via session status; if >70%, create checkpoint file
 - If >85% or drift detected, execute `agents/policy/RECOVERY_PLAYBOOK.md`
 - Ensure each in-flight spawned task has dashboard linkage; auto-repair if missing
