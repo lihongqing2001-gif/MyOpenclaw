@@ -22,10 +22,15 @@
 - Append key events to `agents/reviews/retro-YYYYMMDD.md`
 - Promote stable snippets into `agents/knowledge/L4-snippets/`
 
-6) Quiet hours
+6) Delivery reporting
+- Detect newly completed delivery tasks from timeline
+- Append concise completion report to `agents/reviews/delivery-YYYYMMDD.md`
+- Include: what delivered, verification status, commit reference if available
+
+7) Quiet hours
 - 23:00-08:00 only alert on failures or urgent blockers
 
-7) Control and recovery guardrails
+8) Control and recovery guardrails
 - Check context waterline via session status; if >70%, create checkpoint file
 - If >85% or drift detected, execute `agents/policy/RECOVERY_PLAYBOOK.md`
 - Ensure each in-flight spawned task has dashboard linkage; auto-repair if missing
