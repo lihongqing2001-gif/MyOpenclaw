@@ -103,6 +103,12 @@ def _demand_summary():
     return {"total_main_tasks": len(rows), "done_main_tasks": done, "satisfaction_percent": satisfaction}
 
 
+def _is_self_improvement_task(title: str) -> bool:
+    t = (title or "").strip()
+    keywords = ["自我提升", "构建并迭代 OpenClaw 自监控面板", "自动把董事长新需求建成主任务卡片"]
+    return any(k in t for k in keywords)
+
+
 def _snapshot():
     agents = _rows(
         """
@@ -158,7 +164,7 @@ def _snapshot():
         """
     )
 
-    main_tasks = _rows(
+    main_tasks_all = _rows(
         """
         SELECT id, title, owner, status, progress_percent,
                priority_weight, risk_weight, time_weight, updated_at
@@ -167,6 +173,8 @@ def _snapshot():
         ORDER BY updated_at DESC
         """
     )
+    self_improvement_tasks = [m for m in main_tasks_all if _is_self_improvement_task(m.get("title", ""))]
+    main_tasks = [m for m in main_tasks_all if not _is_self_improvement_task(m.get("title", ""))]
 
     total = _rows("SELECT COALESCE(SUM(total_tokens), 0) AS total_tokens FROM token_log")[0]
     by_agent = _rows(
@@ -188,10 +196,21 @@ def _snapshot():
         """
     )
 
+    self_improvement = {
+        "healthy": bool(self_improvement_tasks),
+        "count": len(self_improvement_tasks),
+        "last_updated": self_improvement_tasks[0]["updated_at"] if self_improvement_tasks else None,
+        "items": [
+            {"id": m["id"], "title": m["title"], "status": m["status"], "updated_at": m["updated_at"]}
+            for m in self_improvement_tasks[:5]
+        ],
+    }
+
     return {
         "agents": agents,
         "tasks": tasks,
         "main_tasks": main_tasks,
+        "self_improvement": self_improvement,
         "demand": _demand_summary(),
         "tokens": {"global": total, "by_agent": by_agent},
         "timeline": timeline,
@@ -267,6 +286,12 @@ def dependency(payload: DependencyRequest, x_role: str | None = Header(default=N
     _write_guard(x_role)
     monitor.add_dependency(payload.task_id, payload.depends_on_task_id)
     return {"ok": True}
+
+
+@app.get("/api/snapshot")
+def api_snapshot():
+    _sync()
+    return _snapshot()
 
 
 @app.get("/api/main-tasks")

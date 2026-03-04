@@ -27,6 +27,23 @@
       </div>
     </div>
 
+    <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 mb-4">
+      <div class="flex items-center justify-between">
+        <div>
+          <div class="text-slate-400 text-xs">自我提升模块</div>
+          <div class="text-lg font-semibold" :class="selfImprovement.healthy ? 'text-emerald-300' : 'text-red-300'">
+            {{ selfImprovement.healthy ? '正常' : '失效' }}
+          </div>
+        </div>
+        <div class="text-sm text-slate-400">最近更新: {{ selfImprovement.last_updated || '无' }}</div>
+      </div>
+      <div class="mt-2 text-xs text-slate-400">日志留存（最近5条）</div>
+      <div class="mt-1 space-y-1">
+        <div v-if="!selfImprovement.items || !selfImprovement.items.length" class="text-xs text-slate-500">暂无记录</div>
+        <div v-for="it in selfImprovement.items" :key="it.id" class="text-xs text-slate-300">- {{ it.updated_at }} · {{ it.title }} · {{ it.status }}</div>
+      </div>
+    </div>
+
     <div class="grid md:grid-cols-5 gap-3 mb-6">
       <div class="bg-slate-900 border border-slate-800 rounded-xl p-3"><div class="text-xs text-slate-400">主任务(进行中)</div><div class="text-xl font-semibold">{{ mainTasks.length }}</div></div>
       <div class="bg-slate-900 border border-slate-800 rounded-xl p-3"><div class="text-xs text-slate-400">子任务(进行中)</div><div class="text-xl font-semibold">{{ activeTasks.length }}</div></div>
@@ -100,6 +117,7 @@
           mainTasks: [],
           activeTasks: [],
           demand: {},
+          selfImprovement: { healthy: false, count: 0, last_updated: null, items: [] },
           timeline: [],
           health: {},
           weekly: {},
@@ -116,6 +134,7 @@
           this.mainTasks = s.main_tasks || [];
           this.activeTasks = s.tasks || [];
           this.demand = s.demand || {};
+          this.selfImprovement = s.self_improvement || this.selfImprovement;
           this.timeline = s.timeline || [];
           this.now = new Date().toLocaleString();
         },
@@ -143,15 +162,9 @@
           ws.onclose = async () => {
             if (!connected) {
               const tick = async () => {
-                const s = await fetch(this.api + '/api/sync', { method: 'POST' });
-                if (s.ok) {
-                  const snap = await fetch(this.api + '/api/timeline').then(() => null);
-                }
-                const d = await fetch(this.api + '/api/main-tasks').then(r => r.json());
-                const t = await fetch(this.api + '/api/tasks/active').then(r => r.json());
-                const dm = await fetch(this.api + '/api/demand/summary').then(r => r.json());
-                const tl = await fetch(this.api + '/api/timeline').then(r => r.json());
-                this.applySnapshot({ main_tasks: d, tasks: t, demand: dm, timeline: tl });
+                await fetch(this.api + '/api/sync', { method: 'POST' });
+                const snap = await fetch(this.api + '/api/snapshot').then(r => r.json());
+                this.applySnapshot(snap);
                 await this.loadAux();
               };
               await tick();
