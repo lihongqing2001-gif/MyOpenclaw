@@ -17,81 +17,75 @@
     <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 mb-4">
       <div class="flex items-center justify-between">
         <div>
-          <div class="text-slate-400 text-xs">需求满足度</div>
+          <div class="text-slate-400 text-xs">需求满足度（加权）</div>
           <div class="text-2xl font-semibold">{{ demand.satisfaction_percent || 0 }}%</div>
         </div>
-        <div class="text-sm text-slate-400">已完成主任务 {{ demand.done_main_tasks || 0 }} / {{ demand.total_main_tasks || 0 }}</div>
+        <div class="text-sm text-slate-400">主任务完成 {{ demand.done_main_tasks || 0 }} / {{ demand.total_main_tasks || 0 }}</div>
       </div>
       <div class="mt-3 h-3 bg-slate-700 rounded">
         <div class="h-3 rounded bg-cyan-500" :style="{ width: (demand.satisfaction_percent || 0) + '%' }"></div>
       </div>
     </div>
 
-    <div class="grid md:grid-cols-4 gap-3 mb-6">
-      <div class="bg-slate-900 border border-slate-800 rounded-xl p-4">
-        <div class="text-slate-400 text-xs">主任务(进行中)</div>
-        <div class="text-2xl font-semibold">{{ mainTasks.length }}</div>
-      </div>
-      <div class="bg-slate-900 border border-slate-800 rounded-xl p-4">
-        <div class="text-slate-400 text-xs">子任务(进行中)</div>
-        <div class="text-2xl font-semibold">{{ activeTasks.length }}</div>
-      </div>
-      <div class="bg-slate-900 border border-slate-800 rounded-xl p-4">
-        <div class="text-slate-400 text-xs">在线Agent</div>
-        <div class="text-2xl font-semibold">{{ agentStatus.length }}</div>
-      </div>
-      <div class="bg-slate-900 border border-slate-800 rounded-xl p-4">
-        <div class="text-slate-400 text-xs">Global Tokens</div>
-        <div class="text-2xl font-semibold">{{ tokenStats.global?.total_tokens || 0 }}</div>
-      </div>
+    <div class="grid md:grid-cols-5 gap-3 mb-6">
+      <div class="bg-slate-900 border border-slate-800 rounded-xl p-3"><div class="text-xs text-slate-400">主任务(进行中)</div><div class="text-xl font-semibold">{{ mainTasks.length }}</div></div>
+      <div class="bg-slate-900 border border-slate-800 rounded-xl p-3"><div class="text-xs text-slate-400">子任务(进行中)</div><div class="text-xl font-semibold">{{ activeTasks.length }}</div></div>
+      <div class="bg-slate-900 border border-slate-800 rounded-xl p-3"><div class="text-xs text-slate-400">阻塞</div><div class="text-xl font-semibold">{{ activeTasks.filter(x=>x.status==='blocked').length }}</div></div>
+      <div class="bg-slate-900 border border-slate-800 rounded-xl p-3"><div class="text-xs text-slate-400">超时</div><div class="text-xl font-semibold">{{ activeTasks.filter(x=>x.overdue===1).length }}</div></div>
+      <div class="bg-slate-900 border border-slate-800 rounded-xl p-3"><div class="text-xs text-slate-400">L3待审批</div><div class="text-xl font-semibold">{{ activeTasks.filter(x=>x.risk_level==='L3' && x.approved===0).length }}</div></div>
     </div>
 
     <div class="grid lg:grid-cols-3 gap-4">
       <section class="bg-slate-900 border border-slate-800 rounded-xl p-4">
-        <h2 class="text-lg font-semibold mb-3">主任务列表（仅进行中）</h2>
+        <h2 class="text-lg font-semibold mb-3">主任务（进行中）</h2>
         <div class="space-y-2">
           <div v-if="!mainTasks.length" class="text-sm text-slate-400">暂无进行中的主任务</div>
           <div v-for="m in mainTasks" :key="m.id" class="p-3 rounded-lg bg-slate-800/60">
             <div class="font-medium">{{ m.title }}</div>
-            <div class="text-xs text-slate-400">负责人: {{ m.owner || '-' }} · 状态: {{ m.status }}</div>
-            <div class="mt-2 h-2 bg-slate-700 rounded">
-              <div class="h-2 rounded bg-fuchsia-500" :style="{ width: (m.progress_percent || 0) + '%' }"></div>
-            </div>
+            <div class="text-xs text-slate-400">{{ m.owner }} · {{ m.status }}</div>
+            <div class="mt-2 h-2 bg-slate-700 rounded"><div class="h-2 rounded bg-fuchsia-500" :style="{ width: (m.progress_percent || 0) + '%' }"></div></div>
           </div>
         </div>
       </section>
 
       <section class="bg-slate-900 border border-slate-800 rounded-xl p-4">
-        <h2 class="text-lg font-semibold mb-3">子任务队列（仅进行中）</h2>
-        <div class="space-y-2">
+        <h2 class="text-lg font-semibold mb-3">子任务（进行中）</h2>
+        <div class="space-y-2 max-h-[420px] overflow-auto">
           <div v-if="!activeTasks.length" class="text-sm text-slate-400">暂无进行中的子任务</div>
           <div v-for="t in activeTasks" :key="t.id" class="p-3 rounded-lg bg-slate-800/60">
             <div class="flex items-center justify-between gap-2">
-              <div class="font-medium truncate">{{ t.request_id }} · {{ t.agent_id }}</div>
-              <span class="text-xs px-2 py-1 rounded" :class="difficultyClass(t.difficulty)">{{ t.difficulty }}</span>
+              <div class="font-medium truncate">{{ t.request_id }}</div>
+              <span class="text-xs px-2 py-1 rounded" :class="riskClass(t.risk_level)">{{ t.risk_level }}</span>
             </div>
-            <div class="text-sm text-slate-300 mt-1">{{ t.task_desc }}</div>
-            <div class="text-xs text-slate-400 mt-1">Tokens: {{ t.total_tokens }} · Status: {{ t.status }}</div>
-            <div class="mt-2 h-2 bg-slate-700 rounded">
-              <div class="h-2 rounded bg-emerald-500" :style="{ width: (t.progress_percent || 0) + '%' }"></div>
+            <div class="text-xs text-slate-300 mt-1">{{ t.agent_id }} · {{ t.task_desc }}</div>
+            <div class="text-xs mt-1" :class="t.overdue===1 ? 'text-red-300':'text-slate-400'">
+              状态: {{ t.status }} · 依赖阻塞: {{ t.blocked_by }} · 审批: {{ t.approved===1 ? '已批' : '待批' }}
             </div>
+            <div class="mt-2 h-2 bg-slate-700 rounded"><div class="h-2 rounded bg-emerald-500" :style="{ width: (t.progress_percent || 0) + '%' }"></div></div>
           </div>
         </div>
       </section>
 
       <section class="bg-slate-900 border border-slate-800 rounded-xl p-4">
-        <h2 class="text-lg font-semibold mb-3">Agent 状态</h2>
-        <div class="space-y-2">
-          <div v-for="a in agentStatus" :key="a.agent_id" class="p-3 rounded-lg bg-slate-800/60">
-            <div class="flex items-center justify-between">
-              <div>
-                <div class="font-medium">{{ a.agent_id }}</div>
-                <div class="text-xs text-slate-400">{{ a.activity }} · {{ a.request_id || '-' }}</div>
-              </div>
-              <span class="text-xs px-2 py-1 rounded" :class="statusClass(a.status)">{{ a.status || 'idle' }}</span>
-            </div>
+        <h2 class="text-lg font-semibold mb-3">事件时间线</h2>
+        <div class="space-y-2 max-h-[420px] overflow-auto">
+          <div v-for="e in timeline" :key="e.id" class="p-2 rounded bg-slate-800/50">
+            <div class="text-xs text-slate-400">{{ e.created_at }} · {{ e.event_type }}</div>
+            <div class="text-sm">{{ e.actor }}: {{ e.message }}</div>
           </div>
         </div>
+      </section>
+    </div>
+
+    <div class="grid lg:grid-cols-2 gap-4 mt-4">
+      <section class="bg-slate-900 border border-slate-800 rounded-xl p-4">
+        <h2 class="text-lg font-semibold mb-2">健康检查</h2>
+        <div class="text-sm text-slate-300">DB: {{ health.db }} · stale_agents: {{ health.stale_agents }} · {{ health.time }}</div>
+      </section>
+      <section class="bg-slate-900 border border-slate-800 rounded-xl p-4">
+        <h2 class="text-lg font-semibold mb-2">报告摘要</h2>
+        <div class="text-sm text-slate-300">周报 done/block/overdue: {{ weekly.done_tasks }}/{{ weekly.blocked_tasks }}/{{ weekly.overdue_tasks }}</div>
+        <div class="text-sm text-slate-300">月报 done/block/overdue: {{ monthly.done_tasks }}/{{ monthly.blocked_tasks }}/{{ monthly.overdue_tasks }}</div>
       </section>
     </div>
   </div>
@@ -103,74 +97,68 @@
         return {
           api: 'http://127.0.0.1:8000',
           now: '-',
-          agentStatus: [],
-          activeTasks: [],
           mainTasks: [],
-          demand: { total_main_tasks: 0, done_main_tasks: 0, satisfaction_percent: 0 },
-          tokenStats: { global: { total_tokens: 0 }, by_agent: [] }
+          activeTasks: [],
+          demand: {},
+          timeline: [],
+          health: {},
+          weekly: {},
+          monthly: {}
         }
       },
       methods: {
-        applySnapshot(snap) {
-          this.agentStatus = snap.agents || [];
-          this.activeTasks = snap.tasks || [];
-          this.mainTasks = snap.main_tasks || [];
-          this.demand = snap.demand || this.demand;
-          this.tokenStats = snap.tokens || { global: { total_tokens: 0 }, by_agent: [] };
+        riskClass(r) {
+          if (r === 'L3') return 'bg-red-900 text-red-200';
+          if (r === 'L2') return 'bg-amber-900 text-amber-200';
+          return 'bg-emerald-900 text-emerald-200';
+        },
+        applySnapshot(s) {
+          this.mainTasks = s.main_tasks || [];
+          this.activeTasks = s.tasks || [];
+          this.demand = s.demand || {};
+          this.timeline = s.timeline || [];
           this.now = new Date().toLocaleString();
         },
-        async load() {
-          const [a, t, m, d, s] = await Promise.all([
-            fetch(this.api + '/api/agents/status').then(r => r.json()),
-            fetch(this.api + '/api/tasks/active').then(r => r.json()),
-            fetch(this.api + '/api/main-tasks').then(r => r.json()),
-            fetch(this.api + '/api/demand/summary').then(r => r.json()),
-            fetch(this.api + '/api/stats/tokens').then(r => r.json())
+        async loadAux() {
+          const [h, w, m] = await Promise.all([
+            fetch(this.api + '/api/health').then(r => r.json()),
+            fetch(this.api + '/api/reports/weekly').then(r => r.json()),
+            fetch(this.api + '/api/reports/monthly').then(r => r.json())
           ]);
-          this.applySnapshot({ agents: a, tasks: t, main_tasks: m, demand: d, tokens: s });
-        },
-        statusClass(st) {
-          if (st === 'blocked') return 'bg-red-900 text-red-200';
-          if (st === 'in_progress') return 'bg-amber-900 text-amber-200';
-          if (st === 'assigned') return 'bg-indigo-900 text-indigo-200';
-          if (st === 'done') return 'bg-emerald-900 text-emerald-200';
-          return 'bg-slate-700 text-slate-200';
-        },
-        difficultyClass(df) {
-          if (df === 'complex') return 'bg-rose-900 text-rose-200';
-          if (df === 'medium') return 'bg-amber-900 text-amber-200';
-          return 'bg-emerald-900 text-emerald-200';
+          this.health = h;
+          this.weekly = w;
+          this.monthly = m;
         }
       },
       async mounted() {
+        await this.loadAux();
         const wsUrl = this.api.replace('http://', 'ws://').replace('https://', 'wss://') + '/ws/live';
         let connected = false;
-
         try {
           const ws = new WebSocket(wsUrl);
           ws.onmessage = (ev) => {
             connected = true;
-            try {
-              const data = JSON.parse(ev.data);
-              this.applySnapshot(data);
-            } catch (_) {}
+            this.applySnapshot(JSON.parse(ev.data));
           };
           ws.onclose = async () => {
             if (!connected) {
-              await this.load();
-              setInterval(this.load, 2000);
+              const tick = async () => {
+                const s = await fetch(this.api + '/api/sync', { method: 'POST' });
+                if (s.ok) {
+                  const snap = await fetch(this.api + '/api/timeline').then(() => null);
+                }
+                const d = await fetch(this.api + '/api/main-tasks').then(r => r.json());
+                const t = await fetch(this.api + '/api/tasks/active').then(r => r.json());
+                const dm = await fetch(this.api + '/api/demand/summary').then(r => r.json());
+                const tl = await fetch(this.api + '/api/timeline').then(r => r.json());
+                this.applySnapshot({ main_tasks: d, tasks: t, demand: dm, timeline: tl });
+                await this.loadAux();
+              };
+              await tick();
+              setInterval(tick, 2000);
             }
           };
-          ws.onerror = async () => {
-            if (!connected) {
-              await this.load();
-              setInterval(this.load, 2000);
-            }
-          };
-        } catch (_) {
-          await this.load();
-          setInterval(this.load, 2000);
-        }
+        } catch (_) {}
       }
     }).mount('#app');
   </script>
