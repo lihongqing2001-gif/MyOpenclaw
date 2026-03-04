@@ -1,0 +1,43 @@
+version: 1
+updated_at: "2026-03-04T21:03:00+08:00"
+agents:
+  - agent_id: design-architect-v1
+    name: 设计师
+    owner: 董事长
+    role: architect
+    status: BUSY
+    lifecycle: PUBLISHED
+    risk_level: L2
+    workspace: /Users/liumobei/.openclaw/workspace/agents/workspaces/designer
+  - agent_id: product-manager-v1
+    name: 产品经理
+    owner: 董事长
+    role: planner
+    status: READY
+    lifecycle: PUBLISHED
+    risk_level: L2
+    workspace: /Users/liumobei/.openclaw/workspace/agents/workspaces/product-manager
+  - agent_id: operations-manager-v1
+    name: 运营官
+    owner: 董事长
+    role: operator
+    status: READY
+    lifecycle: PUBLISHED
+    risk_level: L2
+    workspace: /Users/liumobei/.openclaw/workspace/agents/workspaces/operations-manager
+  - agent_id: growth-strategist-v1
+    name: 增长官
+    owner: 董事长
+    role: growth
+    status: READY
+    lifecycle: PUBLISHED
+    risk_level: L2
+    workspace: /Users/liumobei/.openclaw/workspace/agents/workspaces/growth-strategist
+  - agent_id: qa-auditor-v1
+    name: 审计官
+    owner: 董事长
+    role: auditor
+    status: READY
+    lifecycle: PUBLISHED
+    risk_level: L2
+    workspace: /Users/liumobei/.openclaw/workspace/agents/workspaces/qa-auditor
