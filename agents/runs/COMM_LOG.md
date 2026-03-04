@@ -1,2 +1,22 @@
 # Communication Log
 
+## REQ-20260304-0001
+- from_agent: 中枢
+- to_agent: design-architect-v1
+- intent: design implementation plan for agent routing
+- status: DONE
+- output_ref: agents/workspaces/designer/OUTBOX.md#REQ-20260304-0001
+
+## REQ-20260304-0001-H2
+- from_agent: design-architect-v1
+- to_agent: engineer-v1
+- intent: implement routing files and alias map checks
+- status: DONE
+- output_ref: agents/workspaces/engineer/OUTBOX.md#REQ-20260304-0001-H2
+
+## REQ-20260304-0001-H3
+- from_agent: engineer-v1
+- to_agent: qa-auditor-v1
+- intent: verify structure and policy compliance
+- status: DONE
+- output_ref: agents/workspaces/qa-auditor/OUTBOX.md#REQ-20260304-0001-H3
