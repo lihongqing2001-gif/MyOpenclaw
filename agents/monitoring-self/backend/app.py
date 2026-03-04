@@ -33,6 +33,12 @@ class MainTaskUpdate(BaseModel):
     status: str
     progress_percent: int
 
+class IntakeRequest(BaseModel):
+    demand: str
+    owner: str = "董事长"
+    seed_agent: str = "designer"
+    difficulty: str = "medium"
+
 
 def _rows(query: str, args: tuple = ()): 
     import sqlite3
@@ -137,6 +143,21 @@ def api_sync():
 def create_main_task(payload: MainTaskCreate):
     mid = monitor.create_main_task(payload.title, owner=payload.owner)
     return {"main_task_id": mid}
+
+
+@app.post("/api/intake")
+def intake_demand(payload: IntakeRequest):
+    mid = monitor.create_main_task(payload.demand, owner=payload.owner, status="in_progress")
+    rid = f"REQ-MAIN-{mid:04d}-001"
+    tid = monitor.assign_task(
+        payload.seed_agent,
+        f"拆解主任务: {payload.demand}",
+        payload.difficulty,
+        request_id=rid,
+        main_task_id=mid,
+    )
+    monitor.update_progress(tid, "assigned", 10, activity="waiting")
+    return {"main_task_id": mid, "seed_task_id": tid, "request_id": rid}
 
 
 @app.patch("/api/main-tasks/{main_task_id}")

@@ -46,3 +46,11 @@ curl -X PATCH http://127.0.0.1:8000/api/main-tasks/1 \
   -H 'Content-Type: application/json' \
   -d '{"status":"in_progress","progress_percent":70}'
 ```
+
+Auto-create main task from a new demand:
+
+```bash
+curl -X POST http://127.0.0.1:8000/api/intake \
+  -H 'Content-Type: application/json' \
+  -d '{"demand":"为我做一个周报自动化流程","owner":"董事长"}'
+```
