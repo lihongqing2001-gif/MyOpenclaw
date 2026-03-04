@@ -11,8 +11,9 @@ uvicorn app:app --reload --host 127.0.0.1 --port 8000
 open /Users/liumobei/.openclaw/workspace/agents/monitoring-self/frontend/index.html
 
 ## Notes
-- Frontend polls backend every 2 seconds.
-- Frontend calls `POST /api/sync` before each refresh to ingest latest workspace logs/states.
+- Frontend uses WebSocket `ws://127.0.0.1:8000/ws/live` for live push updates (2s server tick).
+- If WebSocket is unavailable, frontend falls back to 2-second HTTP polling.
+- Backend syncs workspace logs/states before each push/response.
 
 ## Phase-2 Real Data Integration
 Import real handoff logs and agent states from workspace files:

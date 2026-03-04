@@ -89,16 +89,19 @@
         }
       },
       methods: {
+        applySnapshot(snap) {
+          this.agentStatus = snap.agents || [];
+          this.activeTasks = snap.tasks || [];
+          this.tokenStats = snap.tokens || { global: { total_tokens: 0 }, by_agent: [] };
+          this.now = new Date().toLocaleString();
+        },
         async load() {
           const [a, t, s] = await Promise.all([
             fetch(this.api + '/api/agents/status').then(r => r.json()),
             fetch(this.api + '/api/tasks/active').then(r => r.json()),
             fetch(this.api + '/api/stats/tokens').then(r => r.json())
           ]);
-          this.agentStatus = a;
-          this.activeTasks = t;
-          this.tokenStats = s;
-          this.now = new Date().toLocaleString();
+          this.applySnapshot({ agents: a, tasks: t, tokens: s });
         },
         statusClass(st) {
           if (st === 'blocked') return 'bg-red-900 text-red-200';
@@ -114,12 +117,34 @@
         }
       },
       async mounted() {
-        try { await fetch(this.api + '/api/sync', { method: 'POST' }); } catch (_) {}
-        await this.load();
-        setInterval(async () => {
-          try { await fetch(this.api + '/api/sync', { method: 'POST' }); } catch (_) {}
+        const wsUrl = this.api.replace('http://', 'ws://').replace('https://', 'wss://') + '/ws/live';
+        let connected = false;
+
+        try {
+          const ws = new WebSocket(wsUrl);
+          ws.onmessage = (ev) => {
+            connected = true;
+            try {
+              const data = JSON.parse(ev.data);
+              this.applySnapshot(data);
+            } catch (_) {}
+          };
+          ws.onclose = async () => {
+            if (!connected) {
+              await this.load();
+              setInterval(this.load, 2000);
+            }
+          };
+          ws.onerror = async () => {
+            if (!connected) {
+              await this.load();
+              setInterval(this.load, 2000);
+            }
+          };
+        } catch (_) {
           await this.load();
-        }, 2000);
+          setInterval(this.load, 2000);
+        }
       }
     }).mount('#app');
   </script>

@@ -1,8 +1,9 @@
 from __future__ import annotations
 
+import asyncio
 from pathlib import Path
 
-from fastapi import FastAPI
+from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
 
 from ingest_comm_log import DB_PATH, sync_all
@@ -11,7 +12,7 @@ from monitor import AgentMonitor
 BASE_DIR = Path(__file__).resolve().parent
 
 monitor = AgentMonitor(str(DB_PATH))
-app = FastAPI(title="OpenClaw Agent Monitor API", version="0.2.0")
+app = FastAPI(title="OpenClaw Agent Monitor API", version="0.3.0")
 
 app.add_middleware(
     CORSMiddleware,
@@ -35,15 +36,8 @@ def _sync():
     return sync_all(monitor, db_path=DB_PATH)
 
 
-@app.post("/api/sync")
-def api_sync():
-    return _sync()
-
-
-@app.get("/api/agents/status")
-def agents_status():
-    _sync()
-    return _rows(
+def _snapshot():
+    agents = _rows(
         """
         SELECT
             s.agent_id,
@@ -60,12 +54,7 @@ def agents_status():
         ORDER BY s.agent_id ASC
         """
     )
-
-
-@app.get("/api/tasks/active")
-def tasks_active():
-    _sync()
-    return _rows(
+    tasks = _rows(
         """
         SELECT
             t.id,
@@ -84,11 +73,6 @@ def tasks_active():
         ORDER BY t.updated_at DESC
         """
     )
-
-
-@app.get("/api/stats/tokens")
-def stats_tokens():
-    _sync()
     total = _rows("SELECT COALESCE(SUM(total_tokens), 0) AS total_tokens FROM token_log")[0]
     by_agent = _rows(
         """
@@ -99,7 +83,42 @@ def stats_tokens():
         ORDER BY total_tokens DESC
         """
     )
-    return {"global": total, "by_agent": by_agent}
+    return {"agents": agents, "tasks": tasks, "tokens": {"global": total, "by_agent": by_agent}}
+
+
+@app.post("/api/sync")
+def api_sync():
+    return _sync()
+
+
+@app.get("/api/agents/status")
+def agents_status():
+    _sync()
+    return _snapshot()["agents"]
+
+
+@app.get("/api/tasks/active")
+def tasks_active():
+    _sync()
+    return _snapshot()["tasks"]
+
+
+@app.get("/api/stats/tokens")
+def stats_tokens():
+    _sync()
+    return _snapshot()["tokens"]
+
+
+@app.websocket("/ws/live")
+async def ws_live(websocket: WebSocket):
+    await websocket.accept()
+    try:
+        while True:
+            _sync()
+            await websocket.send_json(_snapshot())
+            await asyncio.sleep(2)
+    except WebSocketDisconnect:
+        return
 
 
 @app.post("/api/mock/seed")
