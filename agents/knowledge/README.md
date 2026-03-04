@@ -17,3 +17,12 @@ Copy-paste templates, command snippets, checklists.
 
 Promotion Rule:
 - Real execution evidence required before promoting content.
+
+## Daily Auto-Digest
+Run:
+`bash /Users/liumobei/.openclaw/workspace/agents/evolution/RUN_DAILY_DIGEST.sh`
+
+Output:
+- `agents/evolution/DAILY_DIGEST.md`
+- L3 postmortems (on failures)
+- L4 snippet promotion (on stable success)
