@@ -53,7 +53,7 @@
       </section>
 
       <section class="bg-slate-900 border border-slate-800 rounded-xl p-4">
-        <h2 class="text-lg font-semibold mb-3">任务队列</h2>
+        <h2 class="text-lg font-semibold mb-3">任务队列（无进行中时显示最近任务）</h2>
         <div class="space-y-2">
           <div v-for="t in activeTasks" :key="t.id" class="p-3 rounded-lg bg-slate-800/60">
             <div class="flex items-center justify-between gap-2">

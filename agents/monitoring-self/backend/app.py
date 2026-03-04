@@ -100,7 +100,28 @@ def agents_status():
 @app.get("/api/tasks/active")
 def tasks_active():
     _sync()
-    return _snapshot()["tasks"]
+    tasks = _snapshot()["tasks"]
+    if tasks:
+        return tasks
+    return _rows(
+        """
+        SELECT
+            t.id,
+            t.request_id,
+            t.agent_id,
+            t.task_desc,
+            t.difficulty,
+            t.status,
+            t.progress_percent,
+            COALESCE(SUM(l.total_tokens), 0) AS total_tokens,
+            t.updated_at
+        FROM tasks t
+        LEFT JOIN token_log l ON l.task_id = t.id
+        GROUP BY t.id
+        ORDER BY t.updated_at DESC
+        LIMIT 12
+        """
+    )
 
 
 @app.get("/api/stats/tokens")
