@@ -383,6 +383,22 @@ def build_parser() -> argparse.ArgumentParser:
     s.add_argument("path")
     s.set_defaults(func=cmd_import)
 
+    s = sub.add_parser("dispatch")
+    s.add_argument("--main-task-id", type=int)
+    s.add_argument("--main-title")
+    s.add_argument("--owner", default="董事长")
+    s.add_argument("--agent-id", required=True)
+    s.add_argument("--task-desc", required=True)
+    s.add_argument("--difficulty", default="medium")
+    s.add_argument("--request-id")
+    s.add_argument("--run-id")
+    s.add_argument("--progress", type=int, default=30)
+    s.set_defaults(func=cmd_dispatch)
+
+    s = sub.add_parser("complete")
+    s.add_argument("--request-id", required=True)
+    s.set_defaults(func=cmd_complete)
+
     return p
 
 
