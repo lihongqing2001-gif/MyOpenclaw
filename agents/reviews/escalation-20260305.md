@@ -1,2 +1,20 @@
 # Escalation Reports
 
+- request_id: REQ-SELF-IMPROVE-20260305-001
+  owner: operations-manager-v1
+  idle_minutes: 0
+  issue: self-improvement health endpoint /api/self-improvement/health returned 404
+  follow_up: investigate module health endpoint, restore or update check; add evidence to retro
+  logged_at: 2026-03-05 03:26:36
+- request_id: REQ-SELF-IMPROVE-20260305-001
+  owner: operations-manager-v1
+  idle_minutes: 32
+  issue: self-improvement health endpoint /api/self-improvement/health returned 404 (still failing)
+  follow_up: investigate module health endpoint, restore or update check; add evidence to retro
+  logged_at: 2026-03-05 03:58:28
+- request_id: REQ-SELF-IMPROVE-20260305-001
+  owner: operations-manager-v1
+  idle_minutes: 30
+  issue: self-improvement health endpoint /api/self-improvement/health returned 404 (still failing)
+  follow_up: investigate module health endpoint, restore or update check; add evidence to retro
+  logged_at: 2026-03-05 04:28:33
