@@ -4,6 +4,7 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import shutil
 import signal
 import socket
 import subprocess
@@ -19,11 +20,11 @@ VENV = BACKEND / ".venv"
 PID_FILE = ROOT / ".monitor-kit.pid"
 LOG_FILE = ROOT / "data" / "monitor-kit.log"
 CONFIG = ROOT / "toolkit" / "config.json"
+CONFIG_EXAMPLE = ROOT / "toolkit" / "config.example.json"
+PATCH_FILE = ROOT / "toolkit" / "openclaw.patch.json"
 
 
-def _load_config() -> dict:
-    if CONFIG.exists():
-        return json.loads(CONFIG.read_text(encoding="utf-8"))
+def _default_config() -> dict:
     return {
         "owner": "董事长",
         "default_seed_agent": "designer-v1",
@@ -31,6 +32,18 @@ def _load_config() -> dict:
         "host": "127.0.0.1",
         "port": 8000,
     }
+
+
+def _load_json(path: Path) -> dict:
+    return json.loads(path.read_text(encoding="utf-8"))
+
+
+def _load_config() -> dict:
+    if CONFIG.exists():
+        return _load_json(CONFIG)
+    if CONFIG_EXAMPLE.exists():
+        return _load_json(CONFIG_EXAMPLE)
+    return _default_config()
 
 
 def _venv_python() -> Path:
@@ -47,10 +60,72 @@ def _is_port_open(host: str, port: int) -> bool:
         return s.connect_ex((host, port)) == 0
 
 
-def cmd_doctor(_: argparse.Namespace) -> int:
+def _build_openclaw_patch() -> dict:
+    workspace = ROOT.parents[1]
+    return {
+        "tools": {"agentToAgent": {"enabled": True}},
+        "agents": {
+            "designer": {"agentDir": str(workspace / "agents" / "workspaces" / "designer")},
+            "admin": {"agentDir": str(workspace / "agents" / "workspaces" / "admin")},
+            "engineer": {"agentDir": str(workspace / "agents" / "workspaces" / "engineer")},
+            "executor": {"agentDir": str(workspace / "agents" / "workspaces" / "executor")},
+            "life-assistant": {"agentDir": str(workspace / "agents" / "workspaces" / "life-assistant")},
+        },
+    }
+
+
+def _ensure_patch_file() -> None:
+    patch = _build_openclaw_patch()
+    PATCH_FILE.write_text(json.dumps(patch, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+
+
+def _init_backend_db() -> tuple[bool, str]:
+    python = _venv_python()
+    if not python.exists():
+        return False, f"venv missing: {python}"
+
+    cmd = [
+        str(python),
+        "-c",
+        (
+            "from ingest_comm_log import DB_PATH; "
+            "from monitor import AgentMonitor; "
+            "AgentMonitor(str(DB_PATH)); "
+            "print(DB_PATH)"
+        ),
+    ]
+    proc = subprocess.run(cmd, cwd=str(BACKEND), capture_output=True, text=True)
+    if proc.returncode != 0:
+        err = (proc.stderr or proc.stdout).strip() or "backend init failed"
+        return False, err
+    return True, proc.stdout.strip()
+
+
+def cmd_doctor(args: argparse.Namespace) -> int:
     cfg = _load_config()
     host = cfg.get("host", "127.0.0.1")
     port = int(cfg.get("port", 8000))
+
+    if args.fix:
+        if not CONFIG.exists():
+            source = CONFIG_EXAMPLE if CONFIG_EXAMPLE.exists() else None
+            if source is not None:
+                CONFIG.write_text(source.read_text(encoding="utf-8"), encoding="utf-8")
+                print(f"[fix] generated {CONFIG} from {source}")
+            else:
+                CONFIG.write_text(json.dumps(_default_config(), ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+                print(f"[fix] generated {CONFIG} from built-in defaults")
+
+        if not DATA.exists():
+            DATA.mkdir(parents=True, exist_ok=True)
+            print(f"[fix] created directory {DATA}")
+
+        if not DB.exists():
+            ok, detail = _init_backend_db()
+            if ok:
+                print(f"[fix] initialized backend DB: {detail}")
+            else:
+                print(f"[fix] failed to initialize DB: {detail}", file=sys.stderr)
 
     checks: list[tuple[str, bool, str]] = []
 
@@ -59,7 +134,9 @@ def cmd_doctor(_: argparse.Namespace) -> int:
     checks.append(("backend_exists", BACKEND.exists(), str(BACKEND)))
     checks.append(("frontend_exists", FRONTEND.exists(), str(FRONTEND)))
     checks.append(("venv_exists", _venv_python().exists(), str(_venv_python())))
+    checks.append(("data_exists", DATA.exists(), str(DATA)))
     checks.append(("db_exists", DB.exists(), str(DB)))
+    checks.append(("config_exists", CONFIG.exists(), str(CONFIG)))
 
     comm = workspace / "agents" / "runs" / "COMM_LOG.md"
     checks.append(("comm_log_exists", comm.exists(), str(comm)))
@@ -84,30 +161,24 @@ def cmd_doctor(_: argparse.Namespace) -> int:
     print("\n[fix suggestions]")
     if not _venv_python().exists():
         print(f"- run: {ROOT}/install.sh")
-    if not DB.exists():
-        print(f"- run: {ROOT}/monitor-kit start")
+    if not CONFIG.exists():
+        print(f"- run: {ROOT}/monitor-kit doctor --fix")
+    if not DATA.exists() or not DB.exists():
+        print(f"- run: {ROOT}/monitor-kit doctor --fix")
     if not comm.exists():
         print("- create agents/runs/COMM_LOG.md or enable your handoff pipeline")
 
+    _ensure_patch_file()
     print("\n[openclaw.json patch]")
-    patch = {
-        "tools": {"agentToAgent": {"enabled": True}},
-        "agents": {
-            "designer": {"agentDir": str(workspace / "agents" / "workspaces" / "designer")},
-            "admin": {"agentDir": str(workspace / "agents" / "workspaces" / "admin")},
-            "engineer": {"agentDir": str(workspace / "agents" / "workspaces" / "engineer")},
-            "executor": {"agentDir": str(workspace / "agents" / "workspaces" / "executor")},
-            "life-assistant": {"agentDir": str(workspace / "agents" / "workspaces" / "life-assistant")},
-        },
-    }
-    print(json.dumps(patch, ensure_ascii=False, indent=2))
+    print(json.dumps(_build_openclaw_patch(), ensure_ascii=False, indent=2))
+    print(f"[patch file] {PATCH_FILE}")
     return 0 if all_ok else 2
 
 
 def cmd_setup(args: argparse.Namespace) -> int:
     cfg = _load_config()
     if args.non_interactive:
-        CONFIG.write_text(json.dumps(cfg, ensure_ascii=False, indent=2), encoding="utf-8")
+        CONFIG.write_text(json.dumps(cfg, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
         print(f"wrote {CONFIG}")
         return 0
 
@@ -124,7 +195,7 @@ def cmd_setup(args: argparse.Namespace) -> int:
         "host": host,
         "port": int(port_raw),
     }
-    CONFIG.write_text(json.dumps(out, ensure_ascii=False, indent=2), encoding="utf-8")
+    CONFIG.write_text(json.dumps(out, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     print(f"wrote {CONFIG}")
     return 0
 
@@ -196,14 +267,99 @@ def cmd_status(_: argparse.Namespace) -> int:
     print(f"port_open={_is_port_open(host, port)} {host}:{port}")
     print(f"frontend={FRONTEND}")
     print(f"log={LOG_FILE}")
+    print(f"config={CONFIG}")
+    print(f"patch={PATCH_FILE}")
     return 0
 
+
+def cmd_export(args: argparse.Namespace) -> int:
+    out_dir = Path(args.path).expanduser().resolve()
+    out_dir.mkdir(parents=True, exist_ok=True)
+
+    if not CONFIG.exists():
+        print(f"missing config: {CONFIG}. run monitor-kit setup or doctor --fix first", file=sys.stderr)
+        return 2
+
+    _ensure_patch_file()
+    shutil.copy2(CONFIG, out_dir / "config.json")
+    shutil.copy2(PATCH_FILE, out_dir / "openclaw.patch.json")
+    print(f"exported config.json -> {out_dir / 'config.json'}")
+    print(f"exported openclaw.patch.json -> {out_dir / 'openclaw.patch.json'}")
+    return 0
+
+
+def cmd_import(args: argparse.Namespace) -> int:
+    src_dir = Path(args.path).expanduser().resolve()
+    src_config = src_dir / "config.json"
+    src_patch = src_dir / "openclaw.patch.json"
+
+    if not src_config.exists() or not src_patch.exists():
+        print(f"import requires both {src_config} and {src_patch}", file=sys.stderr)
+        return 2
+
+    _load_json(src_config)
+    _load_json(src_patch)
+
+    CONFIG.parent.mkdir(parents=True, exist_ok=True)
+    shutil.copy2(src_config, CONFIG)
+    shutil.copy2(src_patch, PATCH_FILE)
+    print(f"imported config -> {CONFIG}")
+    print(f"imported patch -> {PATCH_FILE}")
+    return 0
+
+
+
+
+def _monitor():
+    sys.path.append(str(BACKEND))
+    from monitor import AgentMonitor
+
+    return AgentMonitor(str(DB))
+
+
+def cmd_dispatch(args: argparse.Namespace) -> int:
+    m = _monitor()
+    main_task_id = args.main_task_id
+    if main_task_id is None:
+        if not args.main_title:
+            print('need --main-title when --main-task-id is missing', file=sys.stderr)
+            return 2
+        main_task_id = m.create_main_task(args.main_title, owner=args.owner, status='in_progress')
+    tid = m.assign_task(
+        args.agent_id,
+        args.task_desc,
+        args.difficulty,
+        request_id=args.request_id,
+        main_task_id=main_task_id,
+        risk_level='L2',
+    )
+    m.update_progress(tid, 'in_progress', args.progress, activity='executing')
+    m.log_event('task_dispatched', 'main', f'spawned {args.agent_id} run={args.run_id or "-"}', request_id=args.request_id)
+    print(json.dumps({'main_task_id': main_task_id, 'task_id': tid}, ensure_ascii=False))
+    return 0
+
+
+def cmd_complete(args: argparse.Namespace) -> int:
+    m = _monitor()
+    import sqlite3
+
+    with sqlite3.connect(str(DB)) as conn:
+        row = conn.execute('SELECT id FROM tasks WHERE request_id=? ORDER BY id DESC LIMIT 1', (args.request_id,)).fetchone()
+    if not row:
+        print('request_id not found', file=sys.stderr)
+        return 2
+    tid = int(row[0])
+    m.update_progress(tid, 'done', 100, activity='idle')
+    m.log_event('task_completed', 'main', f'completed request={args.request_id}', request_id=args.request_id)
+    print(json.dumps({'task_id': tid, 'status': 'done'}, ensure_ascii=False))
+    return 0
 
 def build_parser() -> argparse.ArgumentParser:
     p = argparse.ArgumentParser(prog="monitor-kit")
     sub = p.add_subparsers(dest="cmd", required=True)
 
     s = sub.add_parser("doctor")
+    s.add_argument("--fix", action="store_true", help="auto-fix safe issues")
     s.set_defaults(func=cmd_doctor)
 
     s = sub.add_parser("setup")
@@ -218,6 +374,14 @@ def build_parser() -> argparse.ArgumentParser:
 
     s = sub.add_parser("status")
     s.set_defaults(func=cmd_status)
+
+    s = sub.add_parser("export")
+    s.add_argument("path", nargs="?", default=str(ROOT / "toolkit" / "exports"))
+    s.set_defaults(func=cmd_export)
+
+    s = sub.add_parser("import")
+    s.add_argument("path")
+    s.set_defaults(func=cmd_import)
 
     return p
 

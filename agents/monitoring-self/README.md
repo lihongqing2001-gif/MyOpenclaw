@@ -11,10 +11,28 @@ Common commands:
 
 ```bash
 ./monitor-kit doctor
+./monitor-kit doctor --fix
 ./monitor-kit setup
+./monitor-kit export ./toolkit/exports
+./monitor-kit import ./toolkit/exports
 ./monitor-kit start
 ./monitor-kit status
 ./monitor-kit stop
+```
+
+## Day-2 commands
+
+Auto-fix safe environment issues (missing config/data/db):
+
+```bash
+./monitor-kit doctor --fix
+```
+
+Export and import toolkit config + patch:
+
+```bash
+./monitor-kit export ./toolkit/exports
+./monitor-kit import ./toolkit/exports
 ```
 
 ## Manual backend run (optional)
