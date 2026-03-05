@@ -138,6 +138,12 @@
   issue: self-improvement health endpoint /api/self-improvement/health returned 404 (still failing)
   follow_up: investigate module health endpoint, restore or update check; add evidence to retro
   logged_at: 2026-03-05 18:01:49
+- request_id: REQ-SELF-IMPROVE-20260305-001
+  owner: operations-manager-v1
+  idle_minutes: 30
+  issue: self-improvement health endpoint /api/self-improvement/health returned 404 (still failing)
+  follow_up: investigate module health endpoint, restore or update check; add evidence to retro
+  logged_at: 2026-03-05 18:31:51
 - 2026-03-05 12:47:21 +0800 | type=slow_progress | request_id=REQ-SOP-20260305-002-PM | idle_min=119 | agent=product-manager-v1 | action=escalate_and_report | task=整理SOP上线说明与对外沟通口径
 - 2026-03-05 12:47:21 +0800 | type=slow_progress | request_id=REQ-SOP-20260305-002-OPS | idle_min=119 | agent=operations-manager-v1 | action=escalate_and_report | task=维护看板与交付回报，确保dispatch/complete闭环
 - 2026-03-05 12:47:21 +0800 | type=slow_progress | request_id=REQ-SOP-20260305-002-QA | idle_min=119 | agent=qa-auditor-v1 | action=escalate_and_report | task=验证SOP落地证据与DoD，出审计结论
