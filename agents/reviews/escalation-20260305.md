@@ -108,3 +108,9 @@
   issue: self-improvement health endpoint /api/self-improvement/health returned 404 (still failing)
   follow_up: investigate module health endpoint, restore or update check; add evidence to retro
   logged_at: 2026-03-05 11:31:06
+- request_id: REQ-SELF-IMPROVE-20260305-001
+  owner: operations-manager-v1
+  idle_minutes: 30
+  issue: self-improvement health endpoint /api/self-improvement/health returned 404 (still failing)
+  follow_up: investigate module health endpoint, restore or update check; add evidence to retro
+  logged_at: 2026-03-05 12:01:05
