@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="zh">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>OpenClaw 技能树</title>
+  <style>
+    :root { --bg:#0b0f14; --panel:#121821; --text:#e6edf3; --muted:#9aa4b2; --accent:#7aa2ff; --line:#2a3340; }
+    * { box-sizing: border-box; }
+    body { margin:0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif; background:var(--bg); color:var(--text); }
+    .wrap { display:grid; grid-template-columns: 1fr 360px; gap:16px; height:100vh; padding:16px; }
+    .canvas { background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:16px; overflow:auto; }
+    .panel { background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:16px; }
+    .node { padding:10px 12px; border:1px solid var(--line); border-radius:10px; margin-bottom:12px; cursor:pointer; }
+    .node:hover { border-color: var(--accent); }
+    .node-title { font-weight:600; margin-bottom:6px; }
+    .node-meta { color:var(--muted); font-size:12px; }
+    .section-title { font-size:13px; color:var(--muted); margin:12px 0 6px; }
+    .pill { display:inline-block; padding:2px 6px; border-radius:999px; background:#1a2230; color:#c7d2fe; font-size:12px; margin-right:6px; }
+    pre { white-space: pre-wrap; background:#0f1520; padding:10px; border-radius:8px; border:1px solid var(--line); color:#cde0ff; }
+    a { color:#9ecbff; text-decoration:none; }
+    .muted { color:var(--muted); }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="canvas" id="tree"></div>
+    <div class="panel" id="detail">
+      <div class="muted">选择左侧技能节点查看详情</div>
+    </div>
+  </div>
+
+  <script>
+    async function loadData() {
+      const res = await fetch('./data.json');
+      return res.json();
+    }
+
+    function renderTree(data) {
+      const tree = document.getElementById('tree');
+      tree.innerHTML = '';
+      data.nodes.forEach(node => {
+        const div = document.createElement('div');
+        div.className = 'node';
+        div.dataset.id = node.id;
+        div.innerHTML = `
+          <div class="node-title">${node.title}</div>
+          <div class="node-meta">${node.category} · ${node.level}</div>
+        `;
+        div.onclick = () => renderDetail(node);
+        tree.appendChild(div);
+      });
+    }
+
+    function renderDetail(node) {
+      const detail = document.getElementById('detail');
+      detail.innerHTML = `
+        <h2>${node.title}</h2>
+        <div class="section-title">前置条件</div>
+        <div>${node.prerequisites}</div>
+
+        <div class="section-title">一键浮现方式</div>
+        <pre>${node.invoke}</pre>
+
+        <div class="section-title">功能</div>
+        <div>${node.functions}</div>
+
+        <div class="section-title">应用</div>
+        <div>${node.applications}</div>
+
+        <div class="section-title">作品集</div>
+        <div>${node.portfolio.map(p => `<div><a href="${p.path}">${p.title}</a></div>`).join('')}</div>
+      `;
+    }
+
+    loadData().then(data => renderTree(data));
+  </script>
+</body>
+</html>

@@ -1,0 +1,37 @@
+{
+  "nodes": [
+    {
+      "id": "content_writer",
+      "title": "小盖风格内容生成",
+      "category": "内容生成",
+      "level": "核心",
+      "prerequisites": "已提供主题或已选题；默认平台：小红书；风格：小盖厚版。
+",
+      "invoke": "触发方式：每日19:00自动产出｜或手动触发：/content run --style xiaogai --count 1",
+      "functions": "主题发散→选题→厚版写作→Tags→配图建议→入库成品",
+      "applications": "AI/创业/教育/生活方式等多领域内容产出",
+      "portfolio": [
+        {
+          "title": "效率变廉价之后，审美与表达更昂贵",
+          "path": "../final/小红书/小盖风格_AI效率与审美_厚版.md"
+        }
+      ]
+    },
+    {
+      "id": "knowledge_index",
+      "title": "知识库归档与标签",
+      "category": "知识管理",
+      "level": "基础",
+      "prerequisites": "已提供素材（文字/图片/视频）与平台信息",
+      "invoke": "触发方式：/knowledge ingest --domain <领域> --platform <平台>",
+      "functions": "分类归档→打标签→结构化摘要→可检索复用",
+      "applications": "跨平台内容库、素材管理与复用",
+      "portfolio": [
+        {
+          "title": "分类与标签规范",
+          "path": "../knowledge/分类与标签规范.md"
+        }
+      ]
+    }
+  ]
+}
