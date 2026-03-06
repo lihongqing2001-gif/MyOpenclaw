@@ -47,3 +47,4 @@
 - 2026-03-06 12:47:48 +0800 | type=slow_progress | request_id=REQ-SOP-20260305-002-QA | idle_min=1560 | agent=qa-auditor-v1 | action=escalate_and_report | task=验证SOP落地证据与DoD，出审计结论
 - 2026-03-06 12:47:48 +0800 | type=slow_progress | request_id=REQ-SOP-20260305-002-ADMIN | idle_min=1560 | agent=admin-v1 | action=escalate_and_report | task=执行会话控制SOP：分发/验收/回填/恢复演练，产出证据
 - [2026-03-06 13:03:38] Active tasks stale >4h: Mission Control / SOP in progress since 2026-03-05; review for updates.
+- [2026-03-06 13:33:46] Active tasks stale >4h: Mission Control / SOP in progress since 2026-03-05; review for updates.
