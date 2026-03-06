@@ -69,3 +69,8 @@
 - 2026-03-06 16:47:53 +0800 | type=slow_progress | request_id=REQ-MC-20260305-001-ENG | idle_min=1730 | agent=engineer-v1 | action=escalate_and_report | task=Mission Control 计划：落地 Memory/Team 页面与数据接口实现
 - 2026-03-06 16:47:53 +0800 | type=slow_progress | request_id=REQ-MC-20260305-001-ADMIN | idle_min=1730 | agent=admin-v1 | action=escalate_and_report | task=Mission Control 计划：制定执行清单与验收标准（DoD），保证流程闭环
 - [2026-03-06 17:49:05] Active tasks stale >4h: Mission Control / SOP in progress since 2026-03-05; review for updates.
+- 2026-03-06 18:47:56 +0800 | type=slow_progress | request_id=REQ-SOP-20260305-002-PM | idle_min=1919 | agent=product-manager-v1 | action=escalate_and_report | task=整理SOP上线说明与对外沟通口径
+- 2026-03-06 18:47:56 +0800 | type=slow_progress | request_id=REQ-SOP-20260305-002-OPS | idle_min=1920 | agent=operations-manager-v1 | action=escalate_and_report | task=维护看板与交付回报，确保dispatch/complete闭环
+- 2026-03-06 18:47:56 +0800 | type=slow_progress | request_id=REQ-SOP-20260305-002-QA | idle_min=1920 | agent=qa-auditor-v1 | action=escalate_and_report | task=验证SOP落地证据与DoD，出审计结论
+- 2026-03-06 18:47:56 +0800 | type=slow_progress | request_id=REQ-SOP-20260305-002-ADMIN | idle_min=1920 | agent=admin-v1 | action=escalate_and_report | task=执行会话控制SOP：分发/验收/回填/恢复演练，产出证据
+- [2026-03-06 18:49:05] Active tasks stale >4h: Mission Control / SOP in progress since 2026-03-05; review for updates.
