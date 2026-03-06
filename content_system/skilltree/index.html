@@ -9,64 +9,69 @@
     * { box-sizing: border-box; }
     body { margin:0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif; background:var(--bg); color:var(--text); }
     .wrap { display:grid; grid-template-columns: 1fr 360px; gap:16px; height:100vh; padding:16px; }
-    .canvas { background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:16px; overflow:auto; }
-    .panel { background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:16px; }
-    .node { padding:10px 12px; border:1px solid var(--line); border-radius:10px; margin-bottom:12px; cursor:pointer; }
+    .canvas { background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:16px; overflow:auto; position:relative; }
+    .panel { background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:16px; overflow:auto; }
+    .node { padding:8px 10px; border:1px solid var(--line); border-radius:10px; margin:6px 0; cursor:pointer; }
     .node:hover { border-color: var(--accent); }
-    .node-title { font-weight:600; margin-bottom:6px; }
+    .node-title { font-weight:600; margin-bottom:4px; }
     .node-meta { color:var(--muted); font-size:12px; }
     .section-title { font-size:13px; color:var(--muted); margin:12px 0 6px; }
-    .pill { display:inline-block; padding:2px 6px; border-radius:999px; background:#1a2230; color:#c7d2fe; font-size:12px; margin-right:6px; }
     pre { white-space: pre-wrap; background:#0f1520; padding:10px; border-radius:8px; border:1px solid var(--line); color:#cde0ff; }
     a { color:#9ecbff; text-decoration:none; }
     .muted { color:var(--muted); }
-    .toolbar { display:flex; gap:8px; margin-bottom:12px; }
-    .toolbar input, .toolbar select { background:#0f1520; color:var(--text); border:1px solid var(--line); border-radius:8px; padding:8px 10px; }
+
+    .mindmap { position:relative; min-height:720px; }
+    .center { position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); padding:16px 20px; border-radius:999px; background:#1a2230; border:1px solid var(--accent); font-weight:700; }
+    .branch { position:absolute; width:36%; min-width:260px; }
+    .branch-title { font-size:13px; color:var(--muted); margin-bottom:6px; }
+    .branch.top { top:10px; left:50%; transform:translateX(-50%); }
+    .branch.bottom { bottom:10px; left:50%; transform:translateX(-50%); }
+    .branch.left { left:10px; top:50%; transform:translateY(-50%); }
+    .branch.right { right:10px; top:50%; transform:translateY(-50%); }
+    .group { margin-bottom:12px; padding:8px; border:1px dashed var(--line); border-radius:10px; }
+
+    @media (max-width: 900px) {
+      .wrap { grid-template-columns: 1fr; height:auto; }
+      .branch, .center { position:static; transform:none; width:auto; min-width:unset; }
+      .mindmap { display:flex; flex-direction:column; gap:12px; min-height:auto; }
+    }
   </style>
 </head>
 <body>
   <div class="wrap">
     <div class="canvas" id="tree">
-      <div class="toolbar">
-        <input id="search" placeholder="搜索技能/功能/应用" />
-        <select id="filter">
-          <option value="">全部分类</option>
-        </select>
+      <div class="mindmap" id="mindmap">
+        <div class="center">OpenClaw</div>
       </div>
-      <div id="list"></div>
     </div>
     <div class="panel" id="detail">
-      <div class="muted">选择左侧技能节点查看详情</div>
+      <div class="muted">选择技能节点查看详情</div>
     </div>
   </div>
 
   <script>
+    const quadrantMap = {
+      top: ["自我管理与提升", "工具与自动化"],
+      right: ["自媒体创作与自动化", "信息获取与洞察"],
+      bottom: ["项目处理与管理", "协作与代理"],
+      left: ["知识库与素材管理", "沟通与触达"]
+    };
+
+    const categoryAlias = {
+      "内容生成": "自媒体创作与自动化",
+      "内容系统": "自媒体创作与自动化",
+      "知识管理": "知识库与素材管理",
+      "日程提醒": "自我管理与提升",
+      "信息获取": "信息获取与洞察",
+      "通讯": "沟通与触达",
+      "自动化": "工具与自动化",
+      "协作": "协作与代理",
+      "基础能力": "工具与自动化"
+    };
+
     async function loadData() {
       const res = await fetch('./data.json');
       return res.json();
-    }
-
-    function renderTree(data, query = '', category = '') {
-      const list = document.getElementById('list');
-      list.innerHTML = '';
-      const q = query.trim().toLowerCase();
-      data.nodes
-        .filter(n => !category || n.category === category)
-        .filter(n => {
-          if (!q) return true;
-          return [n.title, n.category, n.level, n.functions, n.applications].join(' ').toLowerCase().includes(q);
-        })
-        .forEach(node => {
-          const div = document.createElement('div');
-          div.className = 'node';
-          div.dataset.id = node.id;
-          div.innerHTML = `
-            <div class="node-title">${node.title}</div>
-            <div class="node-meta">${node.category} · ${node.level}</div>
-          `;
-          div.onclick = () => renderDetail(node);
-          list.appendChild(div);
-        });
     }
 
     function renderDetail(node) {
@@ -90,21 +95,42 @@
       `;
     }
 
-    loadData().then(data => {
-      const filter = document.getElementById('filter');
-      [...new Set(data.nodes.map(n => n.category))].forEach(cat => {
-        const opt = document.createElement('option');
-        opt.value = cat;
-        opt.textContent = cat;
-        filter.appendChild(opt);
+    function renderMindmap(data) {
+      const root = document.getElementById('mindmap');
+      const grouped = {};
+      data.nodes.forEach(n => {
+        const mapped = categoryAlias[n.category] || n.category;
+        grouped[mapped] = grouped[mapped] || [];
+        grouped[mapped].push(n);
       });
 
-      const search = document.getElementById('search');
-      const update = () => renderTree(data, search.value, filter.value);
-      search.oninput = update;
-      filter.onchange = update;
-      renderTree(data);
-    });
+      Object.entries(quadrantMap).forEach(([pos, cats]) => {
+        const branch = document.createElement('div');
+        branch.className = `branch ${pos}`;
+        branch.innerHTML = `
+          <div class="branch-title">${pos === 'top' ? '上方分支' : pos === 'bottom' ? '下方分支' : pos === 'left' ? '左侧分支' : '右侧分支'}</div>
+        `;
+        cats.forEach(cat => {
+          const group = document.createElement('div');
+          group.className = 'group';
+          group.innerHTML = `<div class="node-meta">${cat}</div>`;
+          (grouped[cat] || []).forEach(node => {
+            const div = document.createElement('div');
+            div.className = 'node';
+            div.innerHTML = `
+              <div class="node-title">${node.title}</div>
+              <div class="node-meta">${node.level}</div>
+            `;
+            div.onclick = () => renderDetail(node);
+            group.appendChild(div);
+          });
+          branch.appendChild(group);
+        });
+        root.appendChild(branch);
+      });
+    }
+
+    loadData().then(data => renderMindmap(data));
   </script>
 </body>
 </html>
