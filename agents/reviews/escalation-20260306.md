@@ -81,3 +81,4 @@
 - 2026-03-06 19:47:57 +0800 | type=slow_progress | request_id=REQ-MC-20260305-001-ADMIN | idle_min=1910 | agent=admin-v1 | action=escalate_and_report | task=Mission Control 计划：制定执行清单与验收标准（DoD），保证流程闭环
 - [2026-03-06 19:54:21] Active tasks stale >4h: Mission Control / SOP in progress since 2026-03-05; review for updates.
 - [2026-03-06 20:53:59] Active tasks stale >4h: Mission Control / SOP in progress since 2026-03-05; review for updates.
+- [2026-03-06 21:38:27] Active tasks stale >4h: Mission Control / SOP in progress since 2026-03-05; review for updates.
