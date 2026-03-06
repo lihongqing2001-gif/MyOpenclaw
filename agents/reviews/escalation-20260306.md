@@ -41,3 +41,4 @@
 - 2026-03-06 10:47:46 +0800 | type=slow_progress | request_id=REQ-MC-20260305-001-ENG | idle_min=1369 | agent=engineer-v1 | action=escalate_and_report | task=Mission Control 计划：落地 Memory/Team 页面与数据接口实现
 - 2026-03-06 10:47:46 +0800 | type=slow_progress | request_id=REQ-MC-20260305-001-ADMIN | idle_min=1370 | agent=admin-v1 | action=escalate_and_report | task=Mission Control 计划：制定执行清单与验收标准（DoD），保证流程闭环
 - [2026-03-06 11:03:25] Active tasks stale >4h: Mission Control / SOP in progress since 2026-03-05; review for updates.
+- [2026-03-06 12:03:38] Active tasks stale >4h: Mission Control / SOP in progress since 2026-03-05; review for updates.
