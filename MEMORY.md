@@ -13,3 +13,4 @@
 - Recovery rule: on restart, use `sessions_list` to locate the latest WhatsApp main session and read its `transcriptPath` to restore current memory; prefer the most recent WhatsApp session over archived `old-main-*` unless explicitly requested.
 - Current WhatsApp main session transcript path (latest): `agents/main/sessions/507c3acb-fbb7-4f51-a392-9c164cdd9ced.jsonl`.
 - Five current mainline tasks captured with priority order defined by user; proceed one-by-one with stage plans, delegated execution, and acceptance-driven run-throughs.
+- User schedule: wake 07:40, sleep 24:00 (used for morning reminders).
