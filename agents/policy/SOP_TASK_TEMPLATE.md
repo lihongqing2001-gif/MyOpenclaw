@@ -23,6 +23,11 @@
 - dashboard_linkage: dispatch/complete
 - status:
 
+## QA & Repair Rules
+- repair_scope: only flagged items
+- no_regen_unless_failed: true
+- recheck_scope: repaired items only
+
 ## Closeout
 - verification_evidence:
 - files_changed:
