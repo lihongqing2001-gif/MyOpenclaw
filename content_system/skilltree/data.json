@@ -2,12 +2,11 @@
   "nodes": [
     {
       "id": "content_writer",
-      "title": "小盖风格内容生成",
+      "title": "小盖风格内容生成（厚版）",
       "category": "内容生成",
       "level": "核心",
-      "prerequisites": "已提供主题或已选题；默认平台：小红书；风格：小盖厚版。
-",
-      "invoke": "触发方式：每日19:00自动产出｜或手动触发：/content run --style xiaogai --count 1",
+      "prerequisites": "已提供主题或已选题；默认平台小红书；风格=小盖厚版。",
+      "invoke": "手动：/content run --style xiaogai --count 1\n定时：每日19:00自动产出",
       "functions": "主题发散→选题→厚版写作→Tags→配图建议→入库成品",
       "applications": "AI/创业/教育/生活方式等多领域内容产出",
       "portfolio": [
@@ -18,12 +17,23 @@
       ]
     },
     {
+      "id": "content_pipeline",
+      "title": "每日8篇成品流水线",
+      "category": "内容系统",
+      "level": "核心",
+      "prerequisites": "已确认每日19:00；默认平台小红书；一次只生成一条；主题先发散后选择。",
+      "invoke": "定时任务：每日19:00自动运行并发送",
+      "functions": "自动选题→单条厚版生成→入库→分条发送→根据选择自我进步",
+      "applications": "日更内容、选题实验、风格迭代",
+      "portfolio": []
+    },
+    {
       "id": "knowledge_index",
       "title": "知识库归档与标签",
       "category": "知识管理",
       "level": "基础",
       "prerequisites": "已提供素材（文字/图片/视频）与平台信息",
-      "invoke": "触发方式：/knowledge ingest --domain <领域> --platform <平台>",
+      "invoke": "/knowledge ingest --domain <领域> --platform <平台>",
       "functions": "分类归档→打标签→结构化摘要→可检索复用",
       "applications": "跨平台内容库、素材管理与复用",
       "portfolio": [
@@ -32,6 +42,83 @@
           "path": "../knowledge/分类与标签规范.md"
         }
       ]
+    },
+    {
+      "id": "reminders",
+      "title": "提醒与出行提示",
+      "category": "日程提醒",
+      "level": "核心",
+      "prerequisites": "已确认提醒内容/时间/地点；提醒由 life-assistant 发送并带【助理】前缀。",
+      "invoke": "Apple Reminders 或 Cron 定时提醒",
+      "functions": "创建提醒→定时触达→补救提醒",
+      "applications": "出行/会议/待办提醒",
+      "portfolio": []
+    },
+    {
+      "id": "browser_ops",
+      "title": "网页浏览与采集",
+      "category": "信息获取",
+      "level": "基础",
+      "prerequisites": "提供网址或关键词；需要登录时由用户完成",
+      "invoke": "浏览器快照/点击/抓取",
+      "functions": "打开网页→提取内容→截图/摘要",
+      "applications": "热点收集、竞品研究、素材整理",
+      "portfolio": []
+    },
+    {
+      "id": "web_search",
+      "title": "搜索与网页抓取",
+      "category": "信息获取",
+      "level": "基础",
+      "prerequisites": "提供关键词或主题",
+      "invoke": "web_search / web_fetch",
+      "functions": "搜索→提取→摘要→入库",
+      "applications": "背景资料、趋势分析",
+      "portfolio": []
+    },
+    {
+      "id": "messaging",
+      "title": "WhatsApp 推送与通知",
+      "category": "通讯",
+      "level": "基础",
+      "prerequisites": "确认消息内容与接收人",
+      "invoke": "message.send",
+      "functions": "发送消息/提醒/分条推送",
+      "applications": "提醒、交付、通知",
+      "portfolio": []
+    },
+    {
+      "id": "cron_jobs",
+      "title": "定时任务编排",
+      "category": "自动化",
+      "level": "基础",
+      "prerequisites": "明确执行时间与任务内容",
+      "invoke": "cron.add / cron.update",
+      "functions": "定时运行→自动触发→通知",
+      "applications": "每日内容产出、提醒、健康检查",
+      "portfolio": []
+    },
+    {
+      "id": "subagents",
+      "title": "子代理协作",
+      "category": "协作",
+      "level": "基础",
+      "prerequisites": "明确任务与风格要求",
+      "invoke": "sessions_spawn (designer/engineer)",
+      "functions": "写作/整理/开发/总结的并行交付",
+      "applications": "高质量内容写作、技能树维护",
+      "portfolio": []
+    },
+    {
+      "id": "files_repo",
+      "title": "文件与版本管理",
+      "category": "基础能力",
+      "level": "基础",
+      "prerequisites": "提供路径与文件目标",
+      "invoke": "read/write/edit/exec + git",
+      "functions": "创建/更新/归档/版本记录",
+      "applications": "成品库、知识库、模板库",
+      "portfolio": []
     }
   ]
 }

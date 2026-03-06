@@ -20,11 +20,21 @@
     pre { white-space: pre-wrap; background:#0f1520; padding:10px; border-radius:8px; border:1px solid var(--line); color:#cde0ff; }
     a { color:#9ecbff; text-decoration:none; }
     .muted { color:var(--muted); }
+    .toolbar { display:flex; gap:8px; margin-bottom:12px; }
+    .toolbar input, .toolbar select { background:#0f1520; color:var(--text); border:1px solid var(--line); border-radius:8px; padding:8px 10px; }
   </style>
 </head>
 <body>
   <div class="wrap">
-    <div class="canvas" id="tree"></div>
+    <div class="canvas" id="tree">
+      <div class="toolbar">
+        <input id="search" placeholder="搜索技能/功能/应用" />
+        <select id="filter">
+          <option value="">全部分类</option>
+        </select>
+      </div>
+      <div id="list"></div>
+    </div>
     <div class="panel" id="detail">
       <div class="muted">选择左侧技能节点查看详情</div>
     </div>
@@ -36,20 +46,27 @@
       return res.json();
     }
 
-    function renderTree(data) {
-      const tree = document.getElementById('tree');
-      tree.innerHTML = '';
-      data.nodes.forEach(node => {
-        const div = document.createElement('div');
-        div.className = 'node';
-        div.dataset.id = node.id;
-        div.innerHTML = `
-          <div class="node-title">${node.title}</div>
-          <div class="node-meta">${node.category} · ${node.level}</div>
-        `;
-        div.onclick = () => renderDetail(node);
-        tree.appendChild(div);
-      });
+    function renderTree(data, query = '', category = '') {
+      const list = document.getElementById('list');
+      list.innerHTML = '';
+      const q = query.trim().toLowerCase();
+      data.nodes
+        .filter(n => !category || n.category === category)
+        .filter(n => {
+          if (!q) return true;
+          return [n.title, n.category, n.level, n.functions, n.applications].join(' ').toLowerCase().includes(q);
+        })
+        .forEach(node => {
+          const div = document.createElement('div');
+          div.className = 'node';
+          div.dataset.id = node.id;
+          div.innerHTML = `
+            <div class="node-title">${node.title}</div>
+            <div class="node-meta">${node.category} · ${node.level}</div>
+          `;
+          div.onclick = () => renderDetail(node);
+          list.appendChild(div);
+        });
     }
 
     function renderDetail(node) {
@@ -69,11 +86,25 @@
         <div>${node.applications}</div>
 
         <div class="section-title">作品集</div>
-        <div>${node.portfolio.map(p => `<div><a href="${p.path}">${p.title}</a></div>`).join('')}</div>
+        <div>${(node.portfolio || []).map(p => `<div><a href="${p.path}">${p.title}</a></div>`).join('')}</div>
       `;
     }
 
-    loadData().then(data => renderTree(data));
+    loadData().then(data => {
+      const filter = document.getElementById('filter');
+      [...new Set(data.nodes.map(n => n.category))].forEach(cat => {
+        const opt = document.createElement('option');
+        opt.value = cat;
+        opt.textContent = cat;
+        filter.appendChild(opt);
+      });
+
+      const search = document.getElementById('search');
+      const update = () => renderTree(data, search.value, filter.value);
+      search.oninput = update;
+      filter.onchange = update;
+      renderTree(data);
+    });
   </script>
 </body>
 </html>
