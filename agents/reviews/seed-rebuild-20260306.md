@@ -52,3 +52,7 @@
 - 2026-03-06 11:47:47 +0800 | commit=85c6951eee8937e8a8ad863abe5606d558037b00 | dirty=yes | archive=/Users/liumobei/.openclaw/workspace/seed/dist/openclaw-seed-20260306-114747.tar.gz
 - 2026-03-06 12:03:17 +0800 | commit=e8abdddcdacc3f26245638720de4c01e2e571783 | dirty=yes | archive=/Users/liumobei/.openclaw/workspace/seed/dist/openclaw-seed-20260306-120317.tar.gz
 - [2026-03-06 12:03:35] ran scripts/seed/auto-rebuild.sh (skipped: missing openclaw.json).
+- 2026-03-06 12:17:48 +0800 | commit=1c503ddadaa33d97092fd6f3c5a5ff396f33b20f | dirty=yes | archive=/Users/liumobei/.openclaw/workspace/seed/dist/openclaw-seed-20260306-121748.tar.gz
+- 2026-03-06 12:47:49 +0800 | commit=2366dd89fe68158be9be457281d8efe1c3e657ef | dirty=yes | archive=/Users/liumobei/.openclaw/workspace/seed/dist/openclaw-seed-20260306-124749.tar.gz
+- 2026-03-06 13:03:11 +0800 | commit=2366dd89fe68158be9be457281d8efe1c3e657ef | dirty=yes | archive=/Users/liumobei/.openclaw/workspace/seed/dist/openclaw-seed-20260306-130311.tar.gz
+- [2026-03-06 13:03:34] ran scripts/seed/auto-rebuild.sh (skipped: missing openclaw.json).
