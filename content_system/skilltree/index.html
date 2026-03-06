@@ -9,9 +9,9 @@
     * { box-sizing: border-box; }
     body { margin:0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif; background:var(--bg); color:var(--text); }
     .wrap { display:grid; grid-template-columns: 1fr 360px; gap:16px; height:100vh; padding:16px; }
-    .canvas { background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:16px; overflow:auto; position:relative; }
+    .canvas { background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:16px; overflow:auto; position:relative; touch-action: pan-x pan-y; }
     .panel { background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:16px; overflow:auto; }
-    .node { padding:8px 10px; border:1px solid var(--line); border-radius:10px; margin:6px 0; cursor:pointer; }
+    .node { padding:8px 10px; border:1px solid var(--line); border-radius:10px; margin:6px 0; cursor:pointer; position:relative; z-index:2; }
     .node:hover { border-color: var(--accent); }
     .node-title { font-weight:600; margin-bottom:4px; }
     .node-meta { color:var(--muted); font-size:12px; }
@@ -20,20 +20,20 @@
     a { color:#9ecbff; text-decoration:none; }
     .muted { color:var(--muted); }
 
-    .mindmap { position:relative; min-height:720px; }
-    .center { position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); padding:16px 20px; border-radius:999px; background:#1a2230; border:1px solid var(--accent); font-weight:700; }
+    .mindmap { position:relative; min-height:720px; min-width:1200px; }
+    .center { position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); padding:16px 20px; border-radius:999px; background:#1a2230; border:1px solid var(--accent); font-weight:700; z-index:1; }
     .branch { position:absolute; width:36%; min-width:260px; }
     .branch-title { font-size:13px; color:var(--muted); margin-bottom:6px; }
     .branch.top { top:10px; left:50%; transform:translateX(-50%); }
     .branch.bottom { bottom:10px; left:50%; transform:translateX(-50%); }
     .branch.left { left:10px; top:50%; transform:translateY(-50%); }
     .branch.right { right:10px; top:50%; transform:translateY(-50%); }
-    .group { margin-bottom:12px; padding:8px; border:1px dashed var(--line); border-radius:10px; }
+    .group { margin-bottom:12px; padding:8px; border:1px dashed var(--line); border-radius:10px; background:rgba(15,21,32,0.3); }
 
     @media (max-width: 900px) {
       .wrap { grid-template-columns: 1fr; height:auto; }
       .branch, .center { position:static; transform:none; width:auto; min-width:unset; }
-      .mindmap { display:flex; flex-direction:column; gap:12px; min-height:auto; }
+      .mindmap { display:flex; flex-direction:column; gap:12px; min-height:auto; min-width:auto; }
     }
   </style>
 </head>
