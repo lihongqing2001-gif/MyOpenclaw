@@ -45,21 +45,25 @@
 - 2026-03-07 13:48:18 +0800 | type=slow_progress | request_id=REQ-MC-20260305-001-QA | idle_min=2990 | agent=qa-auditor-v1 | action=escalate_and_report | task=Mission Control 计划：回归 Operations 不回退，验收新页功能与证据链
 - 2026-03-07 13:48:18 +0800 | type=slow_progress | request_id=REQ-MC-20260305-001-ENG | idle_min=2990 | agent=engineer-v1 | action=escalate_and_report | task=Mission Control 计划：落地 Memory/Team 页面与数据接口实现
 - 2026-03-07 13:48:18 +0800 | type=slow_progress | request_id=REQ-MC-20260305-001-ADMIN | idle_min=2990 | agent=admin-v1 | action=escalate_and_report | task=Mission Control 计划：制定执行清单与验收标准（DoD），保证流程闭环
-- [$ts] request_id=REQ-MC-20260305-001-PM idle_minutes=3566 owner=product-manager-v1 follow_up=progress update or closeout required
-- [$ts] request_id=REQ-MC-20260305-001-OPS idle_minutes=3566 owner=operations-manager-v1 follow_up=progress update or closeout required
-- [$ts] request_id=REQ-MC-20260305-001-QA idle_minutes=3567 owner=qa-auditor-v1 follow_up=progress update or closeout required
-- [$ts] request_id=REQ-MC-20260305-001-ENG idle_minutes=3567 owner=engineer-v1 follow_up=progress update or closeout required
-- [$ts] request_id=REQ-MC-20260305-001-ADMIN idle_minutes=3567 owner=admin-v1 follow_up=progress update or closeout required
-- [$ts] request_id=REQ-SOP-20260305-002-PM idle_minutes=3637 owner=product-manager-v1 follow_up=progress update or closeout required
-- [$ts] request_id=REQ-SOP-20260305-002-OPS idle_minutes=3637 owner=operations-manager-v1 follow_up=progress update or closeout required
-- [$ts] request_id=REQ-SOP-20260305-002-QA idle_minutes=3637 owner=qa-auditor-v1 follow_up=progress update or closeout required
-- [$ts] request_id=REQ-SOP-20260305-002-ADMIN idle_minutes=3637 owner=admin-v1 follow_up=progress update or closeout required
-- [$ts] request_id=REQ-MC-20260305-001-PM idle_minutes=3569 owner=product-manager-v1 follow_up=progress update or closeout required
-- [$ts] request_id=REQ-MC-20260305-001-OPS idle_minutes=3569 owner=operations-manager-v1 follow_up=progress update or closeout required
-- [$ts] request_id=REQ-MC-20260305-001-QA idle_minutes=3569 owner=qa-auditor-v1 follow_up=progress update or closeout required
-- [$ts] request_id=REQ-MC-20260305-001-ENG idle_minutes=3569 owner=engineer-v1 follow_up=progress update or closeout required
-- [$ts] request_id=REQ-MC-20260305-001-ADMIN idle_minutes=3569 owner=admin-v1 follow_up=progress update or closeout required
-- [$ts] request_id=REQ-SOP-20260305-002-PM idle_minutes=3639 owner=product-manager-v1 follow_up=progress update or closeout required
-- [$ts] request_id=REQ-SOP-20260305-002-OPS idle_minutes=3639 owner=operations-manager-v1 follow_up=progress update or closeout required
-- [$ts] request_id=REQ-SOP-20260305-002-QA idle_minutes=3639 owner=qa-auditor-v1 follow_up=progress update or closeout required
-- [$ts] request_id=REQ-SOP-20260305-002-ADMIN idle_minutes=3639 owner=admin-v1 follow_up=progress update or closeout required
+- [None] request_id=REQ-MC-20260305-001-PM idle_minutes=3566 owner=product-manager-v1 follow_up=progress update or closeout required
+- [None] request_id=REQ-MC-20260305-001-OPS idle_minutes=3566 owner=operations-manager-v1 follow_up=progress update or closeout required
+- [None] request_id=REQ-MC-20260305-001-QA idle_minutes=3567 owner=qa-auditor-v1 follow_up=progress update or closeout required
+- [None] request_id=REQ-MC-20260305-001-ENG idle_minutes=3567 owner=engineer-v1 follow_up=progress update or closeout required
+- [None] request_id=REQ-MC-20260305-001-ADMIN idle_minutes=3567 owner=admin-v1 follow_up=progress update or closeout required
+- [None] request_id=REQ-SOP-20260305-002-PM idle_minutes=3637 owner=product-manager-v1 follow_up=progress update or closeout required
+- [None] request_id=REQ-SOP-20260305-002-OPS idle_minutes=3637 owner=operations-manager-v1 follow_up=progress update or closeout required
+- [None] request_id=REQ-SOP-20260305-002-QA idle_minutes=3637 owner=qa-auditor-v1 follow_up=progress update or closeout required
+- [None] request_id=REQ-SOP-20260305-002-ADMIN idle_minutes=3637 owner=admin-v1 follow_up=progress update or closeout required
+- [None] request_id=REQ-MC-20260305-001-PM idle_minutes=3569 owner=product-manager-v1 follow_up=progress update or closeout required
+- [None] request_id=REQ-MC-20260305-001-OPS idle_minutes=3569 owner=operations-manager-v1 follow_up=progress update or closeout required
+- [None] request_id=REQ-MC-20260305-001-QA idle_minutes=3569 owner=qa-auditor-v1 follow_up=progress update or closeout required
+- [None] request_id=REQ-MC-20260305-001-ENG idle_minutes=3569 owner=engineer-v1 follow_up=progress update or closeout required
+- [None] request_id=REQ-MC-20260305-001-ADMIN idle_minutes=3569 owner=admin-v1 follow_up=progress update or closeout required
+- [None] request_id=REQ-SOP-20260305-002-PM idle_minutes=3639 owner=product-manager-v1 follow_up=progress update or closeout required
+- [None] request_id=REQ-SOP-20260305-002-OPS idle_minutes=3639 owner=operations-manager-v1 follow_up=progress update or closeout required
+- [None] request_id=REQ-SOP-20260305-002-QA idle_minutes=3639 owner=qa-auditor-v1 follow_up=progress update or closeout required
+- [None] request_id=REQ-SOP-20260305-002-ADMIN idle_minutes=3639 owner=admin-v1 follow_up=progress update or closeout required
+- 2026-03-07 15:48:20 +0800 | type=slow_progress | request_id=REQ-SOP-20260305-002-PM | idle_min=3180 | agent=product-manager-v1 | action=escalate_and_report | task=整理SOP上线说明与对外沟通口径
+- 2026-03-07 15:48:20 +0800 | type=slow_progress | request_id=REQ-SOP-20260305-002-OPS | idle_min=3180 | agent=operations-manager-v1 | action=escalate_and_report | task=维护看板与交付回报，确保dispatch/complete闭环
+- 2026-03-07 15:48:20 +0800 | type=slow_progress | request_id=REQ-SOP-20260305-002-QA | idle_min=3180 | agent=qa-auditor-v1 | action=escalate_and_report | task=验证SOP落地证据与DoD，出审计结论
+- 2026-03-07 15:48:20 +0800 | type=slow_progress | request_id=REQ-SOP-20260305-002-ADMIN | idle_min=3180 | agent=admin-v1 | action=escalate_and_report | task=执行会话控制SOP：分发/验收/回填/恢复演练，产出证据
