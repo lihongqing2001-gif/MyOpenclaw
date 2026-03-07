@@ -54,3 +54,12 @@
 - [$ts] request_id=REQ-SOP-20260305-002-OPS idle_minutes=3637 owner=operations-manager-v1 follow_up=progress update or closeout required
 - [$ts] request_id=REQ-SOP-20260305-002-QA idle_minutes=3637 owner=qa-auditor-v1 follow_up=progress update or closeout required
 - [$ts] request_id=REQ-SOP-20260305-002-ADMIN idle_minutes=3637 owner=admin-v1 follow_up=progress update or closeout required
+- [$ts] request_id=REQ-MC-20260305-001-PM idle_minutes=3569 owner=product-manager-v1 follow_up=progress update or closeout required
+- [$ts] request_id=REQ-MC-20260305-001-OPS idle_minutes=3569 owner=operations-manager-v1 follow_up=progress update or closeout required
+- [$ts] request_id=REQ-MC-20260305-001-QA idle_minutes=3569 owner=qa-auditor-v1 follow_up=progress update or closeout required
+- [$ts] request_id=REQ-MC-20260305-001-ENG idle_minutes=3569 owner=engineer-v1 follow_up=progress update or closeout required
+- [$ts] request_id=REQ-MC-20260305-001-ADMIN idle_minutes=3569 owner=admin-v1 follow_up=progress update or closeout required
+- [$ts] request_id=REQ-SOP-20260305-002-PM idle_minutes=3639 owner=product-manager-v1 follow_up=progress update or closeout required
+- [$ts] request_id=REQ-SOP-20260305-002-OPS idle_minutes=3639 owner=operations-manager-v1 follow_up=progress update or closeout required
+- [$ts] request_id=REQ-SOP-20260305-002-QA idle_minutes=3639 owner=qa-auditor-v1 follow_up=progress update or closeout required
+- [$ts] request_id=REQ-SOP-20260305-002-ADMIN idle_minutes=3639 owner=admin-v1 follow_up=progress update or closeout required
