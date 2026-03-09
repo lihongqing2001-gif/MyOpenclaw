@@ -11,22 +11,21 @@
 - 自动归档/整理 SOP 产出
 
 ## Milestones
-1) 定义能力包规范 v0.1
-2) 定义 CLI 安装/升级流程 v0.1
-3) 定义 App 握手与数据结构 v0.1
-4) 定义 SOP 依赖联动规则 v0.1
+1) 定义能力包规范 v0.2
+2) 定义 CLI 安装/升级流程 v0.2
+3) 定义 App 握手与数据结构 v0.2
+4) 定义 SOP 依赖联动规则 v0.2
 
 ## Current Status
-- 用户确认能力包来源：现有技能目录打包
-- 安装方式：CLI 一键安装
-- App 握手模式：App 拉取 OpenClaw
-- 主线命名与索引规则已确定
+- v0.2 规范草案已生成
+- 命名方案：cap.<org>.<domain>.<name>
+- 发布方案：ClawHub/索引服务
 
 ## Next Steps
-- 产出能力包规范草案（capability-manifest.json）
-- 产出 CLI 安装/升级流程草案
-- 产出握手 API + SSE 数据契约草案
-- 产出 SOP 依赖联动草案
+- 输出 capability-manifest.json 示例包
+- 定义 registry 索引样例
+- 生成 CLI 原型伪代码
+- 产出 task evidence 模板
 
 ## Blockers
 - 无
@@ -34,3 +33,4 @@
 ## Change Log
 - 2026-03-09: 建立主线任务并确认方向
 - 2026-03-09: 选定方案C（ClawHub/索引发布，cap.<org>.<domain>.<name> 命名）
+- 2026-03-09: v0.2 规范草案完成
