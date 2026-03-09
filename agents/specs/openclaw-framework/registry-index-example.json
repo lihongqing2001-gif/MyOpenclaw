@@ -1,0 +1,16 @@
+{
+  "generated_at": "2026-03-09T21:50:00+08:00",
+  "entries": [
+    {
+      "id": "cap.openclaw.knowledge.qmd",
+      "name": "QMD Knowledge Index",
+      "version": "0.2.0",
+      "description": "Local hybrid search for markdown notes and docs with ingest + query support.",
+      "checksum": "sha256:REPLACE_ME",
+      "download_url": "https://clawhub.com/packages/cap.openclaw.knowledge.qmd-0.2.0.tgz",
+      "requires": ">=0.1.0",
+      "dependencies": ["cap.openclaw.files.repo"],
+      "size": 1234567
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "id": "cap.openclaw.knowledge.qmd",
+  "name": "QMD Knowledge Index",
+  "version": "0.2.0",
+  "description": "Local hybrid search for markdown notes and docs with ingest + query support.",
+  "domain": "knowledge",
+  "category": "indexing",
+  "tags": ["knowledge", "search", "qmd"],
+  "ownership": "openclaw",
+  "publish": "clawhub",
+  "dependencies": ["cap.openclaw.files.repo"],
+  "requires": ">=0.1.0",
+  "skills": ["skills/qmd-skill"],
+  "sops": ["sops/knowledge_index.md"],
+  "install": "bash install.sh",
+  "healthcheck": "bash healthcheck.sh",
+  "outputs": ["knowledge/indexes/"]
+}
