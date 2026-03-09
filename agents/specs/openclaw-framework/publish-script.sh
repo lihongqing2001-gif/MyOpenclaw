@@ -13,18 +13,18 @@ if [ ! -f "$MANIFEST" ]; then
   exit 1
 fi
 
-ID=$(python - <<'PY'
+ID=$(python - "$MANIFEST" <<'PY'
 import json,sys
 m=json.load(open(sys.argv[1]))
 print(m['id'])
 PY
-"$MANIFEST")
-VER=$(python - <<'PY'
+)
+VER=$(python - "$MANIFEST" <<'PY'
 import json,sys
 m=json.load(open(sys.argv[1]))
 print(m['version'])
 PY
-"$MANIFEST")
+)
 
 ARCHIVE="${ID}-${VER}.tgz"
 

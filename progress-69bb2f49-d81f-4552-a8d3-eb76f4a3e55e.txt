@@ -1,0 +1,15 @@
+# Progress Log
+Run: 69bb2f49-d81f-4552-a8d3-eb76f4a3e55e
+Task: Implement OpenClaw framework mainline tasks (ML-20260309): finalize capability packaging spec v0.2, provide example manifest + registry index, CLI install/upgrade pseudocode, task evidence template, example capability skeleton, publish flow script; deliver summary and artifacts paths.
+Started: 2026-03-10 01:01:29 CST
+
+## Codebase Patterns
+- OpenClaw framework specs and examples live in `agents/specs/openclaw-framework`.
+
+---
+## 2026-03-10 01:01:29 CST - story-2: Publish flow template
+- Expanded publish flow doc with script usage and artifact outputs.
+- Added publish script tests covering happy path and missing manifest failure.
+- Files changed: agents/specs/openclaw-framework/publish-flow.md, agents/specs/openclaw-framework/tests/publish-script.test.sh.
+- **Learnings:** Publish script writes tarball and checksum file relative to current working directory.
+---
