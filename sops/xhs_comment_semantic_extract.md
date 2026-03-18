@@ -1,53 +1,150 @@
-# SOP: Xiaohongshu Comment Semantic Extraction (Agent Batch)
+# SOP: Xiaohongshu Comment Semantic Extraction (Auto Excel)
 
 ## Goal
-For given Xiaohongshu note links, extract note + all comments, assign row_id, batch-send comments to an engineer agent for semantic extraction (country/brand/product/valid), then merge results into Excel.
+For a given Xiaohongshu note link, fetch the full comment area, normalize comment semantics into a single business-ready Excel, and default to this SOP whenever the user asks to crawl a Xiaohongshu link's comments.
+
+## Default Trigger
+Use this SOP automatically when the user says things like:
+- "爬这个链接评论区"
+- "抓取这个小红书评论"
+- "把这个链接评论整理出来"
+- "导出这个笔记评论到 Excel"
+
+Unless the user asks otherwise, the default deliverable is one final Excel on Desktop.
 
 ## Inputs
-- Xiaohongshu note URL(s)
-- Logged-in Chrome for xiaohongshu-skills
-- Batch size: 20–50 (default 50)
+- Xiaohongshu note URL
+- Logged-in Chrome for `xiaohongshu-skills`
+- Desktop output path
+- Batch size: 10-20 comments per semantic pass when batching is needed
 
 ## Preconditions
-- Chrome logged in to Xiaohongshu
-- xiaohongshu-skills CLI available
-- Python with openpyxl installed
+- Chrome is logged in to Xiaohongshu
+- `xiaohongshu-skills` CLI is available
+- Output path is writable
+- Do not require `openpyxl`; if unavailable, still produce a valid `.xlsx`
+
+## Output Contract
+Always deliver only one final Excel unless the user explicitly asks for raw JSON/CSV/MD.
+
+Default file name:
+- `Desktop/xhs_note_<feed_id>_comments.xlsx`
+
+Default columns:
+- `评论ID`
+- `评论内序号`
+- `评论人`
+- `用户ID`
+- `国家`
+- `品牌`
+- `产品名`
+- `品类`
+- `评论内容`
+- `点赞数`
+- `回复数`
+- `IP属地`
+- `评论时间`
+- `格式状态`
+- `识别置信度`
+- `备注`
 
 ## Steps
-1) Parse URL to get feed_id and xsec_token.
-2) Create project folder for this link:
-   - `sops/xhs_comment_semantic_extract_projects/<feed_id>/`
-   - All temporary files for this feed live here.
-3) Fetch note + comments:
-   - `python scripts/cli.py get-feed-detail --feed-id <id> --xsec-token <token> --load-all-comments --click-more-replies`
-4) Assign row_id for every comment (include subcomments). Preserve:
-   - comment_id, parent_id, is_subcomment, commenter, content, like_count, ip_location, comment_images (if any)
-5) Freeze ordering and batch by the same row list used for Excel:
-   - Always build `rows` once, store to `tmp_xhs_<id>_rows.json` in the project folder.
-   - Use that exact order to create batches and send `row_id | comment_text`.
-6) Parallel agent execution:
-   - Split into batches of 20–50 rows.
-   - Spawn 2–3 engineer agents in parallel, one batch per agent.
-7) Receive agent output per row_id:
-   - `row_id, country, brand, product, valid`
-   - valid = true if any of country/brand/product appears
-8) Merge results strictly by `row_id` (never by position) into `comments` sheet.
-   - If any row_id missing/duplicate, re-send only missing row_ids.
-9) Consistency check (hard guardrail):
-   - If any extracted field is NOT found in `content` (case-insensitive, whitespace/punct-stripped), clear that field and set `valid=false` for that row.
-   - Write `content_hash` to Excel so later checks can confirm alignment.
-10) Download comment images and store local paths:
-   - For each comment `comment_images` URL, download to `Desktop/xhs_images/<feed_id>/comment_<row_id>_<n>.jpg` (or png if needed).
-   - Write local paths (newline-separated) into `comment_images` column.
-11) Write Excel:
-   - Sheet `note`: note_id, title, desc, author, author_id, like_count, collect_count, comment_count, share_count, ip_location, image_urls
-   - Sheet `comments`: row_id, comment_id, parent_id, is_subcomment, commenter, content, content_hash, like_count, country, brand, product, valid, ip_location, comment_images
-12) Save to Desktop as `xhs_note_<feed_id>_ai.xlsx`.
-13) Cleanup:
-   - Move all temp files (`tmp_xhs_<id>*`, batch txt, rows json) into the project folder.
-   - Remove any duplicate temp files left in workspace root.
+1) Parse URL
+   - Extract `feed_id` and `xsec_token` from the note URL.
+
+2) Create project folder
+   - Use `sops/xhs_comment_semantic_extract_projects/<feed_id>/`
+   - Keep all temp files for this note there.
+
+3) Fetch full comments
+   - Always use full-load flags, never the default partial fetch.
+   - Command:
+     - `python scripts/cli.py get-feed-detail --feed-id <id> --xsec-token <token> --load-all-comments --click-more-replies --scroll-speed slow`
+   - This is mandatory because default `get-feed-detail` may return only the currently loaded comments.
+
+4) Verify fetch completeness
+   - Compare extracted count with visible page expectation when possible.
+   - If the note visibly has more comments than fetched, rerun full fetch before any semantic work.
+   - Do not proceed with partial comments unless the user explicitly accepts it.
+
+5) Freeze raw rows once
+   - Build one raw ordered row list and store it in the project folder.
+   - Preserve at least:
+     - `comment_id`
+     - `parent_id`
+     - `is_subcomment`
+     - `commenter`
+     - `user_id`
+     - `content`
+     - `like_count`
+     - `reply_count`
+     - `ip_location`
+     - `create_time`
+   - Never rebuild ordering later from a different source.
+
+6) Expand multi-item comments
+   - If one comment mentions multiple products, split it into multiple output rows.
+   - Keep the same `评论ID`, and use `评论内序号` to preserve the within-comment order.
+   - Multi-line list comments and numbered comments must be split before semantic merge.
+
+7) Semantic extraction
+   - Extract:
+     - `国家`
+     - `品牌`
+     - `产品名`
+     - `品类`
+     - `格式状态`
+     - `识别置信度`
+     - `备注`
+   - Prefer semantic reading over mechanical delimiter splitting.
+   - Handle common patterns:
+     - `国家 + 品牌 + 产品`
+     - `国家的品牌 产品`
+     - space-separated text
+     - numbered multi-line lists
+     - phrase-style comments such as `智利的蒙特斯 紫天使干红葡萄酒`
+
+8) Batch if needed
+   - For larger comment sets, split into 10-20 comment chunks and process in parallel sessions.
+   - Merge strictly by `评论ID + 评论内序号`, never by plain list position.
+   - If any batch result is missing or duplicated, rerun only the affected rows.
+
+9) Precision guardrails
+   - Do not treat delimiter position as truth.
+   - Normalize obvious aliases when confident, for example:
+     - `安东尼庄园` -> `安东尼世家`
+     - `蒙特斯紫天使` -> 品牌 `蒙特斯`, 产品 `紫天使干红葡萄酒`
+   - If the extraction is only inferred, lower `识别置信度` and explain in `备注`.
+   - If the comment is only a feeling, campaign copy, or non-product text such as `我要`, mark:
+     - `格式状态 = needs_review`
+   - Only mark `ok` when country/brand/product are sufficiently supported by the comment text.
+
+10) Final review before export
+   - Check three things before writing Excel:
+     - full comment count fetched
+     - multi-item comments properly split
+     - obvious brand/product normalization applied
+   - If only one Excel is requested, do not leave extra JSON/CSV/MD on Desktop.
+
+11) Write Excel
+   - Save one final file to:
+     - `Desktop/xhs_note_<feed_id>_comments.xlsx`
+   - Prefer Chinese headers by default.
+   - If a richer Excel library is unavailable, still create a valid `.xlsx` rather than downgrading to CSV.
+
+12) Cleanup
+   - Move temp artifacts into the project folder.
+   - Avoid leaving stale temp files in workspace root or Desktop.
 
 ## Failure Handling
-- If login invalid: run `python scripts/cli.py login` and scan QR.
-- If comments load fails: rerun get-feed-detail.
-- If agent output missing rows: resend only missing row_ids.
+- If login is invalid: run `python scripts/cli.py login` and scan QR.
+- If fetched count is suspiciously low: rerun with `--load-all-comments --click-more-replies --scroll-speed slow`.
+- If semantic extraction is not precise enough: rerun only the uncertain rows or batch them across parallel sessions.
+- If Excel tooling is missing: generate a standards-compliant `.xlsx` directly; do not block on `openpyxl`.
+
+## Lessons Added From 2026-03-18
+- Missing `--load-all-comments` causes incomplete exports.
+- Raw export alone is not enough for this workflow; semantic normalization is required.
+- Multi-product comments must be split into multiple rows.
+- Phrase-style comments need pattern recognition, not just `+` splitting.
+- Final delivery should be one clean Excel unless the user asks for intermediate files.
