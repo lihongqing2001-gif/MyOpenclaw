@@ -30,8 +30,11 @@ Unless the user asks otherwise, the default deliverable is one final Excel on De
 ## Output Contract
 Always deliver only one final Excel unless the user explicitly asks for raw JSON/CSV/MD.
 
+Default storage location:
+- `sops/xhs_comment_semantic_extract_projects/<feed_id>/`
+
 Default file name:
-- `Desktop/xhs_note_<feed_id>_comments.xlsx`
+- `xhs_note_<feed_id>_comments.xlsx`
 
 Default columns:
 - `评论ID`
@@ -49,6 +52,7 @@ Default columns:
 - `格式状态`
 - `识别置信度`
 - `备注`
+- `是否新增`
 
 Even though the SOP is domain-agnostic at the workflow level, the default delivery schema must stay simple and concrete: country, brand, product. Do not switch the user-facing Excel into abstract entity/domain columns unless the user explicitly asks for that.
 
@@ -128,20 +132,43 @@ Even though the SOP is domain-agnostic at the workflow level, the default delive
      - `格式状态 = needs_review`
    - Only mark `ok` when the extracted entities are sufficiently supported by the comment text itself.
 
-10) Final review before export
-   - Check three things before writing Excel:
+10) Historical comparison and new-comment marking
+   - If the same link was processed before, compare the current comment set against the previous saved version for the same `feed_id`.
+   - Mark new comments in the final Excel:
+     - set `是否新增 = 是`
+     - append `新增评论` in `备注` when appropriate
+     - render new-comment rows in red if the writer supports formatting
+   - If no prior version exists, treat the current run as the baseline.
+
+11) Project management and link tracking
+   - Keep every tracked link inside its own project folder:
+     - `sops/xhs_comment_semantic_extract_projects/<feed_id>/`
+   - Maintain a lightweight tracking file for that link, including at least:
+     - source URL
+     - latest fetch time
+     - latest comment count
+     - previous comment count
+     - latest output path
+     - whether new comments were detected
+   - Prefer updating the existing project folder over creating duplicate exports on Desktop.
+   - This project structure should support later proactive refresh runs.
+
+12) Final review before export
+   - Check these things before writing Excel:
      - full comment count fetched
-     - multi-item comments properly split
-     - obvious brand/product normalization applied
+     - multi-item comments properly split when needed
+     - semantic output merged from session results
+     - historical comparison performed when prior data exists
    - If only one Excel is requested, do not leave extra JSON/CSV/MD on Desktop.
 
-11) Write Excel
-   - Save one final file to:
-     - `Desktop/xhs_note_<feed_id>_comments.xlsx`
+13) Write Excel
+   - Save the canonical final file into the project folder:
+     - `sops/xhs_comment_semantic_extract_projects/<feed_id>/xhs_note_<feed_id>_comments.xlsx`
+   - Optionally mirror a copy to Desktop only when the user explicitly asks for Desktop delivery.
    - Prefer Chinese headers by default.
    - If a richer Excel library is unavailable, still create a valid `.xlsx` rather than downgrading to CSV.
 
-12) Cleanup
+14) Cleanup
    - Move temp artifacts into the project folder.
    - Avoid leaving stale temp files in workspace root or Desktop.
 
@@ -159,4 +186,6 @@ Even though the SOP is domain-agnostic at the workflow level, the default delive
 - Phrase-style comments need pattern recognition, not just delimiter splitting.
 - Semantic extraction should default to session distribution, with each session handling at most 50 comments.
 - This SOP must remain domain-agnostic by default; do not silently narrow it to wine, alcohol, or any other vertical.
+- Historical comparison should be built in so repeated runs can surface newly added comments.
+- Link outputs should live in project folders, not pile up on Desktop, so later proactive refresh is possible.
 - Final delivery should be one clean Excel unless the user asks for intermediate files.
