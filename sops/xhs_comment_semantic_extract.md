@@ -16,7 +16,8 @@ Unless the user asks otherwise, the default deliverable is one final Excel on De
 - Xiaohongshu note URL
 - Logged-in Chrome for `xiaohongshu-skills`
 - Desktop output path
-- Batch size: 10-20 comments per semantic pass when batching is needed
+- Semantic batching uses sessions by default
+- Batch size: each session handles at most 50 comments, preferably 10-20 for harder comment sets
 
 ## Preconditions
 - Chrome is logged in to Xiaohongshu
@@ -104,8 +105,10 @@ Default columns:
      - numbered multi-line lists
      - phrase-style comments such as `智利的蒙特斯 紫天使干红葡萄酒`
 
-8) Batch if needed
-   - For larger comment sets, split into 10-20 comment chunks and process in parallel sessions.
+8) Session-first semantic batching
+   - Default to distributing semantic extraction work across sessions.
+   - Each session must handle no more than 50 comments.
+   - For harder or noisier comment sets, prefer 10-20 comments per session.
    - Merge strictly by `评论ID + 评论内序号`, never by plain list position.
    - If any batch result is missing or duplicated, rerun only the affected rows.
 
@@ -147,4 +150,5 @@ Default columns:
 - Raw export alone is not enough for this workflow; semantic normalization is required.
 - Multi-product comments must be split into multiple rows.
 - Phrase-style comments need pattern recognition, not just `+` splitting.
+- Semantic extraction should default to session distribution, with each session handling at most 50 comments.
 - Final delivery should be one clean Excel unless the user asks for intermediate files.
