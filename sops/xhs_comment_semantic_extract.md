@@ -3,6 +3,8 @@
 ## Goal
 For a given Xiaohongshu note link, fetch the full comment area, normalize comment semantics into a single business-ready Excel, and default to this SOP whenever the user asks to crawl a Xiaohongshu link's comments.
 
+This SOP is domain-agnostic by default. Do not assume the note is about wine, alcohol, beauty, hiring, education, or any other category unless the content itself clearly shows that domain.
+
 ## Default Trigger
 Use this SOP automatically when the user says things like:
 - "爬这个链接评论区"
@@ -36,10 +38,14 @@ Default columns:
 - `评论内序号`
 - `评论人`
 - `用户ID`
-- `国家`
-- `品牌`
-- `产品名`
-- `品类`
+- `主题领域`
+- `实体1类型`
+- `实体1`
+- `实体2类型`
+- `实体2`
+- `实体3类型`
+- `实体3`
+- `关键信息`
 - `评论内容`
 - `点赞数`
 - `回复数`
@@ -48,6 +54,8 @@ Default columns:
 - `格式状态`
 - `识别置信度`
 - `备注`
+
+If the user asks for a domain-specific schema later, adapt the entity columns into that schema. Otherwise keep the generic schema above.
 
 ## Steps
 1) Parse URL
@@ -89,21 +97,25 @@ Default columns:
    - Multi-line list comments and numbered comments must be split before semantic merge.
 
 7) Semantic extraction
-   - Extract:
-     - `国家`
-     - `品牌`
-     - `产品名`
-     - `品类`
+   - Extract generic semantics first, not domain-fixed fields.
+   - Default output should identify:
+     - `主题领域`
+     - `实体1类型` / `实体1`
+     - `实体2类型` / `实体2`
+     - `实体3类型` / `实体3`
+     - `关键信息`
      - `格式状态`
      - `识别置信度`
      - `备注`
    - Prefer semantic reading over mechanical delimiter splitting.
    - Handle common patterns:
-     - `国家 + 品牌 + 产品`
-     - `国家的品牌 产品`
-     - space-separated text
+     - structured tuples such as `A + B + C`
+     - phrase-style comments
      - numbered multi-line lists
-     - phrase-style comments such as `智利的蒙特斯 紫天使干红葡萄酒`
+     - recommendation lists
+     - opinion-only comments
+     - activity/campaign replies
+   - Only map to domain-specific fields such as `国家/品牌/产品名/品类` when the comment content clearly belongs to that domain or the user explicitly asked for that schema.
 
 8) Session-first semantic batching
    - Default to distributing semantic extraction work across sessions.
@@ -114,13 +126,13 @@ Default columns:
 
 9) Precision guardrails
    - Do not treat delimiter position as truth.
-   - Normalize obvious aliases when confident, for example:
-     - `安东尼庄园` -> `安东尼世家`
-     - `蒙特斯紫天使` -> 品牌 `蒙特斯`, 产品 `紫天使干红葡萄酒`
+   - Do not assume any default domain.
+   - First infer what the comment is about, then extract matching entities.
+   - Normalize obvious aliases only when the content clearly supports the normalization.
    - If the extraction is only inferred, lower `识别置信度` and explain in `备注`.
-   - If the comment is only a feeling, campaign copy, or non-product text such as `我要`, mark:
+   - If the comment is only a feeling, campaign copy, or non-informational text such as `我要`, mark:
      - `格式状态 = needs_review`
-   - Only mark `ok` when country/brand/product are sufficiently supported by the comment text.
+   - Only mark `ok` when the extracted entities are sufficiently supported by the comment text itself.
 
 10) Final review before export
    - Check three things before writing Excel:
@@ -148,7 +160,8 @@ Default columns:
 ## Lessons Added From 2026-03-18
 - Missing `--load-all-comments` causes incomplete exports.
 - Raw export alone is not enough for this workflow; semantic normalization is required.
-- Multi-product comments must be split into multiple rows.
-- Phrase-style comments need pattern recognition, not just `+` splitting.
+- Multi-item comments must be split into multiple rows when they mention multiple entities.
+- Phrase-style comments need pattern recognition, not just delimiter splitting.
 - Semantic extraction should default to session distribution, with each session handling at most 50 comments.
+- This SOP must remain domain-agnostic by default; do not silently narrow it to wine, alcohol, or any other vertical.
 - Final delivery should be one clean Excel unless the user asks for intermediate files.
