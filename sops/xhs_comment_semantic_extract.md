@@ -38,14 +38,9 @@ Default columns:
 - `评论内序号`
 - `评论人`
 - `用户ID`
-- `主题领域`
-- `实体1类型`
-- `实体1`
-- `实体2类型`
-- `实体2`
-- `实体3类型`
-- `实体3`
-- `关键信息`
+- `国家`
+- `品牌`
+- `产品`
 - `评论内容`
 - `点赞数`
 - `回复数`
@@ -55,7 +50,7 @@ Default columns:
 - `识别置信度`
 - `备注`
 
-If the user asks for a domain-specific schema later, adapt the entity columns into that schema. Otherwise keep the generic schema above.
+Even though the SOP is domain-agnostic at the workflow level, the default delivery schema must stay simple and concrete: country, brand, product. Do not switch the user-facing Excel into abstract entity/domain columns unless the user explicitly asks for that.
 
 ## Steps
 1) Parse URL
@@ -97,16 +92,14 @@ If the user asks for a domain-specific schema later, adapt the entity columns in
    - Multi-line list comments and numbered comments must be split before semantic merge.
 
 7) Semantic extraction
-   - Extract generic semantics first, not domain-fixed fields.
-   - Default output should identify:
-     - `主题领域`
-     - `实体1类型` / `实体1`
-     - `实体2类型` / `实体2`
-     - `实体3类型` / `实体3`
-     - `关键信息`
+   - Default output must identify:
+     - `国家`
+     - `品牌`
+     - `产品`
      - `格式状态`
      - `识别置信度`
      - `备注`
+   - The workflow stays domain-agnostic in how it reads comments, but the user-facing output remains fixed to the concrete fields above.
    - Prefer semantic reading over mechanical delimiter splitting.
    - Handle common patterns:
      - structured tuples such as `A + B + C`
@@ -115,10 +108,11 @@ If the user asks for a domain-specific schema later, adapt the entity columns in
      - recommendation lists
      - opinion-only comments
      - activity/campaign replies
-   - Only map to domain-specific fields such as `国家/品牌/产品名/品类` when the comment content clearly belongs to that domain or the user explicitly asked for that schema.
+   - If a comment does not clearly contain country/brand/product, leave unknown fields blank and mark `格式状态 = needs_review`.
 
 8) Session-first semantic batching
    - Default to distributing semantic extraction work across sessions.
+   - Do not use local heuristic extraction as the default path.
    - Each session must handle no more than 50 comments.
    - For harder or noisier comment sets, prefer 10-20 comments per session.
    - Merge strictly by `评论ID + 评论内序号`, never by plain list position.
@@ -155,6 +149,7 @@ If the user asks for a domain-specific schema later, adapt the entity columns in
 - If login is invalid: run `python scripts/cli.py login` and scan QR.
 - If fetched count is suspiciously low: rerun with `--load-all-comments --click-more-replies --scroll-speed slow`.
 - If semantic extraction is not precise enough: rerun only the uncertain rows or batch them across parallel sessions.
+- Do not fall back to local heuristic-only extraction unless the user explicitly permits it.
 - If Excel tooling is missing: generate a standards-compliant `.xlsx` directly; do not block on `openpyxl`.
 
 ## Lessons Added From 2026-03-18
