@@ -1,0 +1,75 @@
+{
+  "version": 1,
+  "updated_at": "2026-03-20T00:00:00+08:00",
+  "mode": "copy-first",
+  "storage_axis": "project-series",
+  "instance_pattern": "YYYY-MM__主题",
+  "stay_in_workspace": [
+    {
+      "path": "/Users/liumobei/.openclaw/workspace/apps",
+      "reason": "应用主体和运行入口仍属于运行层"
+    },
+    {
+      "path": "/Users/liumobei/.openclaw/workspace/agents/runtime",
+      "reason": "agent 状态与历史属于 runtime 层"
+    },
+    {
+      "path": "/Users/liumobei/.openclaw/workspace/memory",
+      "reason": "连续性记忆暂不进入长期库主干"
+    },
+    {
+      "path": "/Users/liumobei/.openclaw/workspace/MEMORY.md",
+      "reason": "主会话记忆需人工筛选后再迁"
+    },
+    {
+      "path": "/Users/liumobei/.openclaw/workspace/sops",
+      "reason": "SOP 仍属于运行规则层"
+    },
+    {
+      "path": "/Users/liumobei/.openclaw/workspace/skills",
+      "reason": "skills 仍属于能力层"
+    }
+  ],
+  "migrate_to_knowledge": [
+    {
+      "path": "/Users/liumobei/.openclaw/workspace/agents/knowledge",
+      "target_class": "knowledge"
+    },
+    {
+      "path": "/Users/liumobei/.openclaw/workspace/content_system/knowledge",
+      "target_class": "knowledge"
+    }
+  ],
+  "migrate_to_assets": [
+    {
+      "path": "/Users/liumobei/.openclaw/workspace/content_system/01_research",
+      "target_class": "asset"
+    },
+    {
+      "path": "/Users/liumobei/.openclaw/workspace/content_system/final",
+      "target_class": "asset"
+    },
+    {
+      "path": "/Users/liumobei/.openclaw/workspace/content_system/07_archive",
+      "target_class": "asset"
+    },
+    {
+      "path": "/Users/liumobei/.openclaw/workspace/outputs",
+      "target_class": "asset"
+    }
+  ],
+  "selective_review": [
+    {
+      "path": "/Users/liumobei/.openclaw/workspace/content_system/06_data",
+      "reason": "混有日志、运行数据与可长期沉淀内容，必须先筛"
+    },
+    {
+      "path": "/Users/liumobei/.openclaw/workspace/content_system/04_assets",
+      "reason": "可能包含原始素材，也可能包含运行态中间物"
+    },
+    {
+      "path": "/Users/liumobei/.openclaw/workspace/content_system/00_inbox",
+      "reason": "未处理输入，不应直接进入长期库"
+    }
+  ]
+}

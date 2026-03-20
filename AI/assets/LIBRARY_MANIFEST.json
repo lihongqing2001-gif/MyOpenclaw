@@ -1,0 +1,44 @@
+{
+  "name": "长期资产原件层",
+  "kind": "asset-library",
+  "root": "/Volumes/For Win/01_Projects/AI/assets",
+  "children": [
+    "content-system",
+    "workspace-outputs"
+  ],
+  "allowed_content": [
+    "研究资料",
+    "交付物",
+    "附件",
+    "归档快照",
+    "导出文件"
+  ],
+  "forbidden_content": [
+    "知识总结",
+    "runtime lessons",
+    "cases Markdown",
+    "rules 文档",
+    "agent runtime state"
+  ],
+  "naming_rules": {
+    "storage_axis": "项目系列",
+    "instance_pattern": "YYYY-MM__主题",
+    "default_subdirs": [
+      "raw",
+      "research",
+      "deliverables",
+      "archive"
+    ],
+    "default_file_pattern": "<主题>__<状态>.<ext>"
+  },
+  "read_order": [
+    "README.md",
+    "AI_INSTRUCTIONS.md",
+    "../mappings/workspace-to-library.json",
+    "../mappings/project-series.json"
+  ],
+  "related_manifests": [
+    "/Volumes/For Win/01_Projects/AI/LIBRARY_MANIFEST.json",
+    "/Volumes/For Win/01_Projects/AI/mappings/LIBRARY_MANIFEST.json"
+  ]
+}

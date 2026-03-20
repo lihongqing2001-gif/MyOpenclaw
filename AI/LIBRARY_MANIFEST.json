@@ -1,0 +1,48 @@
+{
+  "name": "AI 长期库总根目录",
+  "kind": "library-root",
+  "root": "/Volumes/For Win/01_Projects/AI",
+  "children": [
+    "assets",
+    "knowledge",
+    "mappings"
+  ],
+  "allowed_content": [
+    "长期资产原件",
+    "结构化知识",
+    "迁移映射与策略文件",
+    "入口说明与 manifest"
+  ],
+  "forbidden_content": [
+    "运行缓存",
+    "agent runtime state",
+    "auth 或 token",
+    "memory 主存",
+    "随机临时文件"
+  ],
+  "naming_rules": {
+    "storage_axis": "项目系列",
+    "instance_pattern": "YYYY-MM__主题",
+    "default_file_pattern": "<主题>__<状态>.md",
+    "time_based_docs_only": [
+      "日报",
+      "周报",
+      "快照",
+      "运行记录",
+      "批次索引"
+    ],
+    "domain_representation": "taxonomy-tags"
+  },
+  "read_order": [
+    "README.md",
+    "AI_INSTRUCTIONS.md",
+    "assets/LIBRARY_MANIFEST.json",
+    "knowledge/LIBRARY_MANIFEST.json",
+    "mappings/LIBRARY_MANIFEST.json"
+  ],
+  "related_manifests": [
+    "/Volumes/For Win/01_Projects/AI/assets/LIBRARY_MANIFEST.json",
+    "/Volumes/For Win/01_Projects/AI/knowledge/LIBRARY_MANIFEST.json",
+    "/Volumes/For Win/01_Projects/AI/mappings/LIBRARY_MANIFEST.json"
+  ]
+}

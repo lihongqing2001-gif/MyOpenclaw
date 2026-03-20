@@ -1,0 +1,56 @@
+{
+  "name": "长期知识层",
+  "kind": "knowledge-library",
+  "root": "/Volumes/For Win/01_Projects/AI/knowledge",
+  "children": [
+    "agents",
+    "content-system",
+    "projects",
+    "shared",
+    "_taxonomy"
+  ],
+  "allowed_content": [
+    "cases",
+    "lessons",
+    "references",
+    "rules",
+    "indexes",
+    "taxonomy"
+  ],
+  "forbidden_content": [
+    "原始资产原件",
+    "附件",
+    "运行缓存",
+    "auth 文件"
+  ],
+  "naming_rules": {
+    "storage_axis": "项目系列",
+    "instance_pattern": "YYYY-MM__主题",
+    "project_subdirs": [
+      "cases",
+      "lessons",
+      "references",
+      "rules",
+      "indexes"
+    ],
+    "shared_subdirs": [
+      "cases",
+      "lessons",
+      "references",
+      "rules",
+      "indexes"
+    ],
+    "default_file_pattern": "<主题>__<状态>.md",
+    "domain_representation": "taxonomy-tags"
+  },
+  "read_order": [
+    "README.md",
+    "AI_INSTRUCTIONS.md",
+    "_taxonomy/domains.json",
+    "../mappings/project-series.json"
+  ],
+  "related_manifests": [
+    "/Volumes/For Win/01_Projects/AI/LIBRARY_MANIFEST.json",
+    "/Volumes/For Win/01_Projects/AI/mappings/LIBRARY_MANIFEST.json"
+  ]
+}

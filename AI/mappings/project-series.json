@@ -1,0 +1,66 @@
+{
+  "version": 1,
+  "updated_at": "2026-03-20T00:00:00+08:00",
+  "series": [
+    {
+      "name": "OpenClaw智能体操作系统",
+      "aliases": ["mission-control", "openclaw-agent-os", "agent-os"],
+      "domain_tags": ["agent-os", "ops", "automation", "knowledge-system"],
+      "status": "active",
+      "current_instances": [
+        {
+          "name": "2026-03__长期库与运行知识迁移",
+          "status": "planned"
+        }
+      ]
+    },
+    {
+      "name": "AI内容系统",
+      "aliases": ["content-system", "小红书内容系统"],
+      "domain_tags": ["content", "xiaohongshu", "content-ops"],
+      "status": "active",
+      "current_instances": [
+        {
+          "name": "2026-03__内容知识迁移",
+          "status": "planned"
+        },
+        {
+          "name": "2026-03__内容研究迁移",
+          "status": "planned"
+        },
+        {
+          "name": "2026-03__内容发布物迁移",
+          "status": "planned"
+        },
+        {
+          "name": "2026-03__内容系统归档迁移",
+          "status": "planned"
+        }
+      ]
+    },
+    {
+      "name": "中烟新课题",
+      "aliases": ["中烟项目", "课题交付"],
+      "domain_tags": ["research-delivery", "proposal", "delivery"],
+      "status": "active",
+      "current_instances": [
+        {
+          "name": "2026-03__首轮交付物迁移",
+          "status": "planned"
+        }
+      ]
+    },
+    {
+      "name": "个人档案与复盘",
+      "aliases": ["我的档案", "周报周复盘"],
+      "domain_tags": ["personal-reflection", "reflection", "profile"],
+      "status": "active",
+      "current_instances": [
+        {
+          "name": "2026-03__档案与周报迁移",
+          "status": "planned"
+        }
+      ]
+    }
+  ]
+}

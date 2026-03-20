@@ -1,0 +1,108 @@
+{
+  "version": 2,
+  "mode": "copy-first",
+  "generated_at": "2026-03-20T00:00:00+08:00",
+  "root": "/Volumes/For Win/01_Projects/AI",
+  "storage_axis": "project-series",
+  "instance_pattern": "YYYY-MM__主题",
+  "domain_representation": "taxonomy-tags",
+  "entries": [
+    {
+      "source": "/Users/liumobei/.openclaw/workspace/agents/knowledge",
+      "layer": "knowledge",
+      "series": "OpenClaw智能体操作系统",
+      "instance": "2026-03__长期库与运行知识迁移",
+      "current_library_path": "/Volumes/For Win/01_Projects/AI/knowledge/agents",
+      "planned_library_path": "/Volumes/For Win/01_Projects/AI/knowledge/projects/OpenClaw智能体操作系统/2026-03__长期库与运行知识迁移",
+      "status": "legacy-copied",
+      "note": "当前仍保留在 legacy import 目录，后续再重挂到项目主轴结构。"
+    },
+    {
+      "source": "/Users/liumobei/.openclaw/workspace/content_system/knowledge",
+      "layer": "knowledge",
+      "series": "AI内容系统",
+      "instance": "2026-03__内容知识迁移",
+      "current_library_path": "/Volumes/For Win/01_Projects/AI/knowledge/content-system",
+      "planned_library_path": "/Volumes/For Win/01_Projects/AI/knowledge/projects/AI内容系统/2026-03__内容知识迁移",
+      "status": "legacy-copied",
+      "note": "当前仍保留在 legacy import 目录，后续再重挂到项目主轴结构。"
+    },
+    {
+      "source": "/Users/liumobei/.openclaw/workspace/content_system/01_research",
+      "layer": "asset",
+      "series": "AI内容系统",
+      "instance": "2026-03__内容研究迁移",
+      "current_library_path": "/Volumes/For Win/01_Projects/AI/assets/content-system/research",
+      "planned_library_path": "/Volumes/For Win/01_Projects/AI/assets/AI内容系统/2026-03__内容研究迁移/research",
+      "status": "legacy-copied"
+    },
+    {
+      "source": "/Users/liumobei/.openclaw/workspace/content_system/final",
+      "layer": "asset",
+      "series": "AI内容系统",
+      "instance": "2026-03__内容发布物迁移",
+      "current_library_path": "/Volumes/For Win/01_Projects/AI/assets/content-system/final",
+      "planned_library_path": "/Volumes/For Win/01_Projects/AI/assets/AI内容系统/2026-03__内容发布物迁移/deliverables",
+      "status": "legacy-copied"
+    },
+    {
+      "source": "/Users/liumobei/.openclaw/workspace/content_system/07_archive",
+      "layer": "asset",
+      "series": "AI内容系统",
+      "instance": "2026-03__内容系统归档迁移",
+      "current_library_path": "/Volumes/For Win/01_Projects/AI/assets/content-system/archive",
+      "planned_library_path": "/Volumes/For Win/01_Projects/AI/assets/AI内容系统/2026-03__内容系统归档迁移/archive",
+      "status": "legacy-copied"
+    },
+    {
+      "source": "/Users/liumobei/.openclaw/workspace/outputs",
+      "source_match": [
+        "中烟新课题*",
+        "技术路线*",
+        "手册.docx"
+      ],
+      "layer": "asset",
+      "series": "中烟新课题",
+      "instance": "2026-03__首轮交付物迁移",
+      "current_library_path": "/Volumes/For Win/01_Projects/AI/assets/workspace-outputs",
+      "planned_library_path": "/Volumes/For Win/01_Projects/AI/assets/中烟新课题/2026-03__首轮交付物迁移/deliverables",
+      "status": "legacy-copied"
+    },
+    {
+      "source": "/Users/liumobei/.openclaw/workspace/outputs",
+      "source_match": [
+        "我的档案.md",
+        "周报｜2026-W12.md",
+        "周复盘｜2026-W12.md"
+      ],
+      "layer": "asset",
+      "series": "个人档案与复盘",
+      "instance": "2026-03__档案与周报迁移",
+      "current_library_path": "/Volumes/For Win/01_Projects/AI/assets/workspace-outputs",
+      "planned_library_path": "/Volumes/For Win/01_Projects/AI/assets/个人档案与复盘/2026-03__档案与周报迁移/deliverables",
+      "status": "legacy-copied"
+    }
+  ],
+  "keep_in_workspace": [
+    {
+      "path": "/Users/liumobei/.openclaw/workspace/memory",
+      "reason": "runtime continuity, not long-term library asset by default"
+    },
+    {
+      "path": "/Users/liumobei/.openclaw/workspace/MEMORY.md",
+      "reason": "main-session memory, requires selective curation before migration"
+    },
+    {
+      "path": "/Users/liumobei/.openclaw/workspace/sops",
+      "reason": "runtime rule layer"
+    },
+    {
+      "path": "/Users/liumobei/.openclaw/workspace/skills",
+      "reason": "runtime capability layer"
+    },
+    {
+      "path": "/Users/liumobei/.openclaw/workspace/content_system/06_data",
+      "reason": "mixed logs and operational data; needs selective migration policy"
+    }
+  ]
+}

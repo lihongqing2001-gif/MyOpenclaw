@@ -1,0 +1,30 @@
+{
+  "version": 1,
+  "updated_at": "2026-03-20T00:00:00+08:00",
+  "domains": [
+    {
+      "id": "agent-os",
+      "label": "智能体操作系统",
+      "aliases": ["openclaw", "agent os", "mission-control", "多代理编排"],
+      "description": "围绕 OpenClaw、agent 架构、编排、监控、知识系统的领域。"
+    },
+    {
+      "id": "content",
+      "label": "内容系统",
+      "aliases": ["内容生成", "内容系统", "小红书", "xhs", "选题雷达"],
+      "description": "围绕内容研究、内容生产、平台运营、选题和发布的领域。"
+    },
+    {
+      "id": "research-delivery",
+      "label": "科研与项目交付",
+      "aliases": ["中烟新课题", "研究交付", "项目书", "技术路线"],
+      "description": "围绕研究项目、课题交付、方案、项目材料的领域。"
+    },
+    {
+      "id": "personal-reflection",
+      "label": "个人档案与复盘",
+      "aliases": ["我的档案", "周报", "周复盘", "日记", "成长复盘"],
+      "description": "围绕个人档案、周期复盘、连续性记录的领域。"
+    }
+  ]
+}

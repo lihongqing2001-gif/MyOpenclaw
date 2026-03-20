@@ -2,11 +2,17 @@
 
 ## Purpose
 
-This branch carries repo-native entry documentation that should accompany the Mission Control app split, without trying to force the external AI library itself into git.
+This branch carries repo-native entry documentation that accompanies the Mission Control split, plus a mirrored copy of the long-term AI library entry docs and manifests.
 
 ## Included
 
 - `AGENTS.md` update pointing humans/agents to the long-term AI library entry
+- `AI/` mirrored documentation tree containing:
+  - root entry docs
+  - `assets/` entry docs
+  - `knowledge/` entry docs
+  - `_taxonomy/domains.json`
+  - `mappings/*.json`
 
 ## External Source Of Truth
 
@@ -14,20 +20,22 @@ The long-term library documents remain on disk here:
 
 - `/Volumes/For Win/01_Projects/AI`
 
-That directory is **not inside this git repository**, so it cannot be merged through a normal git branch.
+That directory is still the **operational source of truth**.
+The `AI/` directory in this branch is a git mirror of the documentation and manifests only.
 
 ## What To Merge
 
 - `AGENTS.md`
+- `AI/**` (docs + manifests mirror)
 - this handoff file
 
 ## What Not To Expect
 
-- No `AI/` directory contents are included in this branch
-- No library manifests or mapping files are committed here
-- Those files remain external and must be managed or mirrored separately if you later want them under git
+- No long-term asset originals are included
+- No large deliverables, archives, or copied binaries are included
+- The external AI library still needs separate operational maintenance on disk
 
 ## Recommendation
 
-Merge this branch only if you want the repo-level pointer to the external AI library.
-Keep treating the external AI library as the storage-plane source of truth until you explicitly decide to mirror it into a repository.
+Merge this branch if you want the repo to carry the AI library's structural docs and manifests.
+Keep treating `/Volumes/For Win/01_Projects/AI` as the storage-plane source of truth until you explicitly decide to move operational writes into the repository mirror.

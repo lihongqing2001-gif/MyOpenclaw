@@ -1,0 +1,43 @@
+{
+  "name": "规则与映射层",
+  "kind": "mapping-library",
+  "root": "/Volumes/For Win/01_Projects/AI/mappings",
+  "children": [
+    "workspace-to-library.json",
+    "project-series.json",
+    "migration-policy.json"
+  ],
+  "allowed_content": [
+    "路径映射",
+    "项目系列注册",
+    "迁移策略",
+    "结构规则"
+  ],
+  "forbidden_content": [
+    "资产原件",
+    "知识正文",
+    "运行缓存"
+  ],
+  "naming_rules": {
+    "mapping_statuses": [
+      "planned",
+      "copied",
+      "legacy-copied",
+      "migrated"
+    ],
+    "project_axis": "项目系列",
+    "instance_pattern": "YYYY-MM__主题"
+  },
+  "read_order": [
+    "README.md",
+    "AI_INSTRUCTIONS.md",
+    "project-series.json",
+    "migration-policy.json",
+    "workspace-to-library.json"
+  ],
+  "related_manifests": [
+    "/Volumes/For Win/01_Projects/AI/LIBRARY_MANIFEST.json",
+    "/Volumes/For Win/01_Projects/AI/assets/LIBRARY_MANIFEST.json",
+    "/Volumes/For Win/01_Projects/AI/knowledge/LIBRARY_MANIFEST.json"
+  ]
+}
