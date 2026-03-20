@@ -1,0 +1,24 @@
+# Escalation Reports
+
+- 2026-03-20 12:55:00 +0800 | type=heartbeat_summary | request_id=workspace-heartbeat-20260320-1255 | idle_min=unknown | agent=main | action=report_attention | task=health ok but monitoring still reports stale_agents=10 and the expected api task feeds are missing
+
+- 2026-03-20 09:52:16 +0800 | type=slow_progress | request_id=REQ-MAIN-0008-001 | idle_min=17906 | agent=designer-v1 | action=escalate_and_report | task=拆解主任务: 修复 self-improvement 模块：/api/self-improvement/health 返回 404；恢复健康检查并记录运行状态
+- 2026-03-20 09:52:16 +0800 | type=slow_progress | request_id=REQ-MC-20260305-001-PM | idle_min=21474 | agent=product-manager-v1 | action=escalate_and_report | task=Mission Control 计划：页面结构与优先级梳理、对外说明口径
+- 2026-03-20 09:52:16 +0800 | type=slow_progress | request_id=REQ-MC-20260305-001-OPS | idle_min=21474 | agent=operations-manager-v1 | action=escalate_and_report | task=Mission Control 计划：看板与任务流维护、进度回填与交付报告
+- 2026-03-20 09:52:16 +0800 | type=slow_progress | request_id=REQ-MC-20260305-001-QA | idle_min=21474 | agent=qa-auditor-v1 | action=escalate_and_report | task=Mission Control 计划：回归 Operations 不回退，验收新页功能与证据链
+- 2026-03-20 09:52:16 +0800 | type=slow_progress | request_id=REQ-MC-20260305-001-ENG | idle_min=21474 | agent=engineer-v1 | action=escalate_and_report | task=Mission Control 计划：落地 Memory/Team 页面与数据接口实现
+- 2026-03-20 09:52:16 +0800 | type=slow_progress | request_id=REQ-MC-20260305-001-ADMIN | idle_min=21474 | agent=admin-v1 | action=escalate_and_report | task=Mission Control 计划：制定执行清单与验收标准（DoD），保证流程闭环
+- 2026-03-20 09:52:16 +0800 | type=slow_progress | request_id=REQ-SOP-20260305-002-PM | idle_min=21544 | agent=product-manager-v1 | action=escalate_and_report | task=整理SOP上线说明与对外沟通口径
+- 2026-03-20 09:52:16 +0800 | type=slow_progress | request_id=REQ-SOP-20260305-002-OPS | idle_min=21544 | agent=operations-manager-v1 | action=escalate_and_report | task=维护看板与交付回报，确保dispatch/complete闭环
+- 2026-03-20 09:52:16 +0800 | type=slow_progress | request_id=REQ-SOP-20260305-002-QA | idle_min=21544 | agent=qa-auditor-v1 | action=escalate_and_report | task=验证SOP落地证据与DoD，出审计结论
+- 2026-03-20 09:52:16 +0800 | type=slow_progress | request_id=REQ-SOP-20260305-002-ADMIN | idle_min=21544 | agent=admin-v1 | action=escalate_and_report | task=执行会话控制SOP：分发/验收/回填/恢复演练，产出证据
+- 2026-03-20 12:52:20 +0800 | type=slow_progress | request_id=REQ-MAIN-0008-001 | idle_min=18086 | agent=designer-v1 | action=escalate_and_report | task=拆解主任务: 修复 self-improvement 模块：/api/self-improvement/health 返回 404；恢复健康检查并记录运行状态
+- 2026-03-20 12:52:20 +0800 | type=slow_progress | request_id=REQ-MC-20260305-001-PM | idle_min=21654 | agent=product-manager-v1 | action=escalate_and_report | task=Mission Control 计划：页面结构与优先级梳理、对外说明口径
+- 2026-03-20 12:52:20 +0800 | type=slow_progress | request_id=REQ-MC-20260305-001-OPS | idle_min=21654 | agent=operations-manager-v1 | action=escalate_and_report | task=Mission Control 计划：看板与任务流维护、进度回填与交付报告
+- 2026-03-20 12:52:20 +0800 | type=slow_progress | request_id=REQ-MC-20260305-001-QA | idle_min=21654 | agent=qa-auditor-v1 | action=escalate_and_report | task=Mission Control 计划：回归 Operations 不回退，验收新页功能与证据链
+- 2026-03-20 12:52:20 +0800 | type=slow_progress | request_id=REQ-MC-20260305-001-ENG | idle_min=21654 | agent=engineer-v1 | action=escalate_and_report | task=Mission Control 计划：落地 Memory/Team 页面与数据接口实现
+- 2026-03-20 12:52:20 +0800 | type=slow_progress | request_id=REQ-MC-20260305-001-ADMIN | idle_min=21654 | agent=admin-v1 | action=escalate_and_report | task=Mission Control 计划：制定执行清单与验收标准（DoD），保证流程闭环
+- 2026-03-20 12:52:20 +0800 | type=slow_progress | request_id=REQ-SOP-20260305-002-PM | idle_min=21724 | agent=product-manager-v1 | action=escalate_and_report | task=整理SOP上线说明与对外沟通口径
+- 2026-03-20 12:52:20 +0800 | type=slow_progress | request_id=REQ-SOP-20260305-002-OPS | idle_min=21724 | agent=operations-manager-v1 | action=escalate_and_report | task=维护看板与交付回报，确保dispatch/complete闭环
+- 2026-03-20 12:52:20 +0800 | type=slow_progress | request_id=REQ-SOP-20260305-002-QA | idle_min=21724 | agent=qa-auditor-v1 | action=escalate_and_report | task=验证SOP落地证据与DoD，出审计结论
+- 2026-03-20 12:52:20 +0800 | type=slow_progress | request_id=REQ-SOP-20260305-002-ADMIN | idle_min=21724 | agent=admin-v1 | action=escalate_and_report | task=执行会话控制SOP：分发/验收/回填/恢复演练，产出证据
