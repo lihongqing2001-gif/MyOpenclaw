@@ -1,0 +1,57 @@
+{
+  "version": 1,
+  "default": {
+    "orchestrator": "main",
+    "preferredAgents": ["executor", "engineer", "designer"],
+    "reason": "main 先接单，再按任务性质把工作分派给最合适的专门 agent。"
+  },
+  "rules": [
+    {
+      "id": "personal-management",
+      "match": {
+        "domains": ["个人管理"],
+        "labels": ["日记", "journal", "calendar", "trip", "reminder"]
+      },
+      "route": {
+        "orchestrator": "main",
+        "preferredAgents": ["life-assistant", "executor"],
+        "reason": "这是个人管理/日程/日记类任务，main 应优先分派给 life-assistant 处理，需要执行落地时再借助 executor。"
+      }
+    },
+    {
+      "id": "content-and-xhs",
+      "match": {
+        "domains": ["社交媒体与内容"],
+        "labels": ["小红书", "xiaohongshu", "xhs", "内容", "热点", "模仿", "评论", "crawl"]
+      },
+      "route": {
+        "orchestrator": "main",
+        "preferredAgents": ["executor", "designer", "engineer"],
+        "reason": "这是内容/抓取/生成类任务，main 应先让 executor 落地执行，涉及呈现与包装时再调 designer，确有工程改造再调 engineer。"
+      }
+    },
+    {
+      "id": "ui-and-experience",
+      "match": {
+        "labels": ["ui", "ux", "dashboard", "界面", "设计", "体验", "frontend"]
+      },
+      "route": {
+        "orchestrator": "main",
+        "preferredAgents": ["designer", "engineer"],
+        "reason": "这是界面与体验类任务，main 应优先让 designer 定义与调整方案，必要时再让 engineer 实现。"
+      }
+    },
+    {
+      "id": "engineering-and-files",
+      "match": {
+        "domains": ["项目产出与资料管理"],
+        "labels": ["工程", "script", "python", "node", "归档", "索引", "file"]
+      },
+      "route": {
+        "orchestrator": "main",
+        "preferredAgents": ["engineer", "executor"],
+        "reason": "这是工程/脚本/文件处理类任务，main 应优先分派给 engineer，执行量大的步骤再交 executor。"
+      }
+    }
+  ]
+}

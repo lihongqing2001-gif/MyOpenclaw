@@ -1,0 +1,146 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+}
+
+:root {
+  --bg-primary: #0A0A0A;
+  --bg-secondary: #18181B; /* zinc-900 */
+  --bg-drawer: #0A0A0A;
+  --bg-hero: linear-gradient(180deg, rgba(19,20,29,0.96) 0%, rgba(11,12,18,0.92) 100%);
+  --bg-floating: rgba(17,18,25,0.84);
+  --panel-surface: linear-gradient(180deg, rgba(22, 23, 31, 0.96) 0%, rgba(11, 12, 18, 0.9) 100%);
+  --panel-surface-soft: linear-gradient(180deg, rgba(20, 22, 31, 0.82) 0%, rgba(14, 15, 22, 0.74) 100%);
+  --panel-shadow: 0 24px 64px rgba(0, 0, 0, 0.32), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  --text-primary: #F4F4F5; /* zinc-100 */
+  --text-secondary: #A1A1AA; /* zinc-400 */
+  --border-color: #27272A; /* zinc-800 */
+  --border-hover: #3F3F46; /* zinc-700 */
+  
+  --node-idle-bg: #18181B; /* zinc-900 */
+  --node-idle-border: #27272A; /* zinc-800 */
+  --node-idle-text: #F4F4F5; /* zinc-100 */
+
+  --node-run-bg: #18181B;
+  --node-run-border: #3B82F6; /* blue-500 */
+  --node-run-text: #F4F4F5;
+  --node-run-edge: #3B82F6;
+
+  --node-err-bg: rgba(239, 68, 68, 0.05); /* red-500 with low opacity */
+  --node-err-border: rgba(239, 68, 68, 0.5);
+  --node-err-text: #EF4444;
+
+  --edge-idle: #27272A; /* zinc-800 */
+}
+
+.light-mode {
+  --bg-primary: #FAFAFA;
+  --bg-secondary: #FFFFFF;
+  --bg-drawer: #FFFFFF;
+  --bg-hero: linear-gradient(180deg, rgba(255,255,255,0.97) 0%, rgba(244,245,247,0.96) 100%);
+  --bg-floating: rgba(255,255,255,0.88);
+  --panel-surface: linear-gradient(180deg, rgba(255,255,255,0.98) 0%, rgba(245,246,248,0.94) 100%);
+  --panel-surface-soft: linear-gradient(180deg, rgba(255,255,255,0.96) 0%, rgba(248,249,251,0.9) 100%);
+  --panel-shadow: 0 20px 48px rgba(15, 23, 42, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.72);
+  --text-primary: #18181B; /* zinc-900 */
+  --text-secondary: #71717A; /* zinc-500 */
+  --border-color: #E4E4E7; /* zinc-200 */
+  --border-hover: #D4D4D8; /* zinc-300 */
+
+  --node-idle-bg: #FFFFFF;
+  --node-idle-border: #E4E4E7; /* zinc-200 */
+  --node-idle-text: #18181B; /* zinc-900 */
+
+  --node-run-bg: #FFFFFF;
+  --node-run-border: #3B82F6; /* blue-500 */
+  --node-run-text: #18181B;
+  --node-run-edge: #3B82F6;
+
+  --node-err-bg: rgba(239, 68, 68, 0.02);
+  --node-err-border: rgba(239, 68, 68, 0.5);
+  --node-err-text: #EF4444;
+
+  --edge-idle: #E4E4E7; /* zinc-200 */
+}
+
+body {
+  font-family: var(--font-sans);
+  font-size: 15px;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  margin: 0;
+  overflow: hidden;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Text wrap utility */
+.text-wrap-safe {
+  word-break: break-word;
+  white-space: normal;
+}
+
+/* Custom Scrollbar */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: rgba(150, 150, 150, 0.3);
+  border-radius: 20px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(150, 150, 150, 0.5);
+}
+
+.character-stage-panel {
+  background:
+    linear-gradient(180deg, rgba(8, 8, 12, 0.52) 0%, rgba(8, 8, 12, 0.72) 100%);
+  border-color: rgba(255, 255, 255, 0.1);
+  box-shadow:
+    0 30px 90px rgba(0, 0, 0, 0.34),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(10px);
+}
+
+.character-shell {
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 48% 48% 28% 28% / 28% 28% 52% 52%;
+  transform-style: preserve-3d;
+}
+
+.character-shell::before {
+  content: "";
+  position: absolute;
+  inset: 6%;
+  border-radius: 44% 44% 30% 30% / 28% 28% 48% 48%;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  transform: translateZ(12px);
+}
+
+.character-core {
+  filter: saturate(1.15);
+}
+
+.character-limb {
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+.character-plinth {
+  filter: blur(26px);
+}
+
+.character-pedestal {
+  box-shadow:
+    0 18px 50px rgba(0, 0, 0, 0.28),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+@keyframes flow {
+  from { stroke-dashoffset: 20; }
+  to { stroke-dashoffset: 0; }
+}

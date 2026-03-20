@@ -1,0 +1,5 @@
+{
+  "name": "OpenClaw Web Console",
+  "description": "A highly visual, geeky frontend web console for the OpenClaw backend system, featuring a dynamic Skill Tree with React Flow and Framer Motion.",
+  "requestFramePermissions": []
+}
