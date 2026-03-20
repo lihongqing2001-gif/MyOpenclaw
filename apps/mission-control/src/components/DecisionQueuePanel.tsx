@@ -3,6 +3,19 @@ import { useI18n } from "../i18n";
 
 type BadgeSource = "status" | "evidence";
 
+export interface DecisionRefItem {
+  label: string;
+  value: string;
+  actionLabel?: string;
+  onActionClick?: () => void;
+}
+
+export interface DecisionActionItem {
+  label: string;
+  onActionClick: () => void;
+  tone?: "primary" | "secondary";
+}
+
 export interface DecisionItem {
   id: string;
   priority: number;
@@ -11,7 +24,8 @@ export interface DecisionItem {
   nextAction: string;
   statusLabels?: string[];
   evidenceLabels?: string[];
-  refs?: string[];
+  refs?: DecisionRefItem[];
+  actions?: DecisionActionItem[];
   ctaLabel?: string;
   onActionClick?: () => void;
 }
@@ -256,26 +270,81 @@ export const DecisionQueuePanel = React.memo(function DecisionQueuePanel({ decis
               </div>
 
               {decision.refs && decision.refs.length > 0 && (
-                <p className="mt-2 text-[11px]" style={{ color: "var(--text-secondary)" }}>
-                  {t("decisionQueue.references", { refs: decision.refs.join(" · ") })}
-                </p>
+                <div className="mt-2 flex flex-wrap gap-2">
+                  {decision.refs.map((ref) =>
+                    ref.onActionClick ? (
+                      <button
+                        key={`${decision.id}-${ref.label}-${ref.value}`}
+                        type="button"
+                        onClick={ref.onActionClick}
+                        className="rounded-full border px-3 py-1 text-[10px] font-medium"
+                        style={{
+                          borderColor: "var(--border-color)",
+                          backgroundColor: "var(--bg-secondary)",
+                          color: "var(--text-primary)",
+                        }}
+                      >
+                        {ref.actionLabel ?? ref.label}: {ref.value}
+                      </button>
+                    ) : (
+                      <span
+                        key={`${decision.id}-${ref.label}-${ref.value}`}
+                        className="rounded-full border px-3 py-1 text-[10px] font-medium"
+                        style={{
+                          borderColor: "var(--border-color)",
+                          backgroundColor: "rgba(255,255,255,0.02)",
+                          color: "var(--text-secondary)",
+                        }}
+                      >
+                        {ref.label}: {ref.value}
+                      </span>
+                    ),
+                  )}
+                </div>
               )}
 
-              {decision.onActionClick && decision.ctaLabel && (
-                <div className="mt-3 flex justify-end">
-                  <button
-                    type="button"
-                    onClick={decision.onActionClick}
-                    aria-label={decision.ctaLabel ? `${decision.ctaLabel} for ${decision.title}` : undefined}
-                    className="rounded-full border px-4 py-1 text-[11px] font-semibold transition hover:-translate-y-0.5"
-                    style={{
-                      borderColor: "var(--border-hover)",
-                      backgroundColor: "var(--bg-secondary)",
-                      color: "var(--text-primary)",
-                    }}
-                  >
-                    {decision.ctaLabel}
-                  </button>
+              {((decision.actions && decision.actions.length > 0) ||
+                (decision.onActionClick && decision.ctaLabel)) && (
+                <div className="mt-3 flex flex-wrap justify-end gap-2">
+                  {decision.actions?.map((action) => (
+                    <button
+                      key={`${decision.id}-${action.label}`}
+                      type="button"
+                      onClick={action.onActionClick}
+                      className="rounded-full border px-4 py-1 text-[11px] font-semibold transition hover:-translate-y-0.5"
+                      style={{
+                        borderColor:
+                          action.tone === "primary"
+                            ? "var(--node-run-border)"
+                            : "var(--border-hover)",
+                        backgroundColor:
+                          action.tone === "primary"
+                            ? "rgba(59, 130, 246, 0.12)"
+                            : "var(--bg-secondary)",
+                        color:
+                          action.tone === "primary"
+                            ? "var(--node-run-text)"
+                            : "var(--text-primary)",
+                      }}
+                    >
+                      {action.label}
+                    </button>
+                  ))}
+                  {decision.onActionClick && decision.ctaLabel && (
+                    <button
+                      type="button"
+                      onClick={decision.onActionClick}
+                      aria-label={decision.ctaLabel ? `${decision.ctaLabel} for ${decision.title}` : undefined}
+                      className="rounded-full border px-4 py-1 text-[11px] font-semibold transition hover:-translate-y-0.5"
+                      style={{
+                        borderColor: "var(--border-hover)",
+                        backgroundColor: "var(--bg-secondary)",
+                        color: "var(--text-primary)",
+                      }}
+                    >
+                      {decision.ctaLabel}
+                    </button>
+                  )}
                 </div>
               )}
             </article>

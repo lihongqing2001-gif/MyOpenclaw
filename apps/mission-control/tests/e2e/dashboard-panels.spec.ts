@@ -42,7 +42,14 @@ function createHeartbeatBase() {
         evidenceLevel: "declared",
         relatedTaskId: "task-dq-2",
         relatedNodeId: "project_file_index",
-        refs: [{ label: "Task", value: "task-dq-2" }],
+        refs: [
+          {
+            label: "Target Dir",
+            value: "/Users/liumobei/.openclaw/workspace/content_system/skilltree",
+            path: "/Users/liumobei/.openclaw/workspace/content_system/skilltree",
+          },
+          { label: "Task", value: "task-dq-2" },
+        ],
       },
     ],
   };
@@ -340,6 +347,23 @@ test.describe("dashboard control panels", () => {
     await expect(page.getByText("Queued Follow-up")).toBeVisible();
   });
 
+  test("lets a decision jump directly into the asset intake flow", async ({
+    page,
+  }) => {
+    await mockDashboardApis(page);
+    await page.goto("/");
+
+    const followUpCard = page
+      .getByText("Queued Follow-up")
+      .locator("xpath=ancestor::article[1]");
+    await followUpCard.getByRole("button", { name: /Open asset intake/i }).click();
+
+    await expect(page.getByTestId("asset-intake-panel")).toBeVisible();
+    await expect(page.getByLabel("Target intake directory")).toHaveValue(
+      "/Users/liumobei/.openclaw/workspace/content_system/skilltree",
+    );
+  });
+
   test("queues archive intake with the current target directory and note", async ({
     page,
   }) => {
@@ -372,8 +396,9 @@ test.describe("dashboard control panels", () => {
     await routes.setKnowledgeSearchRoute();
 
     await page.goto("/");
-    await page.getByLabel("Search evidence by keyword, path, or tag").fill("资料");
-    await page.getByRole("button", { name: "Search" }).click();
+    const evidencePanel = page.getByTestId("evidence-search-panel");
+    await evidencePanel.getByLabel("Search evidence by keyword, path, or tag").fill("资料");
+    await evidencePanel.getByRole("button", { name: "Search" }).click();
 
     await expect(page.getByText("资料到索引运行案例")).toBeVisible();
     await expect(page.getByText("资料目录规则")).toBeVisible();

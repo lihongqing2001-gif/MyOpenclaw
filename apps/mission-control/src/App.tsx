@@ -1,4 +1,5 @@
 import React, { Suspense, startTransition, useCallback, useEffect, useState } from "react";
+import type { DecisionActionItem, DecisionRefItem } from "./components/DecisionQueuePanel";
 import { TaskFeedbackModal } from "./components/TaskFeedbackModal";
 import { AssetIntakePanel } from "./components/AssetIntakePanel";
 import { DecisionQueuePanel } from "./components/DecisionQueuePanel";
@@ -616,7 +617,7 @@ const DashboardHeroCard = ({
   );
 };
 
-const GlobalTaskPanel = ({
+const RuntimeStatusStrip = ({
   heartbeat,
   onOpenPath,
   onFeedback,
@@ -630,7 +631,7 @@ const GlobalTaskPanel = ({
   const { t } = useI18n();
   const activeTasks = heartbeat?.activeTasks ?? [];
   const queuedTasks = heartbeat?.queuedTasks ?? [];
-  const recentTasks = heartbeat?.recentTasks ?? [];
+  const recentTask = heartbeat?.recentTasks?.[0] ?? null;
 
   return (
     <div
@@ -668,7 +669,7 @@ const GlobalTaskPanel = ({
           })}
         </span>
       </div>
-      <div className="p-3 space-y-2">
+      <div className="p-3 space-y-3">
         <div
           className="px-3 py-2 rounded-lg border flex items-center justify-between"
           style={{
@@ -703,71 +704,57 @@ const GlobalTaskPanel = ({
               : t("dashboard.tasks.offline")}
           </span>
         </div>
-
-        <div
-          className="text-[10px] font-semibold uppercase tracking-wider mb-1"
-          style={{ color: "var(--text-secondary)" }}
-        >
-          {t("dashboard.tasks.running")}
-        </div>
-        {activeTasks.length > 0 ? (
-          activeTasks.map((task) => (
-            <div key={task.id}>
-              <TaskRow
-                task={task}
-                tone="running"
-                onOpenPath={onOpenPath}
-                onFeedback={onFeedback}
-                isHighlighted={highlightedTaskId === task.id}
-              />
+        <div className="grid grid-cols-3 gap-2">
+          {[
+            {
+              label: t("dashboard.tasks.running"),
+              value: activeTasks.length,
+            },
+            {
+              label: t("dashboard.tasks.queued"),
+              value: queuedTasks.length,
+            },
+            {
+              label: t("dashboard.tasks.recent"),
+              value: heartbeat?.recentTasks?.length ?? 0,
+            },
+          ].map((item) => (
+            <div
+              key={item.label}
+              className="rounded-lg border px-3 py-2"
+              style={{
+                backgroundColor: "var(--bg-primary)",
+                borderColor: "var(--border-color)",
+              }}
+            >
+              <div className="text-[10px]" style={{ color: "var(--text-secondary)" }}>
+                {item.label}
+              </div>
+              <div className="mt-1 text-sm font-semibold" style={{ color: "var(--text-primary)" }}>
+                {item.value}
+              </div>
             </div>
-          ))
+          ))}
+        </div>
+
+        {activeTasks.length > 0 ? (
+          <TaskRow
+            task={activeTasks[0]}
+            tone="running"
+            onOpenPath={onOpenPath}
+            onFeedback={onFeedback}
+            isHighlighted={highlightedTaskId === activeTasks[0].id}
+          />
+        ) : recentTask ? (
+          <TaskRow
+            task={recentTask}
+            tone="recent"
+            onOpenPath={onOpenPath}
+            onFeedback={onFeedback}
+            isHighlighted={highlightedTaskId === recentTask.id}
+          />
         ) : (
           <EmptyTaskState label={t("dashboard.tasks.empty.running")} />
-        )}
-
-        <div
-          className="text-[10px] font-semibold uppercase tracking-wider mt-3 mb-1"
-          style={{ color: "var(--text-secondary)" }}
-        >
-          {t("dashboard.tasks.queued")}
-        </div>
-        {queuedTasks.length > 0 ? (
-          queuedTasks.map((task) => (
-            <div key={task.id}>
-              <TaskRow
-                task={task}
-                tone="queued"
-                onOpenPath={onOpenPath}
-                onFeedback={onFeedback}
-                isHighlighted={highlightedTaskId === task.id}
-              />
-            </div>
-          ))
-        ) : (
-          <EmptyTaskState label={t("dashboard.tasks.empty.queue")} />
-        )}
-
-        <div
-          className="text-[10px] font-semibold uppercase tracking-wider mt-3 mb-1"
-          style={{ color: "var(--text-secondary)" }}
-        >
-          {t("dashboard.tasks.recent")}
-        </div>
-        {recentTasks.length > 0 ? (
-          recentTasks.slice(0, 3).map((task) => (
-            <div key={task.id}>
-              <TaskRow
-                task={task}
-                tone="recent"
-                onOpenPath={onOpenPath}
-                onFeedback={onFeedback}
-                isHighlighted={highlightedTaskId === task.id}
-              />
-            </div>
-          ))
-        ) : (
-          <EmptyTaskState label={t("dashboard.tasks.empty.recent")} />
         )}
       </div>
     </div>
@@ -1025,6 +1012,7 @@ const Flow = () => {
   const [evidenceLoading, setEvidenceLoading] = useState(false);
   const [evidenceResults, setEvidenceResults] = useState<KnowledgeItem[]>([]);
   const [evidenceFilter, setEvidenceFilter] = useState<EvidenceLevel | "all">("all");
+  const [focusedPanel, setFocusedPanel] = useState<"asset" | "evidence" | null>(null);
 
   useEffect(() => {
     if (isLightMode) {
@@ -1202,6 +1190,21 @@ const Flow = () => {
     window.open(link, "_blank", "noopener,noreferrer");
   }, []);
 
+  const focusPanel = useCallback((panel: "asset" | "evidence") => {
+    setCurrentView("dashboard");
+    setFocusedPanel(panel);
+    window.requestAnimationFrame(() => {
+      const selector =
+        panel === "asset"
+          ? "[data-testid='asset-intake-panel']"
+          : "[data-testid='evidence-search-panel']";
+      document.querySelector(selector)?.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+      });
+    });
+  }, []);
+
   const handleAdoptSuggestedRoot = useCallback(async () => {
     const suggested = controlPlaneState?.assetRoot.suggestedPath;
     if (!suggested) {
@@ -1217,6 +1220,7 @@ const Flow = () => {
       setIntakeLastActionMessage(`Saved asset root: ${response.assetRoot.path}`);
       setIntakeErrorMessage(undefined);
       pushToast(`Asset root saved: ${response.assetRoot.path}`);
+      focusPanel("asset");
       await refreshControlPlane();
     } catch (error) {
       console.error(error);
@@ -1283,6 +1287,29 @@ const Flow = () => {
     }
   }, [evidenceQuery, pushToast]);
 
+  const runDecisionEvidenceSearch = useCallback(
+    async (query: string) => {
+      setEvidenceQuery(query);
+      setEvidenceFilter("all");
+      focusPanel("evidence");
+      try {
+        setEvidenceLoading(true);
+        const { results } = await searchKnowledge(query);
+        startTransition(() => {
+          setEvidenceResults(results);
+        });
+      } catch (error) {
+        console.error(error);
+        pushToast(
+          error instanceof Error ? error.message : "Failed to search evidence",
+        );
+      } finally {
+        setEvidenceLoading(false);
+      }
+    },
+    [focusPanel, pushToast],
+  );
+
   const handleOpenFeedback = useCallback((task: AgentTask) => {
     setFeedbackTask(task);
     setFeedbackResult(null);
@@ -1334,20 +1361,67 @@ const Flow = () => {
 
   const decisionQueueItems = (
     heartbeat?.decisionQueue ?? controlPlaneState?.decisionQueue ?? []
-  ).map((item) => ({
-    id: item.id,
-    priority: decisionPriorityNumber(item.priority),
-    title: item.title,
-    reason: item.reason,
-    nextAction: item.nextAction,
-    statusLabels: [item.status],
-    evidenceLabels: item.evidenceLevel ? [item.evidenceLevel] : [],
-    refs: item.refs?.map((ref) => ref.value) ?? [],
-    ctaLabel: item.relatedTaskId ? t("decisionQueue.action.highlightTask") : undefined,
-    onActionClick: item.relatedTaskId
-      ? () => handleViewEvolutionTask(item.relatedTaskId as string)
-      : undefined,
-  }));
+  ).map((item) => {
+    const refs: DecisionRefItem[] =
+      item.refs?.map((ref) => ({
+        label: ref.label,
+        value: ref.value,
+        actionLabel: ref.path ? t("evidence.action.openPath") : undefined,
+        onActionClick: ref.path ? () => handleOpenPath(ref.path!) : undefined,
+      })) ?? [];
+
+    const actions: DecisionActionItem[] = [];
+
+    if (item.title === "Asset Root Needed" && !controlPlaneState?.assetRoot.configured) {
+      actions.push({
+        label: t("assetIntake.adoptSuggested"),
+        onActionClick: handleAdoptSuggestedRoot,
+        tone: "primary",
+      });
+    }
+
+    if (
+      item.relatedNodeId === "project_file_organize" ||
+      item.relatedNodeId === "project_file_index" ||
+      item.title === "Blocked Workflow"
+    ) {
+      actions.push({
+        label: t("decisionQueue.action.openAssetIntake"),
+        onActionClick: () => {
+          const targetPath = item.refs?.find((ref) => ref.path)?.path;
+          if (targetPath) {
+            setTargetDirectory(targetPath);
+          }
+          focusPanel("asset");
+        },
+        tone: "primary",
+      });
+    }
+
+    actions.push({
+      label: t("decisionQueue.action.searchEvidence"),
+      onActionClick: () =>
+        runDecisionEvidenceSearch(
+          item.relatedTaskId || item.relatedNodeId || item.refs?.[0]?.value || item.title,
+        ),
+    });
+
+    return {
+      id: item.id,
+      priority: decisionPriorityNumber(item.priority),
+      title: item.title,
+      reason: item.reason,
+      nextAction: item.nextAction,
+      statusLabels: [item.status],
+      evidenceLabels: item.evidenceLevel ? [item.evidenceLevel] : [],
+      refs,
+      actions,
+      ctaLabel: item.relatedTaskId ? t("decisionQueue.action.highlightTask") : undefined,
+      onActionClick: item.relatedTaskId
+        ? () => handleViewEvolutionTask(item.relatedTaskId as string)
+        : undefined,
+    };
+  });
 
   const evidencePanelResults = evidenceResults.map(mapKnowledgeToEvidenceResult);
 
@@ -1478,7 +1552,7 @@ const Flow = () => {
                     onOpenGuide={() => setIsGuideOpen(true)}
                     onPreloadTree={handlePreloadSkillTree}
                   />
-                  <GlobalTaskPanel
+                  <RuntimeStatusStrip
                     heartbeat={heartbeat}
                     onOpenPath={handleOpenPath}
                     onFeedback={handleOpenFeedback}
@@ -1486,46 +1560,70 @@ const Flow = () => {
                   />
                   <DecisionQueuePanel decisions={decisionQueueItems} />
                   {controlPlaneState && (
-                    <AssetIntakePanel
-                      assetRoot={{
-                        path: controlPlaneState.assetRoot.path,
-                        source: controlPlaneState.assetRoot.source,
-                        configured: controlPlaneState.assetRoot.configured,
-                        description: controlPlaneState.assetRoot.configured
-                          ? t("assetIntake.description.configured")
-                          : t("assetIntake.description.suggested"),
+                    <div
+                      data-focus-state={focusedPanel === "asset" ? "active" : "idle"}
+                      style={{
+                        outline:
+                          focusedPanel === "asset"
+                            ? "2px solid var(--node-run-border)"
+                            : "none",
+                        outlineOffset: "6px",
+                        borderRadius: "24px",
                       }}
-                      suggestedAssetRootPath={controlPlaneState.assetRoot.suggestedPath}
-                      namingContractLines={controlPlaneState.assetRoot.namingContract.summary}
-                      onAdoptSuggestedRoot={
-                        controlPlaneState.assetRoot.configured
-                          ? undefined
-                          : handleAdoptSuggestedRoot
-                      }
-                      targetDirectory={targetDirectory}
-                      archiveRuleNote={archiveRuleNote}
-                      onTargetDirectoryChange={setTargetDirectory}
-                      onArchiveRuleNoteChange={setArchiveRuleNote}
-                      onQueueOrganize={() => handleQueueAssetIntake("organize")}
-                      onQueueIndex={() => handleQueueAssetIntake("index")}
-                      onQueueFullIntake={() => handleQueueAssetIntake("fullIntake")}
-                      loadingAction={intakeLoadingAction}
-                      errorMessage={intakeErrorMessage}
-                      lastActionMessage={intakeLastActionMessage}
-                    />
+                    >
+                      <AssetIntakePanel
+                        assetRoot={{
+                          path: controlPlaneState.assetRoot.path,
+                          source: controlPlaneState.assetRoot.source,
+                          configured: controlPlaneState.assetRoot.configured,
+                          description: controlPlaneState.assetRoot.configured
+                            ? t("assetIntake.description.configured")
+                            : t("assetIntake.description.suggested"),
+                        }}
+                        suggestedAssetRootPath={controlPlaneState.assetRoot.suggestedPath}
+                        namingContractLines={controlPlaneState.assetRoot.namingContract.summary}
+                        onAdoptSuggestedRoot={
+                          controlPlaneState.assetRoot.configured
+                            ? undefined
+                            : handleAdoptSuggestedRoot
+                        }
+                        targetDirectory={targetDirectory}
+                        archiveRuleNote={archiveRuleNote}
+                        onTargetDirectoryChange={setTargetDirectory}
+                        onArchiveRuleNoteChange={setArchiveRuleNote}
+                        onQueueOrganize={() => handleQueueAssetIntake("organize")}
+                        onQueueIndex={() => handleQueueAssetIntake("index")}
+                        onQueueFullIntake={() => handleQueueAssetIntake("fullIntake")}
+                        loadingAction={intakeLoadingAction}
+                        errorMessage={intakeErrorMessage}
+                        lastActionMessage={intakeLastActionMessage}
+                      />
+                    </div>
                   )}
                   <div className="min-h-[24rem]">
-                    <EvidenceSearchPanel
-                      query={evidenceQuery}
-                      onQueryChange={setEvidenceQuery}
-                      loading={evidenceLoading}
-                      results={evidencePanelResults}
-                      selectedEvidenceFilter={evidenceFilter}
-                      onFilterChange={setEvidenceFilter}
-                      onSubmit={handleEvidenceSearch}
-                      onOpenPath={handleOpenPath}
-                      onOpenLink={handleOpenKnowledgeLink}
-                    />
+                    <div
+                      data-focus-state={focusedPanel === "evidence" ? "active" : "idle"}
+                      style={{
+                        outline:
+                          focusedPanel === "evidence"
+                            ? "2px solid var(--node-run-border)"
+                            : "none",
+                        outlineOffset: "6px",
+                        borderRadius: "24px",
+                      }}
+                    >
+                      <EvidenceSearchPanel
+                        query={evidenceQuery}
+                        onQueryChange={setEvidenceQuery}
+                        loading={evidenceLoading}
+                        results={evidencePanelResults}
+                        selectedEvidenceFilter={evidenceFilter}
+                        onFilterChange={setEvidenceFilter}
+                        onSubmit={handleEvidenceSearch}
+                        onOpenPath={handleOpenPath}
+                        onOpenLink={handleOpenKnowledgeLink}
+                      />
+                    </div>
                   </div>
                 </div>
               </div>
