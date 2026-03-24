@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>OpenClaw</title>
+    <style>
+      body { margin: 0; background: #f4f7fb; color: #111827; font: 16px/1.6 -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif; }
+      .page { max-width: 1080px; margin: 0 auto; padding: 56px 20px 72px; }
+      .hero { background: white; border: 1px solid #dbe2ea; border-radius: 28px; padding: 32px; box-shadow: 0 18px 48px rgba(15,23,42,.08); }
+      .grid { display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); margin-top: 24px; }
+      .card { background: white; border: 1px solid #dbe2ea; border-radius: 20px; padding: 18px; }
+      .actions { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 20px; }
+      a.button { display: inline-flex; align-items: center; justify-content: center; border-radius: 999px; padding: 12px 18px; text-decoration: none; font-weight: 700; }
+      a.primary { background: #2563eb; color: white; }
+      a.secondary { background: #eef2ff; color: #3730a3; }
+      code { background: #eef2ff; border-radius: 6px; padding: 2px 6px; }
+    </style>
+  </head>
+  <body>
+    <div class="page">
+      <section class="hero">
+        <h1>OpenClaw</h1>
+        <p>Local-first console, official package distribution, and a moderated community platform for reusable SOPs, skills, demos, and tutorials.</p>
+        <div class="actions">
+          <a class="button primary" href="https://github.com/YOUR_ORG/YOUR_REPO/releases">Download Packages</a>
+          <a class="button secondary" href="https://app.your-domain.example">Open Platform</a>
+          <a class="button secondary" href="https://github.com/YOUR_ORG/YOUR_REPO/discussions">Community Discussions</a>
+        </div>
+      </section>
+      <div class="grid">
+        <div class="card">
+          <h3>Local Console</h3>
+          <p>Private local control plane for assets, SOP execution, package import/install, and agent workflows.</p>
+        </div>
+        <div class="card">
+          <h3>Web Platform</h3>
+          <p>Website, package registry, submissions, reviews, admin controls, and signed distribution flows.</p>
+        </div>
+        <div class="card">
+          <h3>GitHub Distribution</h3>
+          <p>GitHub Pages for the public site and GitHub Releases for public package distribution.</p>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

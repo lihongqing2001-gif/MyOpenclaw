@@ -1,0 +1,16 @@
+[Unit]
+Description=OpenClaw Local Console Broker
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=/opt/openclaw/mission-control
+Environment=NODE_ENV=production
+ExecStart=/usr/bin/npm run start
+Restart=always
+RestartSec=5
+User=openclaw
+Group=openclaw
+
+[Install]
+WantedBy=multi-user.target

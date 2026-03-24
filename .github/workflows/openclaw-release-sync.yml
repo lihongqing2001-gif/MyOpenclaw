@@ -1,0 +1,30 @@
+name: openclaw-release-sync
+
+on:
+  workflow_dispatch:
+    inputs:
+      package_zip:
+        description: "Path to the package zip inside the repository workspace or build artifact step"
+        required: true
+      visibility:
+        description: "official or community"
+        required: true
+        default: "official"
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: apps/openclaw-web-platform
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: npm install
+      - run: npm run typecheck
+      - run: npm run publish-package -- ../../${{ inputs.package_zip }} ${{ inputs.visibility }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_RELEASE_REPO: ${{ github.repository }}

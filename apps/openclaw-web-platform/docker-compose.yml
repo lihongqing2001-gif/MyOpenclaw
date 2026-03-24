@@ -1,0 +1,12 @@
+services:
+  openclaw-web-platform:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3400:3400"
+    env_file:
+      - .env
+    volumes:
+      - ./data:/app/data
+    restart: unless-stopped

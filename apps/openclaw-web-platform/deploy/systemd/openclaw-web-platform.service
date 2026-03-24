@@ -1,0 +1,17 @@
+[Unit]
+Description=OpenClaw Web Platform
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=/opt/openclaw/openclaw-web-platform
+Environment=NODE_ENV=production
+EnvironmentFile=/opt/openclaw/openclaw-web-platform/.env
+ExecStart=/usr/bin/npm run start
+Restart=always
+RestartSec=5
+User=openclaw
+Group=openclaw
+
+[Install]
+WantedBy=multi-user.target

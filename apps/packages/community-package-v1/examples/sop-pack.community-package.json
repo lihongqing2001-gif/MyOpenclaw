@@ -1,0 +1,50 @@
+{
+  "schemaVersion": "community-package-v1",
+  "packageId": "cap.openclaw.sop.content-schedule-planning",
+  "type": "sop-pack",
+  "name": "日程规划与冲突检测",
+  "version": "0.2.0",
+  "author": {
+    "name": "OpenClaw",
+    "id": "official/openclaw"
+  },
+  "description": "Portable SOP package exported from OpenClaw Local Console.",
+  "source": {
+    "kind": "local-export",
+    "createdAt": "2026-03-24T00:00:00Z"
+  },
+  "capabilities": [
+    {
+      "id": "cap.openclaw.sop.content-schedule-planning",
+      "label": "日程规划与冲突检测",
+      "summary": "Portable SOP workflow package.",
+      "entrypoint": "__OPENCLAW_WORKFLOW__ sop-content-schedule-planning"
+    }
+  ],
+  "dependencies": [],
+  "compatibility": {
+    "openclawMinVersion": "2026.3.2",
+    "installMode": "local-console",
+    "platforms": ["macos", "linux", "windows"]
+  },
+  "permissions": [
+    {
+      "key": "filesystem.read",
+      "required": true,
+      "reason": "Read SOP, docs, and local support files during install and execution."
+    }
+  ],
+  "checksums": {
+    "algorithm": "sha256",
+    "files": []
+  },
+  "docs": [
+    {
+      "title": "README",
+      "path": "README.md"
+    }
+  ],
+  "assets": [],
+  "reviewStatus": "draft",
+  "visibility": "private"
+}

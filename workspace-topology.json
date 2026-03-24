@@ -1,0 +1,12 @@
+{
+  "repoRoot": "/Users/liumobei/.openclaw/workspace",
+  "runtimeRoot": "/Users/liumobei/.openclaw/runtime",
+  "externalProjectsRoot": "/Users/liumobei/.openclaw/external-projects",
+  "appsRoot": "/Users/liumobei/.openclaw/workspace/apps",
+  "officialRoot": "/Users/liumobei/.openclaw/workspace/official",
+  "docsRoot": "/Users/liumobei/.openclaw/workspace/docs",
+  "infraRoot": "/Users/liumobei/.openclaw/workspace/infra",
+  "archiveRoot": "/Users/liumobei/.openclaw/workspace/archive",
+  "migrationMode": "phase-1-compatible",
+  "compatibilitySymlinks": true
+}

@@ -1,25 +1,50 @@
 {
-  "name": "mission-control",
-  "version": "0.1.0",
+  "name": "react-example",
   "private": true,
+  "version": "0.0.0",
+  "type": "module",
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "next lint"
+    "dev": "tsx server.ts",
+    "build": "vite build",
+    "preview": "vite preview",
+    "clean": "rm -rf dist",
+    "lint": "tsc --noEmit",
+    "start": "NODE_ENV=production tsx server.ts",
+    "agent": "python3 openclaw_agent.py",
+    "test:e2e": "playwright test",
+    "test:e2e:headed": "playwright test --headed",
+    "package": "python3 scripts/package_release.py"
   },
   "dependencies": {
-    "convex": "^1.18.2",
-    "next": "14.2.18",
-    "react": "18.3.1",
-    "react-dom": "18.3.1"
+    "@google/genai": "^1.29.0",
+    "@react-three/drei": "^10.7.7",
+    "@react-three/fiber": "^9.5.0",
+    "@splinetool/react-spline": "^4.1.0",
+    "@tailwindcss/vite": "^4.1.14",
+    "@types/dagre": "^0.7.54",
+    "@vitejs/plugin-react": "^5.0.4",
+    "@xyflow/react": "^12.10.1",
+    "better-sqlite3": "^12.4.1",
+    "clsx": "^2.1.1",
+    "dagre": "^0.8.5",
+    "dotenv": "^17.2.3",
+    "express": "^4.21.2",
+    "lucide-react": "^0.546.0",
+    "motion": "^12.23.24",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "tailwind-merge": "^3.5.0",
+    "three": "^0.183.2",
+    "vite": "^6.2.0"
   },
   "devDependencies": {
-    "@types/node": "^22.10.1",
-    "@types/react": "^18.3.12",
-    "@types/react-dom": "^18.3.1",
-    "eslint": "^8.57.1",
-    "eslint-config-next": "14.2.18",
-    "typescript": "^5.7.2"
+    "@playwright/test": "^1.58.2",
+    "@types/express": "^4.17.21",
+    "@types/node": "^22.14.0",
+    "autoprefixer": "^10.4.21",
+    "tailwindcss": "^4.1.14",
+    "tsx": "^4.21.0",
+    "typescript": "~5.8.2",
+    "vite": "^6.2.0"
   }
 }
