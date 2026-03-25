@@ -7,6 +7,12 @@ export type CommunityPackageType =
 
 export type CommunityPackageVisibility = "private" | "official" | "community";
 export type CommunityResourceMirrorStatus = "official" | "mirrored" | "upstream-only";
+export type CommunityPackageOnboardingRequirementKind =
+  | "permission"
+  | "config"
+  | "login"
+  | "consent"
+  | "dependency";
 
 export type CommunityPackageReviewStatus =
   | "draft"
@@ -77,6 +83,22 @@ export interface CommunityPackageManifest {
     required: boolean;
     reason: string;
   }>;
+  onboarding?: {
+    mode: "guided-first-run";
+    autoRunEntrypoint: string;
+    requirements: Array<{
+      id: string;
+      kind: CommunityPackageOnboardingRequirementKind;
+      label: string;
+      required: boolean;
+      reason: string;
+      key?: string;
+      provider?: string;
+      instructions?: string;
+      installCommand?: string;
+      installUrl?: string;
+    }>;
+  };
   checksums: {
     algorithm: "sha256";
     files: Array<{ path: string; sha256: string }>;

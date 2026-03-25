@@ -9,6 +9,8 @@ import {
   CloudConsoleAccessCode,
   CloudConsoleGrant,
   GithubOAuthState,
+  LocalComputeNode,
+  LocalComputeTask,
   PackageRecord,
   ReviewDecision,
   SecurityEvent,
@@ -32,6 +34,8 @@ export interface WebPlatformDatabase {
   securityEvents: SecurityEvent[];
   cloudConsoleAccessCodes: CloudConsoleAccessCode[];
   cloudConsoleGrants: CloudConsoleGrant[];
+  localComputeNodes: LocalComputeNode[];
+  localComputeTasks: LocalComputeTask[];
   settings: PlatformSettings;
 }
 
@@ -42,6 +46,7 @@ const dataDir = path.resolve(
 const storageDir = path.join(dataDir, "storage");
 const packagesDir = path.join(storageDir, "packages");
 const submissionsDir = path.join(storageDir, "submissions");
+const localComputeDir = path.join(storageDir, "local-compute");
 const databasePath = path.join(dataDir, "db.json");
 const postgresStateKey = "primary";
 
@@ -60,6 +65,8 @@ const emptyDatabase = (): WebPlatformDatabase => ({
   securityEvents: [],
   cloudConsoleAccessCodes: [],
   cloudConsoleGrants: [],
+  localComputeNodes: [],
+  localComputeTasks: [],
   settings: {
     github: {
       clientId: "",
@@ -91,6 +98,12 @@ function arrayOrEmpty<T>(value: unknown): T[] {
   return Array.isArray(value) ? (value as T[]) : [];
 }
 
+function stringArrayOrEmpty(value: unknown) {
+  return Array.isArray(value)
+    ? value.map((item) => String(item).trim()).filter(Boolean)
+    : [];
+}
+
 export function normalizeDatabase(payload: Partial<WebPlatformDatabase> | null | undefined): WebPlatformDatabase {
   return {
     users: arrayOrEmpty<User>(payload?.users),
@@ -104,6 +117,21 @@ export function normalizeDatabase(payload: Partial<WebPlatformDatabase> | null |
     securityEvents: arrayOrEmpty<SecurityEvent>(payload?.securityEvents),
     cloudConsoleAccessCodes: arrayOrEmpty<CloudConsoleAccessCode>(payload?.cloudConsoleAccessCodes),
     cloudConsoleGrants: arrayOrEmpty<CloudConsoleGrant>(payload?.cloudConsoleGrants),
+    localComputeNodes: arrayOrEmpty<LocalComputeNode>(payload?.localComputeNodes).map((node) => ({
+      ...node,
+      sharingMode: node?.sharingMode === "trusted-shared" ? "trusted-shared" : "author-only",
+      sharedWithUserIds: stringArrayOrEmpty(node?.sharedWithUserIds),
+      allowedPackageIds: stringArrayOrEmpty(node?.allowedPackageIds),
+      allowedNodeIds: stringArrayOrEmpty(node?.allowedNodeIds),
+      allowedPathScopes: stringArrayOrEmpty(node?.allowedPathScopes),
+      allowedAuthCapabilities: stringArrayOrEmpty(node?.allowedAuthCapabilities),
+    })),
+    localComputeTasks: arrayOrEmpty<LocalComputeTask>(payload?.localComputeTasks).map((task) => ({
+      ...task,
+      requestedByUserId: task?.requestedByUserId || task.createdByUserId,
+      ownerUserId: task?.ownerUserId || task.createdByUserId,
+      accessMode: task?.accessMode === "trusted-shared" ? "trusted-shared" : "owner",
+    })),
     settings: {
       github: {
         clientId: payload?.settings?.github?.clientId || "",
@@ -256,6 +284,7 @@ export function getWebPlatformPaths() {
     storageDir,
     packagesDir,
     submissionsDir,
+    localComputeDir,
     databasePath,
   };
 }
@@ -265,6 +294,7 @@ export function ensureWebPlatformStorage() {
   ensureDir(storageDir);
   ensureDir(packagesDir);
   ensureDir(submissionsDir);
+  ensureDir(localComputeDir);
   ensurePostgresStorage();
   if (!fs.existsSync(databasePath)) {
     writeLocalMirror(emptyDatabase());
@@ -329,4 +359,8 @@ export function publishPackageArchive(packageId: string, version: string, archiv
 
 export function createId(prefix: string) {
   return `${prefix}_${randomUUID()}`;
+}
+
+export function localComputeTaskDir(taskId: string) {
+  return path.join(localComputeDir, "tasks", taskId);
 }

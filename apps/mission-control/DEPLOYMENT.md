@@ -72,6 +72,12 @@ Set these environment variables on the server deployment:
 
 This keeps the Console as a separate app while still requiring a Hub-issued access grant before users can enter it.
 
+Resident agent requirement:
+
+- export `SOLOCORE_CLOUD_CONSOLE_INTERNAL_TOKEN` in the same runtime that launches `python3 openclaw_agent.py`
+- fallback env keys accepted by the agent are `OPENCLAW_CLOUD_CONSOLE_INTERNAL_TOKEN` and `SOLOCORE_INTERNAL_TOKEN`
+- the token must match the broker token exactly, otherwise agent heartbeat/poll/task-update calls are rejected
+
 ## Build A Shareable Local Bundle
 
 ```bash

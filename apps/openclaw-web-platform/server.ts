@@ -54,6 +54,21 @@ import {
   issueCloudConsoleLaunchToken,
   redeemCloudConsoleAccessCode,
 } from "./src/server/consoleAccess";
+import {
+  assertSharedRuntimePackageAccess,
+  authenticateLocalComputeNode,
+  buildAdminLocalComputeSnapshot,
+  buildSharedRuntimeSnapshot,
+  canUserAccessLocalComputeNode,
+  createLocalComputeNode,
+  createLocalComputeTask,
+  markLocalComputeHeartbeat,
+  nextQueuedLocalComputeTask,
+  refreshLocalComputeNodes,
+  resolveLocalComputePackageTarget,
+  storeLocalComputeArtifact,
+  updateLocalComputeTask,
+} from "./src/server/localCompute";
 
 dotenv.config();
 ensureWebPlatformStorage();
@@ -176,6 +191,39 @@ function safeUser(user: {
     githubLogin: user.githubLogin,
     twoFactorEnabled: user.twoFactorEnabled,
     createdAt: user.createdAt,
+  };
+}
+
+function localComputeNodeCredentials(req: Request) {
+  const nodeId = String(req.header("x-solocore-local-node-id") || req.body?.nodeId || "").trim();
+  const token = String(req.header("x-solocore-local-node-token") || req.body?.nodeToken || "").trim();
+  return { nodeId, token };
+}
+
+function parseDelimitedList(value: unknown) {
+  if (Array.isArray(value)) {
+    return value.map((item) => String(item).trim()).filter(Boolean);
+  }
+  if (typeof value === "string") {
+    return value
+      .split(/[\n,]/)
+      .map((item) => item.trim())
+      .filter(Boolean);
+  }
+  return [] as string[];
+}
+
+function normalizeCapabilityList(value: unknown) {
+  return parseDelimitedList(value).map((item) => item.toLowerCase());
+}
+
+function resolveSharedUsersByEmail(db: ReturnType<typeof loadDatabase>, emails: string[]) {
+  const byEmail = new Map(db.users.map((user) => [user.email.trim().toLowerCase(), user]));
+  const sharedUsers = emails.map((email) => byEmail.get(email.trim().toLowerCase()) || null);
+  const unresolvedEmails = emails.filter((_email, index) => !sharedUsers[index]);
+  return {
+    sharedUsers: sharedUsers.filter((user): user is NonNullable<typeof user> => Boolean(user)),
+    unresolvedEmails,
   };
 }
 
@@ -1012,6 +1060,368 @@ app.post("/admin/cloud-console/access-codes/:codeId/revoke", requireAuth, requir
   saveDatabase(db);
   audit("cloud_console_code_revoke", "cloud_console_code", code.id, auth.user.id);
   return res.json({ success: true });
+});
+
+app.get("/admin/local-compute/nodes", requireAuth, requireRole(["super_admin"]), requireAdminTwoFactor, (_req, res) => {
+  const db = loadDatabase();
+  const snapshot = buildAdminLocalComputeSnapshot(db);
+  saveDatabase(db);
+  return res.json(snapshot);
+});
+
+app.post("/admin/local-compute/nodes/register", requireAuth, requireRole(["super_admin"]), requireAdminTwoFactor, enforceCsrf, (req, res) => {
+  const auth = (req as Request & { auth?: ReturnType<typeof authContext> }).auth!;
+  const label = typeof req.body?.label === "string" ? req.body.label.trim() : "";
+  if (!label) {
+    return res.status(400).json({ error: "label is required" });
+  }
+
+  const db = loadDatabase();
+  const sharedWithEmails = parseDelimitedList(req.body?.sharedWithEmails);
+  const { sharedUsers, unresolvedEmails } = resolveSharedUsersByEmail(db, sharedWithEmails);
+  if (unresolvedEmails.length > 0) {
+    return res.status(400).json({ error: `Shared users not found: ${unresolvedEmails.join(", ")}` });
+  }
+  const { node, plainToken } = createLocalComputeNode(db, auth.user, {
+    label,
+    allowedPackageIds: parseDelimitedList(req.body?.allowedPackageIds),
+    allowedNodeIds: parseDelimitedList(req.body?.allowedNodeIds),
+    sharedWithUserIds: sharedUsers.map((user) => user.id),
+    sharingMode: req.body?.sharingMode === "trusted-shared" ? "trusted-shared" : "author-only",
+    allowedPathScopes: parseDelimitedList(req.body?.allowedPathScopes),
+    allowedAuthCapabilities: normalizeCapabilityList(req.body?.allowedAuthCapabilities),
+    capabilities: Array.isArray(req.body?.capabilities)
+      ? req.body.capabilities
+          .filter((item: unknown): item is { id: string; label: string; kind: "package" | "skill-node" | "system"; command?: string } => {
+            const candidate = item as Record<string, unknown> | null;
+            return Boolean(
+              candidate &&
+              typeof candidate.id === "string" &&
+              typeof candidate.label === "string" &&
+              typeof candidate.kind === "string",
+            );
+          })
+          .map((item: { id: string; label: string; kind: "package" | "skill-node" | "system"; command?: string }) => ({
+            id: item.id.trim(),
+            label: item.label.trim(),
+            kind: item.kind,
+            command: typeof item.command === "string" ? item.command.trim() : undefined,
+          }))
+      : [],
+  });
+  saveDatabase(db);
+  audit("local_compute_node_register", "local_compute_node", node.nodeId, auth.user.id, {
+    sharingMode: node.sharingMode,
+    sharedWithUserIds: node.sharedWithUserIds,
+    allowedPackageIds: node.allowedPackageIds,
+    allowedNodeIds: node.allowedNodeIds,
+    allowedPathScopes: node.allowedPathScopes,
+    allowedAuthCapabilities: node.allowedAuthCapabilities,
+  });
+  return res.json({ success: true, node, plainToken });
+});
+
+app.post("/admin/local-compute/nodes/:nodeId/share-policy", requireAuth, requireRole(["super_admin"]), requireAdminTwoFactor, enforceCsrf, (req, res) => {
+  const auth = (req as Request & { auth?: ReturnType<typeof authContext> }).auth!;
+  const db = loadDatabase();
+  const node = db.localComputeNodes.find((item) => item.nodeId === req.params.nodeId);
+  if (!node) {
+    return res.status(404).json({ error: "Local compute node not found" });
+  }
+
+  const sharedWithEmails = parseDelimitedList(req.body?.sharedWithEmails);
+  const { sharedUsers, unresolvedEmails } = resolveSharedUsersByEmail(db, sharedWithEmails);
+  if (unresolvedEmails.length > 0) {
+    return res.status(400).json({ error: `Shared users not found: ${unresolvedEmails.join(", ")}` });
+  }
+
+  node.sharingMode = req.body?.sharingMode === "trusted-shared" ? "trusted-shared" : "author-only";
+  node.sharedWithUserIds = sharedUsers.map((user) => user.id);
+  node.allowedPathScopes = parseDelimitedList(req.body?.allowedPathScopes);
+  node.allowedAuthCapabilities = normalizeCapabilityList(req.body?.allowedAuthCapabilities);
+  node.updatedAt = new Date().toISOString();
+  saveDatabase(db);
+  audit("local_compute_node_share_policy_update", "local_compute_node", node.nodeId, auth.user.id, {
+    sharingMode: node.sharingMode,
+    sharedWithUserIds: node.sharedWithUserIds,
+    allowedPathScopes: node.allowedPathScopes,
+    allowedAuthCapabilities: node.allowedAuthCapabilities,
+  });
+  return res.json({ success: true, node });
+});
+
+app.post("/admin/local-compute/nodes/heartbeat", rateLimit("local-compute-heartbeat", 300, 60 * 1000), (req, res) => {
+  const { nodeId, token } = localComputeNodeCredentials(req);
+  if (!nodeId || !token) {
+    return res.status(401).json({ error: "node credentials are required" });
+  }
+
+  const db = loadDatabase();
+  const node = authenticateLocalComputeNode(db, nodeId, token);
+  if (!node) {
+    return res.status(403).json({ error: "Invalid local compute node credentials" });
+  }
+
+  markLocalComputeHeartbeat(node, {
+    status: typeof req.body?.status === "string" ? req.body.status : undefined,
+    currentTaskId: typeof req.body?.currentTaskId === "string" ? req.body.currentTaskId : undefined,
+    lastError: typeof req.body?.lastError === "string" ? req.body.lastError : undefined,
+    heartbeatMeta: req.body?.heartbeatMeta && typeof req.body.heartbeatMeta === "object"
+      ? {
+          localConsoleBaseUrl: typeof req.body.heartbeatMeta.localConsoleBaseUrl === "string" ? req.body.heartbeatMeta.localConsoleBaseUrl : undefined,
+          localBrokerVersion: typeof req.body.heartbeatMeta.localBrokerVersion === "string" ? req.body.heartbeatMeta.localBrokerVersion : undefined,
+          onlineAgent: Boolean(req.body.heartbeatMeta.onlineAgent),
+        }
+      : undefined,
+  });
+  saveDatabase(db);
+  return res.json({ success: true, nodeStatus: node.status, lastSeenAt: node.lastSeenAt });
+});
+
+app.post("/admin/local-compute/tasks", requireAuth, requireRole(["super_admin"]), requireAdminTwoFactor, enforceCsrf, (req, res) => {
+  const auth = (req as Request & { auth?: ReturnType<typeof authContext> }).auth!;
+  const nodeId = typeof req.body?.nodeId === "string" ? req.body.nodeId.trim() : "";
+  const taskKind = req.body?.taskKind === "skill-node" ? "skill-node" : "package";
+  if (!nodeId) {
+    return res.status(400).json({ error: "nodeId is required" });
+  }
+
+  const db = loadDatabase();
+  const node = db.localComputeNodes.find((item) => item.nodeId === nodeId);
+  if (!node) {
+    return res.status(404).json({ error: "Local compute node not found" });
+  }
+
+  try {
+    let task;
+    if (taskKind === "package") {
+      const packageId = typeof req.body?.packageId === "string" ? req.body.packageId.trim() : "";
+      if (!packageId) {
+        return res.status(400).json({ error: "packageId is required" });
+      }
+      if (node.allowedPackageIds.length > 0 && !node.allowedPackageIds.includes(packageId)) {
+        return res.status(403).json({ error: "Package is not allowed on this local compute node" });
+      }
+      const record = db.packages.find((item) => item.packageId === packageId);
+      if (!record) {
+        return res.status(404).json({ error: "Package not found" });
+      }
+      const resolved = resolveLocalComputePackageTarget(record, typeof req.body?.packageVersion === "string" ? req.body.packageVersion.trim() : undefined);
+      task = createLocalComputeTask(db, {
+        node,
+        createdByUser: auth.user,
+        ownerUserId: node.ownerUserId,
+        requestedByUserId: auth.user.id,
+        accessMode: auth.user.id === node.ownerUserId ? "owner" : "trusted-shared",
+        taskKind: "package",
+        packageId,
+        packageVersion: resolved.packageVersion,
+        targetNodeId: resolved.targetNodeId,
+        targetLabel: resolved.targetLabel,
+        command: resolved.command,
+        inputValues: req.body?.inputValues && typeof req.body.inputValues === "object" ? req.body.inputValues as Record<string, string> : {},
+      });
+    } else {
+      const targetNodeId = typeof req.body?.targetNodeId === "string" ? req.body.targetNodeId.trim() : "";
+      const targetLabel = typeof req.body?.targetLabel === "string" ? req.body.targetLabel.trim() : targetNodeId;
+      const command = typeof req.body?.command === "string" ? req.body.command.trim() : "";
+      if (!targetNodeId || !command) {
+        return res.status(400).json({ error: "targetNodeId and command are required" });
+      }
+      if (node.allowedNodeIds.length > 0 && !node.allowedNodeIds.includes(targetNodeId)) {
+        return res.status(403).json({ error: "Skill node is not allowed on this local compute node" });
+      }
+      task = createLocalComputeTask(db, {
+        node,
+        createdByUser: auth.user,
+        ownerUserId: node.ownerUserId,
+        requestedByUserId: auth.user.id,
+        accessMode: auth.user.id === node.ownerUserId ? "owner" : "trusted-shared",
+        taskKind: "skill-node",
+        targetNodeId,
+        targetLabel,
+        command,
+        inputValues: req.body?.inputValues && typeof req.body.inputValues === "object" ? req.body.inputValues as Record<string, string> : {},
+      });
+    }
+
+    saveDatabase(db);
+    audit("local_compute_task_create", "local_compute_task", task.id, auth.user.id, {
+      nodeId: task.nodeId,
+      ownerUserId: task.ownerUserId,
+      requestedByUserId: task.requestedByUserId,
+      accessMode: task.accessMode,
+      taskKind: task.taskKind,
+      targetNodeId: task.targetNodeId,
+      packageId: task.packageId,
+    });
+    return res.json({ success: true, task });
+  } catch (error) {
+    return res.status(400).json({ error: error instanceof Error ? error.message : "Failed to create local compute task" });
+  }
+});
+
+app.get("/me/shared-runtime", requireAuth, (req, res) => {
+  const auth = (req as Request & { auth?: ReturnType<typeof authContext> }).auth!;
+  const db = loadDatabase();
+  const snapshot = buildSharedRuntimeSnapshot(db, auth.user);
+  saveDatabase(db);
+  return res.json(snapshot);
+});
+
+app.post("/me/shared-runtime/tasks", requireAuth, enforceCsrf, rateLimit("shared-runtime-task-create", 60, 60 * 1000), (req, res) => {
+  const auth = (req as Request & { auth?: ReturnType<typeof authContext> }).auth!;
+  const nodeId = typeof req.body?.nodeId === "string" ? req.body.nodeId.trim() : "";
+  const taskKind = req.body?.taskKind === "skill-node" ? "skill-node" : "package";
+  if (!nodeId) {
+    return res.status(400).json({ error: "nodeId is required" });
+  }
+
+  const db = loadDatabase();
+  const node = db.localComputeNodes.find((item) => item.nodeId === nodeId);
+  if (!node || !canUserAccessLocalComputeNode(node, auth.user)) {
+    return res.status(403).json({ error: "Shared runtime is not available" });
+  }
+
+  try {
+    let task;
+    if (taskKind === "package") {
+      const packageId = typeof req.body?.packageId === "string" ? req.body.packageId.trim() : "";
+      if (!packageId) {
+        return res.status(400).json({ error: "packageId is required" });
+      }
+      const record = db.packages.find((item) => item.packageId === packageId);
+      if (!record) {
+        return res.status(404).json({ error: "Package not found" });
+      }
+      assertSharedRuntimePackageAccess(node, auth.user, record);
+      const resolved = resolveLocalComputePackageTarget(record, typeof req.body?.packageVersion === "string" ? req.body.packageVersion.trim() : undefined);
+      task = createLocalComputeTask(db, {
+        node,
+        createdByUser: auth.user,
+        ownerUserId: node.ownerUserId,
+        requestedByUserId: auth.user.id,
+        accessMode: auth.user.id === node.ownerUserId ? "owner" : "trusted-shared",
+        taskKind: "package",
+        packageId,
+        packageVersion: resolved.packageVersion,
+        targetNodeId: resolved.targetNodeId,
+        targetLabel: resolved.targetLabel,
+        command: resolved.command,
+        inputValues: req.body?.inputValues && typeof req.body.inputValues === "object" ? req.body.inputValues as Record<string, string> : {},
+      });
+    } else {
+      const targetNodeId = typeof req.body?.targetNodeId === "string" ? req.body.targetNodeId.trim() : "";
+      const targetLabel = typeof req.body?.targetLabel === "string" ? req.body.targetLabel.trim() : targetNodeId;
+      const command = typeof req.body?.command === "string" ? req.body.command.trim() : "";
+      if (!targetNodeId || !command) {
+        return res.status(400).json({ error: "targetNodeId and command are required" });
+      }
+      if (auth.user.id !== node.ownerUserId) {
+        if (node.allowedNodeIds.length === 0 || !node.allowedNodeIds.includes(targetNodeId)) {
+          return res.status(403).json({ error: "Skill node is not shared on this runtime" });
+        }
+      }
+      task = createLocalComputeTask(db, {
+        node,
+        createdByUser: auth.user,
+        ownerUserId: node.ownerUserId,
+        requestedByUserId: auth.user.id,
+        accessMode: auth.user.id === node.ownerUserId ? "owner" : "trusted-shared",
+        taskKind: "skill-node",
+        targetNodeId,
+        targetLabel,
+        command,
+        inputValues: req.body?.inputValues && typeof req.body.inputValues === "object" ? req.body.inputValues as Record<string, string> : {},
+      });
+    }
+
+    saveDatabase(db);
+    audit("shared_runtime_task_create", "local_compute_task", task.id, auth.user.id, {
+      nodeId: task.nodeId,
+      ownerUserId: task.ownerUserId,
+      requestedByUserId: task.requestedByUserId,
+      accessMode: task.accessMode,
+      taskKind: task.taskKind,
+      targetNodeId: task.targetNodeId,
+      packageId: task.packageId,
+      allowedPathScopes: node.allowedPathScopes,
+      allowedAuthCapabilities: node.allowedAuthCapabilities,
+    });
+    return res.json({ success: true, task });
+  } catch (error) {
+    return res.status(400).json({ error: error instanceof Error ? error.message : "Failed to create shared runtime task" });
+  }
+});
+
+app.post("/admin/local-compute/tasks/poll", rateLimit("local-compute-poll", 300, 60 * 1000), (req, res) => {
+  const { nodeId, token } = localComputeNodeCredentials(req);
+  if (!nodeId || !token) {
+    return res.status(401).json({ error: "node credentials are required" });
+  }
+  const db = loadDatabase();
+  const node = authenticateLocalComputeNode(db, nodeId, token);
+  if (!node) {
+    return res.status(403).json({ error: "Invalid local compute node credentials" });
+  }
+  const task = nextQueuedLocalComputeTask(db, node);
+  saveDatabase(db);
+  return res.json({ success: true, task: task || null });
+});
+
+app.post("/admin/local-compute/tasks/:taskId/update", rateLimit("local-compute-update", 300, 60 * 1000), (req, res) => {
+  const { nodeId, token } = localComputeNodeCredentials(req);
+  if (!nodeId || !token) {
+    return res.status(401).json({ error: "node credentials are required" });
+  }
+  const db = loadDatabase();
+  const node = authenticateLocalComputeNode(db, nodeId, token);
+  if (!node) {
+    return res.status(403).json({ error: "Invalid local compute node credentials" });
+  }
+  const task = db.localComputeTasks.find((item) => item.id === req.params.taskId && item.nodeId === node.nodeId);
+  if (!task) {
+    return res.status(404).json({ error: "Local compute task not found" });
+  }
+
+  updateLocalComputeTask(task, node, {
+    status: typeof req.body?.status === "string" ? req.body.status : undefined,
+    summary: typeof req.body?.summary === "string" ? req.body.summary : undefined,
+    resultDetail: typeof req.body?.resultDetail === "string" ? req.body.resultDetail : undefined,
+    error: typeof req.body?.error === "string" ? req.body.error : undefined,
+    localBrokerTaskId: typeof req.body?.localBrokerTaskId === "string" ? req.body.localBrokerTaskId : undefined,
+    syncManifest: req.body?.syncManifest && typeof req.body.syncManifest === "object" ? req.body.syncManifest as Record<string, unknown> : undefined,
+  });
+  saveDatabase(db);
+  return res.json({ success: true, task });
+});
+
+app.post("/admin/local-compute/tasks/:taskId/artifacts", rateLimit("local-compute-artifacts", 120, 60 * 1000), (req, res) => {
+  const { nodeId, token } = localComputeNodeCredentials(req);
+  if (!nodeId || !token) {
+    return res.status(401).json({ error: "node credentials are required" });
+  }
+  const db = loadDatabase();
+  const node = authenticateLocalComputeNode(db, nodeId, token);
+  if (!node) {
+    return res.status(403).json({ error: "Invalid local compute node credentials" });
+  }
+  const task = db.localComputeTasks.find((item) => item.id === req.params.taskId && item.nodeId === node.nodeId);
+  if (!task) {
+    return res.status(404).json({ error: "Local compute task not found" });
+  }
+  const artifacts = Array.isArray(req.body?.artifacts) ? req.body.artifacts : [];
+  const stored = artifacts
+    .filter((item: unknown): item is { fileName: string; contentBase64: string; contentType?: string; label?: string } => {
+      const candidate = item as Record<string, unknown> | null;
+      return Boolean(candidate && typeof candidate.fileName === "string" && typeof candidate.contentBase64 === "string");
+    })
+    .map((item: { fileName: string; contentBase64: string; contentType?: string; label?: string }) => storeLocalComputeArtifact(task, item));
+  task.updatedAt = new Date().toISOString();
+  node.lastSeenAt = task.updatedAt;
+  node.updatedAt = task.updatedAt;
+  saveDatabase(db);
+  return res.json({ success: true, artifacts: stored });
 });
 
 app.get("/admin/cloud-openclaw/summary", requireAuth, requireRole(["super_admin"]), requireAdminTwoFactor, async (_req, res) => {

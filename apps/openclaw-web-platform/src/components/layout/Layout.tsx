@@ -90,6 +90,11 @@ export function Layout() {
                     {session?.user?.email?.split("@")[0] || "Account"}
                   </Button>
                 </Link>
+                <Link to="/shared-runtime">
+                  <Button variant="ghost" size="sm" className="gap-2">
+                    Shared Runtime
+                  </Button>
+                </Link>
                 {session?.user?.role === "super_admin" ? (
                   <Link to="/admin">
                     <Button variant="outline" size="sm" className="gap-2">
@@ -148,6 +153,9 @@ export function Layout() {
                 <>
                   <Link to="/me" onClick={() => setIsMobileMenuOpen(false)}>
                     <Button variant="outline" className="w-full justify-start">My Submissions</Button>
+                  </Link>
+                  <Link to="/shared-runtime" onClick={() => setIsMobileMenuOpen(false)}>
+                    <Button variant="outline" className="w-full justify-start">Shared Runtime</Button>
                   </Link>
                   {session?.user?.role === "super_admin" ? (
                     <Link to="/admin" onClick={() => setIsMobileMenuOpen(false)}>
@@ -213,6 +221,7 @@ export function Layout() {
               <li><Link to="/community" className="hover:text-blue-400 transition-colors">Community Packages</Link></li>
               <li><Link to="/submit" className="hover:text-blue-400 transition-colors">Submit a Package</Link></li>
               <li><Link to="/cloud-console" className="hover:text-blue-400 transition-colors">Cloud Console Access</Link></li>
+              <li><Link to="/shared-runtime" className="hover:text-blue-400 transition-colors">Shared Runtime</Link></li>
             </ul>
           </div>
           <div>

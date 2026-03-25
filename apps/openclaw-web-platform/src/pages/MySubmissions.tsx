@@ -94,6 +94,13 @@ export function MySubmissions() {
                 {session?.user?.twoFactorEnabled ? "Enabled" : "Not enabled"}
               </span>
             </div>
+            <div className="flex flex-wrap gap-3 pt-2">
+              <Link to="/shared-runtime">
+                <Button variant="outline" className="border-slate-700 text-slate-300 hover:bg-slate-800">
+                  Open Shared Runtime
+                </Button>
+              </Link>
+            </div>
                 {session?.user?.githubLogin ? (
                   <div className="inline-flex items-center gap-2 text-slate-400">
                     <GitBranch className="w-4 h-4" />

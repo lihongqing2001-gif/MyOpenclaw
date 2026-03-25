@@ -25,6 +25,7 @@ SoloCore Console is the operator console for a resident OpenClaw runtime. It can
 - Pushes knowledge artifacts back into the UI after execution
 - Writes runtime cases and lessons into `agents/knowledge/`
 - Triggers `qmd update` after new knowledge is written
+- In cloud-console mode, sends `x-solocore-internal-token` from `SOLOCORE_CLOUD_CONSOLE_INTERNAL_TOKEN` (fallbacks: `OPENCLAW_CLOUD_CONSOLE_INTERNAL_TOKEN`, `SOLOCORE_INTERNAL_TOKEN`)
 
 ## Local Development
 
@@ -83,6 +84,7 @@ Rules:
 - do not expose the broker directly on a public port
 - reach it only through the authenticated admin surface in `SoloCore Hub`
 - deploy from local source / GitHub-tracked versions, not by hand-editing the server copy
+- when internal access checks are enabled, configure the same internal token for broker and resident agent so `/api/v1/heartbeat`, `/api/v1/agent/poll`, and `/api/v1/agent/task-update` stay reachable
 
 ## Packaging a Release Bundle
 

@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
   CommunityPackageInspection,
+  CommunityPackageInstallResult,
   InstalledCommunityPackage,
 } from "../types";
 import {
@@ -64,6 +65,7 @@ export const CommunityPackagesWorkspace = React.memo(function CommunityPackagesW
   const [inspection, setInspection] = useState<CommunityPackageInspection | null>(null);
   const [inspectLoading, setInspectLoading] = useState(false);
   const [installLoading, setInstallLoading] = useState(false);
+  const [installResult, setInstallResult] = useState<CommunityPackageInstallResult | null>(null);
   const [packages, setPackages] = useState<InstalledCommunityPackage[]>([]);
   const [error, setError] = useState("");
 
@@ -84,6 +86,7 @@ export const CommunityPackagesWorkspace = React.memo(function CommunityPackagesW
     try {
       setInspectLoading(true);
       setError("");
+      setInstallResult(null);
       const result = await inspectLocalPackage(
         uploadedFile
           ? {
@@ -110,7 +113,8 @@ export const CommunityPackagesWorkspace = React.memo(function CommunityPackagesW
     try {
       setInstallLoading(true);
       setError("");
-      await installLocalPackage({ packagePath: inspection.packagePath });
+      const result = await installLocalPackage({ packagePath: inspection.packagePath });
+      setInstallResult(result);
       await loadPackages();
     } catch (installError) {
       console.error(installError);
@@ -221,6 +225,44 @@ export const CommunityPackagesWorkspace = React.memo(function CommunityPackagesW
             <div className="text-[12px]" style={{ color: "var(--text-secondary)" }}>
               {inspection.manifest.description}
             </div>
+            {inspection.onboarding.available ? (
+              <div className="rounded-lg border px-3 py-3 space-y-2" style={{ borderColor: "var(--border-color)", backgroundColor: "var(--bg-secondary)" }}>
+                <div className="text-[11px] font-semibold" style={sectionTitleStyle}>
+                  Onboarding
+                </div>
+                <div className="text-[12px]" style={{ color: "var(--text-primary)" }}>
+                  {inspection.onboarding.title}
+                </div>
+                {inspection.onboarding.description ? (
+                  <div className="text-[11px]" style={{ color: "var(--text-secondary)" }}>
+                    {inspection.onboarding.description}
+                  </div>
+                ) : null}
+                <div className="text-[11px]" style={{ color: "var(--text-secondary)" }}>
+                  {inspection.onboarding.steps.length} steps · {inspection.onboardingState.pendingRequiredSteps} required pending · source: {inspection.onboarding.source}
+                </div>
+                <div className="space-y-2">
+                  {inspection.onboarding.steps.map((step) => (
+                    <div key={step.id} className="rounded-lg border px-3 py-2 text-[11px]" style={{ borderColor: "var(--border-color)", backgroundColor: "var(--bg-primary)" }}>
+                      <div style={{ color: "var(--text-primary)" }}>
+                        {step.required ? "[required] " : "[optional] "}
+                        {step.title}
+                      </div>
+                      {step.description ? (
+                        <div style={{ color: "var(--text-secondary)" }}>
+                          {step.description}
+                        </div>
+                      ) : null}
+                      {(step.command || step.installUrl || step.docPath) ? (
+                        <div style={{ color: "var(--text-secondary)" }}>
+                          {[step.command, step.installUrl, step.docPath].filter(Boolean).join(" · ")}
+                        </div>
+                      ) : null}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ) : null}
             <div className="grid gap-3 md:grid-cols-2">
               <div>
                 <div className="text-[11px] font-semibold" style={sectionTitleStyle}>
@@ -279,6 +321,23 @@ export const CommunityPackagesWorkspace = React.memo(function CommunityPackagesW
                 {installLoading ? t("packages.install.installing") : t("packages.install.action")}
               </button>
             </div>
+            {installResult ? (
+              <div className="rounded-lg border px-3 py-3 text-[11px] space-y-1" style={{ borderColor: "var(--border-color)", backgroundColor: "var(--bg-secondary)", color: "var(--text-secondary)" }}>
+                <div style={{ color: "var(--text-primary)" }}>
+                  Installed {installResult.packageId} v{installResult.version}
+                </div>
+                <div>
+                  Onboarding phase: {installResult.onboardingState.phase} · {installResult.onboardingState.pendingRequiredSteps} required pending
+                </div>
+                <div>
+                  Install state: {installResult.installState.installed ? "installed" : "unknown"} ·
+                  {" "}
+                  {installResult.installState.versionStatus || "status unavailable"} ·
+                  {" "}
+                  active {installResult.installState.activeVersion || "-"}
+                </div>
+              </div>
+            ) : null}
           </div>
         ) : null}
       </div>

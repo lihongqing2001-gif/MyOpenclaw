@@ -154,6 +154,92 @@
         }
       }
     },
+    "onboarding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["mode", "autoRunEntrypoint", "requirements"],
+      "properties": {
+        "mode": {
+          "type": "string",
+          "enum": ["guided-first-run"]
+        },
+        "autoRunEntrypoint": {
+          "type": "string",
+          "minLength": 1
+        },
+        "requirements": {
+          "type": "array",
+          "items": {
+            "oneOf": [
+              {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["type", "permissionKey", "reason", "required"],
+                "properties": {
+                  "type": { "const": "permission" },
+                  "permissionKey": {
+                    "type": "string",
+                    "enum": [
+                      "filesystem.read",
+                      "filesystem.write",
+                      "process.exec",
+                      "network.http",
+                      "agent.orchestration",
+                      "knowledge.write"
+                    ]
+                  },
+                  "reason": { "type": "string", "minLength": 1 },
+                  "required": { "type": "boolean" }
+                }
+              },
+              {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["type", "configKey", "prompt", "required"],
+                "properties": {
+                  "type": { "const": "config" },
+                  "configKey": { "type": "string", "minLength": 1 },
+                  "prompt": { "type": "string", "minLength": 1 },
+                  "required": { "type": "boolean" }
+                }
+              },
+              {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["type", "provider", "prompt", "required"],
+                "properties": {
+                  "type": { "const": "login" },
+                  "provider": { "type": "string", "minLength": 1 },
+                  "prompt": { "type": "string", "minLength": 1 },
+                  "required": { "type": "boolean" }
+                }
+              },
+              {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["type", "consentKey", "text", "required"],
+                "properties": {
+                  "type": { "const": "consent" },
+                  "consentKey": { "type": "string", "minLength": 1 },
+                  "text": { "type": "string", "minLength": 1 },
+                  "required": { "type": "boolean" }
+                }
+              },
+              {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["type", "dependencyId", "required"],
+                "properties": {
+                  "type": { "const": "dependency" },
+                  "dependencyId": { "type": "string", "minLength": 1 },
+                  "required": { "type": "boolean" }
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
     "checksums": {
       "type": "object",
       "additionalProperties": false,

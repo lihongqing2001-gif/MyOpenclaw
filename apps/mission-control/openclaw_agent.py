@@ -380,6 +380,7 @@ class OpenClawResidentAgent:
         poll_interval: float = 2.0,
         openclaw_agent_id: str = "main",
         whatsapp_target: Optional[str] = None,
+        internal_console_token: Optional[str] = None,
     ) -> None:
         self.base_url = base_url.rstrip("/")
         self.agent_id = agent_id
@@ -387,15 +388,24 @@ class OpenClawResidentAgent:
         self.poll_interval = poll_interval
         self.openclaw_agent_id = openclaw_agent_id
         self.whatsapp_target = whatsapp_target
+        self.internal_console_token = (
+            (internal_console_token or "").strip()
+            or os.environ.get("SOLOCORE_CLOUD_CONSOLE_INTERNAL_TOKEN", "").strip()
+            or os.environ.get("OPENCLAW_CLOUD_CONSOLE_INTERNAL_TOKEN", "").strip()
+            or os.environ.get("SOLOCORE_INTERNAL_TOKEN", "").strip()
+        )
         self.running = True
         self.workspace_root = Path.home() / ".openclaw" / "workspace"
         self.knowledge_root = self.workspace_root / "agents" / "knowledge"
 
     def _post_json(self, path: str, payload: Dict[str, Any]) -> Dict[str, Any]:
+        headers = {"Content-Type": "application/json"}
+        if self.internal_console_token:
+            headers["x-solocore-internal-token"] = self.internal_console_token
         request = urllib.request.Request(
             f"{self.base_url}{path}",
             data=json.dumps(payload).encode("utf-8"),
-            headers={"Content-Type": "application/json"},
+            headers=headers,
             method="POST",
         )
         with urllib.request.urlopen(request, timeout=10) as response:

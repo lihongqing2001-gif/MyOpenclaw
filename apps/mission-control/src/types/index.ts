@@ -363,6 +363,43 @@ export interface CommunityPackageDependency {
   bundled?: boolean;
 }
 
+export type CommunityPackageOnboardingStepKind =
+  | "permission"
+  | "dependency"
+  | "action"
+  | "verification"
+  | "docs";
+
+export interface CommunityPackageOnboardingStep {
+  id: string;
+  title: string;
+  description?: string;
+  kind: CommunityPackageOnboardingStepKind;
+  required: boolean;
+  command?: string;
+  installUrl?: string;
+  docPath?: string;
+}
+
+export interface CommunityPackageOnboardingMetadata {
+  available: boolean;
+  source: "manifest" | "derived";
+  title: string;
+  description?: string;
+  estimatedMinutes?: number;
+  firstRunWizard: boolean;
+  steps: CommunityPackageOnboardingStep[];
+}
+
+export interface CommunityPackageOnboardingState {
+  phase: "not-required" | "inspect-ready" | "installed-pending" | "completed";
+  completion: "not-started" | "in-progress" | "complete";
+  totalSteps: number;
+  requiredSteps: number;
+  pendingRequiredSteps: number;
+  nextStepId?: string;
+}
+
 export interface CommunityPackageManifest {
   schemaVersion: string;
   packageId: string;
@@ -398,6 +435,13 @@ export interface CommunityPackageManifest {
     files: Array<{ path: string; sha256: string }>;
     archive?: { path?: string; sha256?: string };
   };
+  onboarding?: {
+    title?: string;
+    description?: string;
+    estimatedMinutes?: number;
+    firstRunWizard?: boolean;
+    steps?: CommunityPackageOnboardingStep[];
+  };
   docs: Array<{ title: string; path: string }>;
   assets: Array<{ path: string; kind: string; label?: string }>;
   reviewStatus: string;
@@ -415,6 +459,22 @@ export interface CommunityPackageInspection {
     version: string;
     permissions: CommunityPackagePermission[];
     dependencies: CommunityPackageDependency[];
+  };
+  onboarding: CommunityPackageOnboardingMetadata;
+  onboardingState: CommunityPackageOnboardingState;
+}
+
+export interface CommunityPackageInstallResult {
+  success: boolean;
+  packageId: string;
+  version: string;
+  installPath: string;
+  onboarding: CommunityPackageOnboardingMetadata;
+  onboardingState: CommunityPackageOnboardingState;
+  installState: {
+    installed: boolean;
+    activeVersion?: string;
+    versionStatus?: "enabled" | "disabled";
   };
 }
 
