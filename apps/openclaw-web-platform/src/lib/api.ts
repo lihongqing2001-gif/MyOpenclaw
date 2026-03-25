@@ -1,4 +1,5 @@
 import type {
+  AdminUserSummary,
   AdminCloudConsoleAccessSnapshot,
   AuditLogEntry,
   CloudConsoleAccessCode,
@@ -276,6 +277,37 @@ export async function getAuditLogs() {
 
 export async function getSecurityEvents() {
   return apiRequest<{ securityEvents: SecurityEvent[] }>("/admin/security-events");
+}
+
+export async function getAdminUsers() {
+  return apiRequest<{ users: AdminUserSummary[] }>("/admin/users");
+}
+
+export async function updateAdminUserRole(userId: string, role: UserRole, csrfToken: string) {
+  return apiRequest<{
+    success: true;
+    user: AdminUserSummary;
+  }>(`/admin/users/${encodeURIComponent(userId)}/role`, {
+    method: "POST",
+    headers: {
+      "x-openclaw-csrf": csrfToken,
+    },
+    body: JSON.stringify({ role }),
+  });
+}
+
+export async function revokeAdminUserSessions(userId: string, csrfToken: string) {
+  return apiRequest<{
+    success: true;
+    revokedCount: number;
+    user: AdminUserSummary;
+  }>(`/admin/users/${encodeURIComponent(userId)}/revoke-sessions`, {
+    method: "POST",
+    headers: {
+      "x-openclaw-csrf": csrfToken,
+    },
+    body: JSON.stringify({}),
+  });
 }
 
 export async function getPlatformSummary() {

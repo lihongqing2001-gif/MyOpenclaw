@@ -15,6 +15,7 @@ const MySubmissions = lazy(() => import("@/pages/MySubmissions").then((module) =
 const ReviewQueue = lazy(() => import("@/pages/ReviewQueue").then((module) => ({ default: module.ReviewQueue })));
 const AdminDashboard = lazy(() => import("@/pages/AdminDashboard").then((module) => ({ default: module.AdminDashboard })));
 const Admin2FA = lazy(() => import("@/pages/Admin2FA").then((module) => ({ default: module.Admin2FA })));
+const UserManagement = lazy(() => import("@/pages/UserManagement").then((module) => ({ default: module.UserManagement })));
 const CloudOpenClaw = lazy(() => import("@/pages/CloudOpenClaw").then((module) => ({ default: module.CloudOpenClaw })));
 const CloudConsoleAccess = lazy(() => import("@/pages/CloudConsoleAccess").then((module) => ({ default: module.CloudConsoleAccess })));
 
@@ -138,6 +139,16 @@ export default function App() {
                 <ProtectedRoute roles={["super_admin"]} requireTwoFactor>
                   <DeferredPage>
                     <AdminDashboard />
+                  </DeferredPage>
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="admin/users"
+              element={
+                <ProtectedRoute roles={["super_admin"]} requireTwoFactor>
+                  <DeferredPage>
+                    <UserManagement />
                   </DeferredPage>
                 </ProtectedRoute>
               }

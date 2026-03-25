@@ -117,6 +117,27 @@ export interface AuditLogEntry {
   createdAt: string;
 }
 
+export interface AdminUserSummary {
+  id: string;
+  email: string;
+  role: UserRole;
+  primaryAuthProvider?: AuthProvider;
+  linkedProviders?: AuthProvider[];
+  githubUserId?: string;
+  githubLogin?: string;
+  twoFactorEnabled: boolean;
+  createdAt: string;
+  sessionCount: number;
+  activeSessionCount: number;
+  submissionCount: number;
+  reviewCount: number;
+  auditCount: number;
+  activeCloudGrantCount: number;
+  lastActivityAt?: string;
+  lastAuthAt?: string;
+  recentAudit: AuditLogEntry[];
+}
+
 export interface AuthChallenge {
   id: string;
   email: string;
