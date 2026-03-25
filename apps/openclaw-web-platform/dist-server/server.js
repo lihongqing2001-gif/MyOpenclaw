@@ -3,9 +3,9 @@ import express from "express";
 import cookieParser from "cookie-parser";
 import dotenv from "dotenv";
 import { spawnSync } from "node:child_process";
-import fs4 from "node:fs";
+import fs5 from "node:fs";
 import os2 from "node:os";
-import path4 from "node:path";
+import path5 from "node:path";
 import { randomInt } from "node:crypto";
 import { authenticator } from "otplib";
 import AdmZip from "adm-zip";
@@ -44,6 +44,7 @@ var dataDir = path2.resolve(
 var storageDir = path2.join(dataDir, "storage");
 var packagesDir = path2.join(storageDir, "packages");
 var submissionsDir = path2.join(storageDir, "submissions");
+var localComputeDir = path2.join(storageDir, "local-compute");
 var databasePath = path2.join(dataDir, "db.json");
 var postgresStateKey = "primary";
 var cachedDatabase = null;
@@ -60,6 +61,8 @@ var emptyDatabase = () => ({
   securityEvents: [],
   cloudConsoleAccessCodes: [],
   cloudConsoleGrants: [],
+  localComputeNodes: [],
+  localComputeTasks: [],
   settings: {
     github: {
       clientId: "",
@@ -82,7 +85,8 @@ var emptyDatabase = () => ({
       requestLimitPerWindow: 8,
       requestWindowMinutes: 15,
       verifyLimitPerWindow: 10,
-      verifyWindowMinutes: 15
+      verifyWindowMinutes: 15,
+      adminTwoFactorRequired: true
     }
   }
 });
@@ -102,6 +106,8 @@ function normalizeDatabase(payload) {
     securityEvents: arrayOrEmpty(payload?.securityEvents),
     cloudConsoleAccessCodes: arrayOrEmpty(payload?.cloudConsoleAccessCodes),
     cloudConsoleGrants: arrayOrEmpty(payload?.cloudConsoleGrants),
+    localComputeNodes: arrayOrEmpty(payload?.localComputeNodes),
+    localComputeTasks: arrayOrEmpty(payload?.localComputeTasks),
     settings: {
       github: {
         clientId: payload?.settings?.github?.clientId || "",
@@ -124,7 +130,8 @@ function normalizeDatabase(payload) {
         requestLimitPerWindow: Math.max(1, Number(payload?.settings?.authEmail?.requestLimitPerWindow || 8)),
         requestWindowMinutes: Math.max(1, Number(payload?.settings?.authEmail?.requestWindowMinutes || 15)),
         verifyLimitPerWindow: Math.max(1, Number(payload?.settings?.authEmail?.verifyLimitPerWindow || 10)),
-        verifyWindowMinutes: Math.max(1, Number(payload?.settings?.authEmail?.verifyWindowMinutes || 15))
+        verifyWindowMinutes: Math.max(1, Number(payload?.settings?.authEmail?.verifyWindowMinutes || 15)),
+        adminTwoFactorRequired: payload?.settings?.authEmail?.adminTwoFactorRequired !== false
       }
     }
   };
@@ -243,6 +250,7 @@ function ensureWebPlatformStorage() {
   ensureDir(storageDir);
   ensureDir(packagesDir);
   ensureDir(submissionsDir);
+  ensureDir(localComputeDir);
   ensurePostgresStorage();
   if (!fs2.existsSync(databasePath)) {
     writeLocalMirror(emptyDatabase());
@@ -296,6 +304,9 @@ function publishPackageArchive(packageId, version, archiveSourcePath, manifest) 
 }
 function createId(prefix) {
   return `${prefix}_${randomUUID()}`;
+}
+function localComputeTaskDir(taskId) {
+  return path2.join(localComputeDir, "tasks", taskId);
 }
 
 // src/server/security.ts
@@ -429,11 +440,17 @@ function requireAdminTwoFactor(req, res, next) {
     res.status(401).json({ error: "Authentication required" });
     return;
   }
-  if (auth.user.role === "super_admin" && !auth.session.twoFactorPassed) {
+  if (adminTwoFactorRequiredForRole(auth.user.role) && !auth.session.twoFactorPassed) {
     res.status(403).json({ error: "Admin 2FA required" });
     return;
   }
   next();
+}
+function adminTwoFactorRequiredForRole(role) {
+  if (role !== "super_admin") {
+    return false;
+  }
+  return loadDatabase().settings.authEmail.adminTwoFactorRequired !== false;
 }
 function enforceCsrf(req, res, next) {
   if (req.method === "GET" || req.method === "HEAD" || req.method === "OPTIONS") {
@@ -868,6 +885,200 @@ function buildCloudConsoleLaunchUrl(token) {
   return `${baseUrl2}/auth/access?grant=${encodeURIComponent(token)}`;
 }
 
+// src/server/localCompute.ts
+import crypto3 from "node:crypto";
+import fs4 from "node:fs";
+import path4 from "node:path";
+var heartbeatTimeoutMs = Number(process.env.SOLOCORE_LOCAL_COMPUTE_HEARTBEAT_TIMEOUT_MS || "45000");
+function normalizeToken(token) {
+  return token.trim();
+}
+function hashToken(token) {
+  return crypto3.createHash("sha256").update(normalizeToken(token)).digest("hex");
+}
+function generateToken2() {
+  return crypto3.randomBytes(24).toString("hex");
+}
+function createTokenPreview(token) {
+  return `${token.slice(0, 8)}...${token.slice(-6)}`;
+}
+function refreshLocalComputeNodes(db) {
+  const now = Date.now();
+  db.localComputeNodes = db.localComputeNodes.map((node) => {
+    if (!node.lastSeenAt) {
+      return {
+        ...node,
+        status: node.currentTaskId ? node.status : "offline"
+      };
+    }
+    if (Date.parse(node.lastSeenAt) + heartbeatTimeoutMs < now && node.status !== "offline") {
+      return {
+        ...node,
+        status: "offline",
+        currentTaskId: void 0
+      };
+    }
+    return node;
+  });
+}
+function createLocalComputeNode(db, ownerUser, input) {
+  const plainToken = generateToken2();
+  const now = (/* @__PURE__ */ new Date()).toISOString();
+  const node = {
+    nodeId: createId("local_node"),
+    label: input.label.trim() || "Local Compute Node",
+    ownerUserId: ownerUser.id,
+    mode: "local-compute",
+    status: "offline",
+    resultPolicy: "full-sync",
+    capabilities: input.capabilities,
+    allowedPackageIds: input.allowedPackageIds,
+    allowedNodeIds: input.allowedNodeIds,
+    tokenHash: hashToken(plainToken),
+    tokenPreview: createTokenPreview(plainToken),
+    createdAt: now,
+    updatedAt: now
+  };
+  db.localComputeNodes.push(node);
+  return { node, plainToken };
+}
+function authenticateLocalComputeNode(db, nodeId, token) {
+  refreshLocalComputeNodes(db);
+  const node = db.localComputeNodes.find((item) => item.nodeId === nodeId);
+  if (!node) {
+    return null;
+  }
+  if (node.tokenHash !== hashToken(token)) {
+    return null;
+  }
+  return node;
+}
+function markLocalComputeHeartbeat(node, input) {
+  node.lastSeenAt = (/* @__PURE__ */ new Date()).toISOString();
+  node.updatedAt = node.lastSeenAt;
+  node.status = input.status || (node.currentTaskId ? "busy" : "online");
+  node.currentTaskId = input.currentTaskId;
+  node.lastError = input.lastError;
+  node.heartbeatMeta = input.heartbeatMeta;
+}
+function firstPackageCapability(manifest) {
+  return manifest.capabilities.find((item) => Boolean(item.entrypoint)) || manifest.capabilities[0] || null;
+}
+function resolveLocalComputePackageTarget(record, version) {
+  const selectedVersion = version || record.latestVersion;
+  const versionRecord = record.versions.find((item) => item.version === selectedVersion);
+  if (!versionRecord) {
+    throw new Error("Package version not found");
+  }
+  const capability = firstPackageCapability(versionRecord.manifest);
+  if (!capability?.entrypoint) {
+    throw new Error("Package does not expose an executable capability entrypoint");
+  }
+  return {
+    packageVersion: selectedVersion,
+    targetNodeId: capability.id,
+    targetLabel: capability.label || record.name,
+    command: capability.entrypoint
+  };
+}
+function createLocalComputeTask(db, input) {
+  const now = (/* @__PURE__ */ new Date()).toISOString();
+  const task = {
+    id: createId("local_task"),
+    nodeId: input.node.nodeId,
+    taskKind: input.taskKind,
+    status: "queued",
+    createdByUserId: input.createdByUser.id,
+    createdAt: now,
+    updatedAt: now,
+    packageId: input.packageId,
+    packageVersion: input.packageVersion,
+    targetNodeId: input.targetNodeId,
+    targetLabel: input.targetLabel,
+    command: input.command,
+    inputValues: input.inputValues || {},
+    artifacts: []
+  };
+  db.localComputeTasks.unshift(task);
+  return task;
+}
+function nextQueuedLocalComputeTask(db, node) {
+  refreshLocalComputeNodes(db);
+  const task = db.localComputeTasks.filter((item) => item.nodeId === node.nodeId && item.status === "queued").sort((a, b) => Date.parse(a.createdAt) - Date.parse(b.createdAt))[0];
+  if (!task) {
+    return null;
+  }
+  const now = (/* @__PURE__ */ new Date()).toISOString();
+  task.status = "running";
+  task.startedAt = now;
+  task.updatedAt = now;
+  node.status = "busy";
+  node.currentTaskId = task.id;
+  node.updatedAt = now;
+  node.lastSeenAt = now;
+  return task;
+}
+function storeLocalComputeArtifact(task, artifact) {
+  const dirPath = localComputeTaskDir(task.id);
+  fs4.mkdirSync(dirPath, { recursive: true });
+  const fileName = path4.basename(artifact.fileName || `${createId("artifact")}.bin`);
+  const artifactId = createId("artifact");
+  const targetPath = path4.join(dirPath, `${artifactId}-${fileName}`);
+  const buffer = Buffer.from(artifact.contentBase64, "base64");
+  fs4.writeFileSync(targetPath, buffer);
+  const record = {
+    id: artifactId,
+    fileName,
+    contentType: artifact.contentType || "application/octet-stream",
+    label: artifact.label,
+    path: targetPath,
+    sizeBytes: buffer.length,
+    uploadedAt: (/* @__PURE__ */ new Date()).toISOString()
+  };
+  task.artifacts.push(record);
+  return record;
+}
+function updateLocalComputeTask(task, node, input) {
+  const now = (/* @__PURE__ */ new Date()).toISOString();
+  task.updatedAt = now;
+  if (input.status) {
+    task.status = input.status;
+  }
+  if (typeof input.summary === "string") {
+    task.summary = input.summary;
+  }
+  if (typeof input.resultDetail === "string") {
+    task.resultDetail = input.resultDetail;
+  }
+  if (typeof input.error === "string") {
+    task.error = input.error;
+  }
+  if (typeof input.localBrokerTaskId === "string") {
+    task.localBrokerTaskId = input.localBrokerTaskId;
+  }
+  if (input.syncManifest) {
+    task.syncManifest = input.syncManifest;
+  }
+  if (task.status === "completed" || task.status === "failed") {
+    task.completedAt = now;
+    node.currentTaskId = void 0;
+    node.status = task.status === "completed" ? "online" : "error";
+    node.lastError = task.status === "failed" ? task.error || task.summary : void 0;
+  } else if (task.status === "running") {
+    node.status = "busy";
+    node.currentTaskId = task.id;
+  }
+  node.lastSeenAt = now;
+  node.updatedAt = now;
+}
+function buildAdminLocalComputeSnapshot(db) {
+  refreshLocalComputeNodes(db);
+  return {
+    nodes: [...db.localComputeNodes].sort((a, b) => Date.parse(b.updatedAt) - Date.parse(a.updatedAt)),
+    tasks: [...db.localComputeTasks].sort((a, b) => Date.parse(b.updatedAt) - Date.parse(a.updatedAt))
+  };
+}
+
 // server.ts
 dotenv.config();
 ensureWebPlatformStorage();
@@ -879,8 +1090,8 @@ var cloudOpenClawPublicBaseUrl = cloudConsolePublicBaseUrl();
 var cloudOpenClawWorkdir = process.env.SOLOCORE_CLOUD_CONSOLE_WORKDIR || process.env.OPENCLAW_CLOUD_CONSOLE_WORKDIR || "/opt/solocore/workspace/apps/mission-control";
 var cloudOpenClawTopologyPath = process.env.SOLOCORE_CLOUD_TOPOLOGY_PATH || process.env.OPENCLAW_CLOUD_TOPOLOGY_PATH || "/etc/solocore/workspace-topology.json";
 var cloudOpenClawInternalToken = (process.env.SOLOCORE_CLOUD_CONSOLE_INTERNAL_TOKEN || process.env.OPENCLAW_CLOUD_CONSOLE_INTERNAL_TOKEN || "").trim();
-var forgeConsoleReleasesDir = path4.resolve(
-  process.env.OPENCLAW_FORGE_CONSOLE_RELEASES_DIR || path4.join(process.cwd(), "../mission-control/releases")
+var forgeConsoleReleasesDir = path5.resolve(
+  process.env.OPENCLAW_FORGE_CONSOLE_RELEASES_DIR || path5.join(process.cwd(), "../mission-control/releases")
 );
 var upload = multer({
   storage: multer.memoryStorage(),
@@ -946,6 +1157,30 @@ function buildAdminUserSummary(db, user) {
     recentAudit: auditLogs.slice(0, 8)
   };
 }
+function parseBoolean(value, fallback = true) {
+  if (typeof value === "boolean") {
+    return value;
+  }
+  if (typeof value === "string") {
+    const normalized = value.trim().toLowerCase();
+    if (["false", "0", "off", "no"].includes(normalized)) {
+      return false;
+    }
+    if (["true", "1", "on", "yes"].includes(normalized)) {
+      return true;
+    }
+  }
+  return fallback;
+}
+function auditSeverity(action) {
+  if (["user_role_update", "user_sessions_revoked"].includes(action)) {
+    return "critical";
+  }
+  if (["cloud_console_code_create", "cloud_console_code_revoke", "admin_2fa_verify"].includes(action)) {
+    return "warning";
+  }
+  return "info";
+}
 async function cloudOpenClawFetch(targetPath, init) {
   const nextHeaders = new Headers(init?.headers || {});
   if (cloudOpenClawInternalToken) {
@@ -965,7 +1200,7 @@ async function cloudOpenClawFetch(targetPath, init) {
   return body;
 }
 function runCloudConsoleRegistryInstall(packagePath) {
-  const scriptPath = path4.join(cloudOpenClawWorkdir, "scripts", "local_package_registry.py");
+  const scriptPath = path5.join(cloudOpenClawWorkdir, "scripts", "local_package_registry.py");
   const result = spawnSync(
     "python3",
     [scriptPath, "install", "--package-path", packagePath],
@@ -997,6 +1232,20 @@ function safeUser(user) {
     createdAt: user.createdAt
   };
 }
+function localComputeNodeCredentials(req) {
+  const nodeId = String(req.header("x-solocore-local-node-id") || req.body?.nodeId || "").trim();
+  const token = String(req.header("x-solocore-local-node-token") || req.body?.nodeToken || "").trim();
+  return { nodeId, token };
+}
+function parseDelimitedList(value) {
+  if (Array.isArray(value)) {
+    return value.map((item) => String(item).trim()).filter(Boolean);
+  }
+  if (typeof value === "string") {
+    return value.split(/[\n,]/).map((item) => item.trim()).filter(Boolean);
+  }
+  return [];
+}
 function buildCloudConsoleAccessResponse(userId) {
   const db = loadDatabase();
   expireCloudConsoleRecords(db);
@@ -1015,10 +1264,10 @@ function buildCloudConsoleAccessResponse(userId) {
 }
 function parseCommunityManifestFromBase64(name, contentBase64) {
   const buffer = Buffer.from(contentBase64, "base64");
-  const tempDir = fs4.mkdtempSync(path4.join(os2.tmpdir(), "openclaw-upload-"));
-  const tempPath = path4.join(tempDir, name || "upload.zip");
+  const tempDir = fs5.mkdtempSync(path5.join(os2.tmpdir(), "openclaw-upload-"));
+  const tempPath = path5.join(tempDir, name || "upload.zip");
   try {
-    fs4.writeFileSync(tempPath, buffer);
+    fs5.writeFileSync(tempPath, buffer);
     const archive = new AdmZip(tempPath);
     const entry = archive.getEntries().find((item) => item.entryName.endsWith("/community-package.json") || item.entryName === "community-package.json");
     if (!entry) {
@@ -1026,27 +1275,27 @@ function parseCommunityManifestFromBase64(name, contentBase64) {
     }
     return JSON.parse(archive.readAsText(entry));
   } finally {
-    fs4.rmSync(tempDir, { recursive: true, force: true });
+    fs5.rmSync(tempDir, { recursive: true, force: true });
   }
 }
 function latestForgeConsoleBundle() {
-  if (!fs4.existsSync(forgeConsoleReleasesDir)) {
+  if (!fs5.existsSync(forgeConsoleReleasesDir)) {
     return null;
   }
-  const releaseDirs = fs4.readdirSync(forgeConsoleReleasesDir).map((entry) => path4.join(forgeConsoleReleasesDir, entry)).filter((entryPath) => fs4.existsSync(path4.join(entryPath, "release-manifest.json")));
+  const releaseDirs = fs5.readdirSync(forgeConsoleReleasesDir).map((entry) => path5.join(forgeConsoleReleasesDir, entry)).filter((entryPath) => fs5.existsSync(path5.join(entryPath, "release-manifest.json")));
   const manifestCandidates = releaseDirs.map((releasePath) => {
-    const manifestPath = path4.join(releasePath, "release-manifest.json");
+    const manifestPath = path5.join(releasePath, "release-manifest.json");
     try {
-      const manifest = JSON.parse(fs4.readFileSync(manifestPath, "utf-8"));
-      const archiveName = manifest.archiveFile || `${path4.basename(releasePath)}.zip`;
-      const archivePath = path4.join(forgeConsoleReleasesDir, archiveName);
-      if (!fs4.existsSync(archivePath)) {
+      const manifest = JSON.parse(fs5.readFileSync(manifestPath, "utf-8"));
+      const archiveName = manifest.archiveFile || `${path5.basename(releasePath)}.zip`;
+      const archivePath = path5.join(forgeConsoleReleasesDir, archiveName);
+      if (!fs5.existsSync(archivePath)) {
         return null;
       }
       return {
         fileName: archiveName,
         fullPath: archivePath,
-        updatedAt: manifest.builtAt || fs4.statSync(archivePath).mtime.toISOString(),
+        updatedAt: manifest.builtAt || fs5.statSync(archivePath).mtime.toISOString(),
         version: manifest.version || "0.0.0",
         artifactType: manifest.artifactType || "local-runtime-bundle",
         launchers: manifest.launchers || {}
@@ -1064,9 +1313,9 @@ function latestForgeConsoleBundle() {
   if (manifestCandidates[0]) {
     return manifestCandidates[0];
   }
-  const zipCandidates = fs4.readdirSync(forgeConsoleReleasesDir).filter((entry) => entry.endsWith(".zip")).map((entry) => {
-    const fullPath = path4.join(forgeConsoleReleasesDir, entry);
-    const stat = fs4.statSync(fullPath);
+  const zipCandidates = fs5.readdirSync(forgeConsoleReleasesDir).filter((entry) => entry.endsWith(".zip")).map((entry) => {
+    const fullPath = path5.join(forgeConsoleReleasesDir, entry);
+    const stat = fs5.statSync(fullPath);
     return {
       fileName: entry,
       fullPath,
@@ -1144,7 +1393,7 @@ app.get("/auth/github/callback", async (req, res) => {
       id: generateToken(24),
       userId: user.id,
       csrfToken: generateToken(16),
-      twoFactorPassed: user.role !== "super_admin",
+      twoFactorPassed: !adminTwoFactorRequiredForRole(user.role),
       createdAt: (/* @__PURE__ */ new Date()).toISOString(),
       expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1e3).toISOString()
     };
@@ -1156,7 +1405,7 @@ app.get("/auth/github/callback", async (req, res) => {
       githubLogin: identity.githubLogin,
       githubUserId: identity.githubUserId
     });
-    res.redirect(user.role === "super_admin" ? "/admin/2fa" : state.redirectTo || "/me");
+    res.redirect(adminTwoFactorRequiredForRole(user.role) ? "/admin/2fa" : state.redirectTo || "/me");
   } catch (error) {
     res.status(500).send(error instanceof Error ? error.message : "GitHub OAuth failed");
   }
@@ -1193,7 +1442,7 @@ app.get("/auth/session", (req, res) => {
     user: safeUser(auth.user),
     csrfToken: auth.session.csrfToken,
     twoFactorPassed: auth.session.twoFactorPassed,
-    requiresAdminTwoFactor: auth.user.role === "super_admin" && !auth.session.twoFactorPassed,
+    requiresAdminTwoFactor: adminTwoFactorRequiredForRole(auth.user.role) && !auth.session.twoFactorPassed,
     githubOauthConfigured: githubOauthConfigured()
   });
 });
@@ -1400,7 +1649,7 @@ app.post("/auth/email/verify", (req, res) => {
     id: generateToken(24),
     userId: user.id,
     csrfToken: generateToken(16),
-    twoFactorPassed: user.role !== "super_admin",
+    twoFactorPassed: !adminTwoFactorRequiredForRole(user.role),
     createdAt: (/* @__PURE__ */ new Date()).toISOString(),
     expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1e3).toISOString()
   };
@@ -1414,7 +1663,7 @@ app.post("/auth/email/verify", (req, res) => {
     success: true,
     user: safeUser(user),
     csrfToken: session.csrfToken,
-    requiresAdminTwoFactor: user.role === "super_admin"
+    requiresAdminTwoFactor: adminTwoFactorRequiredForRole(user.role)
   });
 });
 app.post("/auth/admin/2fa/verify", requireAuth, enforceCsrf, rateLimit("auth-admin-2fa", 12, 15 * 60 * 1e3), (req, res) => {
@@ -1534,7 +1783,7 @@ function reviewAction(req, res, action) {
   }
   submission.status = action === "approve" ? "published" : action === "request_changes" ? "changes_requested" : "rejected";
   submission.updatedAt = (/* @__PURE__ */ new Date()).toISOString();
-  const manifest = JSON.parse(fs4.readFileSync(submission.manifestPath, "utf-8"));
+  const manifest = JSON.parse(fs5.readFileSync(submission.manifestPath, "utf-8"));
   if (action === "approve") {
     const publishedManifest = {
       ...manifest,
@@ -1592,7 +1841,7 @@ app.post("/publish/:submissionId/github-release", requireAuth, enforceCsrf, requ
     if (!submission) {
       return res.status(404).json({ error: "Submission not found" });
     }
-    const manifest = JSON.parse(fs4.readFileSync(submission.manifestPath, "utf-8"));
+    const manifest = JSON.parse(fs5.readFileSync(submission.manifestPath, "utf-8"));
     const sync = await syncPackageToGithubRelease({
       packageId: manifest.packageId,
       version: manifest.version,
@@ -1647,7 +1896,7 @@ app.get("/downloads/file", (req, res) => {
   const db = loadDatabase();
   const record = db.packages.find((item) => item.packageId === packageId);
   const versionRecord = record?.versions.find((item) => item.version === version);
-  if (!versionRecord || !fs4.existsSync(versionRecord.archivePath)) {
+  if (!versionRecord || !fs5.existsSync(versionRecord.archivePath)) {
     return res.status(404).send("Package archive not found");
   }
   audit("download_package", "package", packageId, null, { version });
@@ -1672,6 +1921,157 @@ app.get("/admin/audit-logs", requireAuth, requireRole(["super_admin"]), requireA
 app.get("/admin/security-events", requireAuth, requireRole(["super_admin"]), requireAdminTwoFactor, (_req, res) => {
   const db = loadDatabase();
   res.json({ securityEvents: db.securityEvents });
+});
+app.get("/admin/overview", requireAuth, requireRole(["super_admin"]), requireAdminTwoFactor, async (_req, res) => {
+  const db = loadDatabase();
+  expireCloudConsoleRecords(db);
+  const localComputeSnapshot = buildAdminLocalComputeSnapshot(db);
+  saveDatabase(db);
+  const activeCloudCodes = db.cloudConsoleAccessCodes.filter((item) => !item.revokedAt && Date.parse(item.expiresAt) > Date.now());
+  const activeCloudGrants = db.cloudConsoleGrants.filter((item) => item.status === "active" && Date.parse(item.expiresAt) > Date.now());
+  const onlineLocalComputeNodes = localComputeSnapshot.nodes.filter((node) => node.status === "online" || node.status === "busy");
+  const pendingReviews = db.submissions.filter((item) => ["submitted", "under_review"].includes(item.status)).length;
+  const recentSecurityEvents = [...db.securityEvents].sort((a, b) => Date.parse(b.createdAt) - Date.parse(a.createdAt)).slice(0, 6);
+  const recentCriticalActivity = [...db.auditLogs].filter((item) => ["user_role_update", "user_sessions_revoked", "cloud_console_code_create", "cloud_console_code_revoke", "admin_2fa_verify", "publish_github_release", "local_compute_task_create"].includes(item.action)).sort((a, b) => Date.parse(b.createdAt) - Date.parse(a.createdAt)).slice(0, 8);
+  let runtimeReachable = false;
+  try {
+    await cloudOpenClawFetch("/api/health");
+    runtimeReachable = true;
+  } catch {
+    runtimeReachable = false;
+  }
+  const alerts = [];
+  if (!smtpConfigured()) {
+    alerts.push({
+      id: "smtp-missing",
+      severity: "critical",
+      title: "SMTP delivery is not configured",
+      detail: "Email sign-in and operator notifications are still relying on fallback behavior.",
+      href: "/admin/platform"
+    });
+  }
+  if (!githubOauthConfigured()) {
+    alerts.push({
+      id: "github-oauth-missing",
+      severity: "warning",
+      title: "GitHub OAuth is not configured",
+      detail: "Users can still sign in by email, but GitHub identity linking and OAuth sign-in are unavailable.",
+      href: "/admin/platform"
+    });
+  }
+  if (pendingReviews > 0) {
+    alerts.push({
+      id: "pending-reviews",
+      severity: "warning",
+      title: `${pendingReviews} submissions need moderation`,
+      detail: "Reviewer action is required before these packages can move forward.",
+      href: "/admin/review"
+    });
+  }
+  if (!runtimeReachable) {
+    alerts.push({
+      id: "runtime-unreachable",
+      severity: "critical",
+      title: "Cloud runtime is unreachable",
+      detail: "Server-side OpenClaw runtime checks are failing. Runtime operations should be investigated before dispatching work.",
+      href: "/admin/runtime"
+    });
+  }
+  if (localComputeSnapshot.nodes.length > 0 && onlineLocalComputeNodes.length === 0) {
+    alerts.push({
+      id: "local-compute-offline",
+      severity: "warning",
+      title: "All local compute nodes are offline",
+      detail: "Dispatch is configured, but no trusted local machine is currently reporting online.",
+      href: "/admin/local-compute"
+    });
+  }
+  if (recentSecurityEvents.length > 0) {
+    alerts.push({
+      id: "security-events",
+      severity: "info",
+      title: `${recentSecurityEvents.length} recent security signals`,
+      detail: "Review recent events and correlate them with audit activity if anything looks unusual.",
+      href: "/admin/security"
+    });
+  }
+  const moduleHealth = [
+    {
+      id: "users",
+      label: "Users & Roles",
+      status: db.users.length > 0 ? "healthy" : "warning",
+      summary: `${db.users.length} accounts, ${db.sessions.length} persisted sessions, ${activeCloudGrants.length} live grants.`,
+      href: "/admin/users"
+    },
+    {
+      id: "review",
+      label: "Review Moderation",
+      status: pendingReviews > 0 ? "warning" : "healthy",
+      summary: pendingReviews > 0 ? `${pendingReviews} submissions still need a decision.` : "Review queue is currently clear.",
+      href: "/admin/review"
+    },
+    {
+      id: "security",
+      label: "Security & Audit",
+      status: recentSecurityEvents.length > 0 ? "warning" : "healthy",
+      summary: `${db.auditLogs.length} audit logs and ${db.securityEvents.length} security events recorded.`,
+      href: "/admin/security"
+    },
+    {
+      id: "platform",
+      label: "Platform Settings",
+      status: smtpConfigured() && githubOauthConfigured() ? "healthy" : "warning",
+      summary: `${githubOauthConfigured() ? "GitHub OAuth ready" : "GitHub OAuth missing"} \xB7 ${smtpConfigured() ? "SMTP ready" : "SMTP fallback only"}.`,
+      href: "/admin/platform"
+    },
+    {
+      id: "cloud-access",
+      label: "Cloud Access",
+      status: activeCloudCodes.length > 0 || activeCloudGrants.length > 0 ? "healthy" : "idle",
+      summary: `${activeCloudCodes.length} active codes and ${activeCloudGrants.length} live grants.`,
+      href: "/admin/cloud-access"
+    },
+    {
+      id: "runtime",
+      label: "Runtime Ops",
+      status: runtimeReachable ? "healthy" : "critical",
+      summary: runtimeReachable ? "Cloud runtime is reachable for package install and node execution." : "Cloud runtime health checks are failing.",
+      href: "/admin/runtime"
+    },
+    {
+      id: "local-compute",
+      label: "Local Compute",
+      status: localComputeSnapshot.nodes.length === 0 ? "idle" : onlineLocalComputeNodes.length > 0 ? "healthy" : "warning",
+      summary: `${onlineLocalComputeNodes.length}/${localComputeSnapshot.nodes.length} nodes online, ${localComputeSnapshot.tasks.length} tracked tasks.`,
+      href: "/admin/local-compute"
+    }
+  ];
+  return res.json({
+    counts: {
+      users: db.users.length,
+      sessions: db.sessions.length,
+      pendingReviews,
+      publishedPackages: db.packages.filter((item) => item.reviewStatus === "published").length,
+      auditLogs: db.auditLogs.length,
+      securityEvents: db.securityEvents.length,
+      activeCloudCodes: activeCloudCodes.length,
+      activeCloudGrants: activeCloudGrants.length,
+      onlineLocalComputeNodes: onlineLocalComputeNodes.length,
+      localComputeTasks: localComputeSnapshot.tasks.length
+    },
+    moduleHealth: moduleHealth.map((item) => ({ ...item })),
+    alerts: alerts.sort((a, b) => {
+      const rank = { critical: 0, warning: 1, info: 2 };
+      return rank[a.severity] - rank[b.severity];
+    }),
+    recentCriticalActivity: recentCriticalActivity.map((item) => ({
+      ...item,
+      metadata: {
+        ...item.metadata || {},
+        severity: auditSeverity(item.action)
+      }
+    }))
+  });
 });
 app.get("/admin/users", requireAuth, requireRole(["super_admin"]), requireAdminTwoFactor, (_req, res) => {
   const db = loadDatabase();
@@ -1812,6 +2212,199 @@ app.post("/admin/cloud-console/access-codes/:codeId/revoke", requireAuth, requir
   audit("cloud_console_code_revoke", "cloud_console_code", code.id, auth.user.id);
   return res.json({ success: true });
 });
+app.get("/admin/local-compute/nodes", requireAuth, requireRole(["super_admin"]), requireAdminTwoFactor, (_req, res) => {
+  const db = loadDatabase();
+  const snapshot = buildAdminLocalComputeSnapshot(db);
+  saveDatabase(db);
+  return res.json(snapshot);
+});
+app.post("/admin/local-compute/nodes/register", requireAuth, requireRole(["super_admin"]), requireAdminTwoFactor, enforceCsrf, (req, res) => {
+  const auth = req.auth;
+  const label = typeof req.body?.label === "string" ? req.body.label.trim() : "";
+  if (!label) {
+    return res.status(400).json({ error: "label is required" });
+  }
+  const db = loadDatabase();
+  const { node, plainToken } = createLocalComputeNode(db, auth.user, {
+    label,
+    allowedPackageIds: parseDelimitedList(req.body?.allowedPackageIds),
+    allowedNodeIds: parseDelimitedList(req.body?.allowedNodeIds),
+    capabilities: Array.isArray(req.body?.capabilities) ? req.body.capabilities.filter((item) => {
+      const candidate = item;
+      return Boolean(
+        candidate && typeof candidate.id === "string" && typeof candidate.label === "string" && typeof candidate.kind === "string"
+      );
+    }).map((item) => ({
+      id: item.id.trim(),
+      label: item.label.trim(),
+      kind: item.kind,
+      command: typeof item.command === "string" ? item.command.trim() : void 0
+    })) : []
+  });
+  saveDatabase(db);
+  audit("local_compute_node_register", "local_compute_node", node.nodeId, auth.user.id, {
+    allowedPackageIds: node.allowedPackageIds,
+    allowedNodeIds: node.allowedNodeIds
+  });
+  return res.json({ success: true, node, plainToken });
+});
+app.post("/admin/local-compute/nodes/heartbeat", rateLimit("local-compute-heartbeat", 300, 60 * 1e3), (req, res) => {
+  const { nodeId, token } = localComputeNodeCredentials(req);
+  if (!nodeId || !token) {
+    return res.status(401).json({ error: "node credentials are required" });
+  }
+  const db = loadDatabase();
+  const node = authenticateLocalComputeNode(db, nodeId, token);
+  if (!node) {
+    return res.status(403).json({ error: "Invalid local compute node credentials" });
+  }
+  markLocalComputeHeartbeat(node, {
+    status: typeof req.body?.status === "string" ? req.body.status : void 0,
+    currentTaskId: typeof req.body?.currentTaskId === "string" ? req.body.currentTaskId : void 0,
+    lastError: typeof req.body?.lastError === "string" ? req.body.lastError : void 0,
+    heartbeatMeta: req.body?.heartbeatMeta && typeof req.body.heartbeatMeta === "object" ? {
+      localConsoleBaseUrl: typeof req.body.heartbeatMeta.localConsoleBaseUrl === "string" ? req.body.heartbeatMeta.localConsoleBaseUrl : void 0,
+      localBrokerVersion: typeof req.body.heartbeatMeta.localBrokerVersion === "string" ? req.body.heartbeatMeta.localBrokerVersion : void 0,
+      onlineAgent: Boolean(req.body.heartbeatMeta.onlineAgent)
+    } : void 0
+  });
+  saveDatabase(db);
+  return res.json({ success: true, nodeStatus: node.status, lastSeenAt: node.lastSeenAt });
+});
+app.post("/admin/local-compute/tasks", requireAuth, requireRole(["super_admin"]), requireAdminTwoFactor, enforceCsrf, (req, res) => {
+  const auth = req.auth;
+  const nodeId = typeof req.body?.nodeId === "string" ? req.body.nodeId.trim() : "";
+  const taskKind = req.body?.taskKind === "skill-node" ? "skill-node" : "package";
+  if (!nodeId) {
+    return res.status(400).json({ error: "nodeId is required" });
+  }
+  const db = loadDatabase();
+  const node = db.localComputeNodes.find((item) => item.nodeId === nodeId);
+  if (!node) {
+    return res.status(404).json({ error: "Local compute node not found" });
+  }
+  try {
+    let task;
+    if (taskKind === "package") {
+      const packageId = typeof req.body?.packageId === "string" ? req.body.packageId.trim() : "";
+      if (!packageId) {
+        return res.status(400).json({ error: "packageId is required" });
+      }
+      if (node.allowedPackageIds.length > 0 && !node.allowedPackageIds.includes(packageId)) {
+        return res.status(403).json({ error: "Package is not allowed on this local compute node" });
+      }
+      const record = db.packages.find((item) => item.packageId === packageId);
+      if (!record) {
+        return res.status(404).json({ error: "Package not found" });
+      }
+      const resolved = resolveLocalComputePackageTarget(record, typeof req.body?.packageVersion === "string" ? req.body.packageVersion.trim() : void 0);
+      task = createLocalComputeTask(db, {
+        node,
+        createdByUser: auth.user,
+        taskKind: "package",
+        packageId,
+        packageVersion: resolved.packageVersion,
+        targetNodeId: resolved.targetNodeId,
+        targetLabel: resolved.targetLabel,
+        command: resolved.command,
+        inputValues: req.body?.inputValues && typeof req.body.inputValues === "object" ? req.body.inputValues : {}
+      });
+    } else {
+      const targetNodeId = typeof req.body?.targetNodeId === "string" ? req.body.targetNodeId.trim() : "";
+      const targetLabel = typeof req.body?.targetLabel === "string" ? req.body.targetLabel.trim() : targetNodeId;
+      const command = typeof req.body?.command === "string" ? req.body.command.trim() : "";
+      if (!targetNodeId || !command) {
+        return res.status(400).json({ error: "targetNodeId and command are required" });
+      }
+      if (node.allowedNodeIds.length > 0 && !node.allowedNodeIds.includes(targetNodeId)) {
+        return res.status(403).json({ error: "Skill node is not allowed on this local compute node" });
+      }
+      task = createLocalComputeTask(db, {
+        node,
+        createdByUser: auth.user,
+        taskKind: "skill-node",
+        targetNodeId,
+        targetLabel,
+        command,
+        inputValues: req.body?.inputValues && typeof req.body.inputValues === "object" ? req.body.inputValues : {}
+      });
+    }
+    saveDatabase(db);
+    audit("local_compute_task_create", "local_compute_task", task.id, auth.user.id, {
+      nodeId: task.nodeId,
+      taskKind: task.taskKind,
+      targetNodeId: task.targetNodeId,
+      packageId: task.packageId
+    });
+    return res.json({ success: true, task });
+  } catch (error) {
+    return res.status(400).json({ error: error instanceof Error ? error.message : "Failed to create local compute task" });
+  }
+});
+app.post("/admin/local-compute/tasks/poll", rateLimit("local-compute-poll", 300, 60 * 1e3), (req, res) => {
+  const { nodeId, token } = localComputeNodeCredentials(req);
+  if (!nodeId || !token) {
+    return res.status(401).json({ error: "node credentials are required" });
+  }
+  const db = loadDatabase();
+  const node = authenticateLocalComputeNode(db, nodeId, token);
+  if (!node) {
+    return res.status(403).json({ error: "Invalid local compute node credentials" });
+  }
+  const task = nextQueuedLocalComputeTask(db, node);
+  saveDatabase(db);
+  return res.json({ success: true, task: task || null });
+});
+app.post("/admin/local-compute/tasks/:taskId/update", rateLimit("local-compute-update", 300, 60 * 1e3), (req, res) => {
+  const { nodeId, token } = localComputeNodeCredentials(req);
+  if (!nodeId || !token) {
+    return res.status(401).json({ error: "node credentials are required" });
+  }
+  const db = loadDatabase();
+  const node = authenticateLocalComputeNode(db, nodeId, token);
+  if (!node) {
+    return res.status(403).json({ error: "Invalid local compute node credentials" });
+  }
+  const task = db.localComputeTasks.find((item) => item.id === req.params.taskId && item.nodeId === node.nodeId);
+  if (!task) {
+    return res.status(404).json({ error: "Local compute task not found" });
+  }
+  updateLocalComputeTask(task, node, {
+    status: typeof req.body?.status === "string" ? req.body.status : void 0,
+    summary: typeof req.body?.summary === "string" ? req.body.summary : void 0,
+    resultDetail: typeof req.body?.resultDetail === "string" ? req.body.resultDetail : void 0,
+    error: typeof req.body?.error === "string" ? req.body.error : void 0,
+    localBrokerTaskId: typeof req.body?.localBrokerTaskId === "string" ? req.body.localBrokerTaskId : void 0,
+    syncManifest: req.body?.syncManifest && typeof req.body.syncManifest === "object" ? req.body.syncManifest : void 0
+  });
+  saveDatabase(db);
+  return res.json({ success: true, task });
+});
+app.post("/admin/local-compute/tasks/:taskId/artifacts", rateLimit("local-compute-artifacts", 120, 60 * 1e3), (req, res) => {
+  const { nodeId, token } = localComputeNodeCredentials(req);
+  if (!nodeId || !token) {
+    return res.status(401).json({ error: "node credentials are required" });
+  }
+  const db = loadDatabase();
+  const node = authenticateLocalComputeNode(db, nodeId, token);
+  if (!node) {
+    return res.status(403).json({ error: "Invalid local compute node credentials" });
+  }
+  const task = db.localComputeTasks.find((item) => item.id === req.params.taskId && item.nodeId === node.nodeId);
+  if (!task) {
+    return res.status(404).json({ error: "Local compute task not found" });
+  }
+  const artifacts = Array.isArray(req.body?.artifacts) ? req.body.artifacts : [];
+  const stored = artifacts.filter((item) => {
+    const candidate = item;
+    return Boolean(candidate && typeof candidate.fileName === "string" && typeof candidate.contentBase64 === "string");
+  }).map((item) => storeLocalComputeArtifact(task, item));
+  task.updatedAt = (/* @__PURE__ */ new Date()).toISOString();
+  node.lastSeenAt = task.updatedAt;
+  node.updatedAt = task.updatedAt;
+  saveDatabase(db);
+  return res.json({ success: true, artifacts: stored });
+});
 app.get("/admin/cloud-openclaw/summary", requireAuth, requireRole(["super_admin"]), requireAdminTwoFactor, async (_req, res) => {
   const summary = {
     consoleBaseUrl: cloudOpenClawBaseUrl,
@@ -1891,7 +2484,7 @@ app.post("/admin/cloud-openclaw/packages/install-official", requireAuth, require
   if (!versionRecord) {
     return res.status(404).json({ error: "Package version not found" });
   }
-  if (!fs4.existsSync(versionRecord.archivePath)) {
+  if (!fs5.existsSync(versionRecord.archivePath)) {
     return res.status(404).json({ error: "Package archive is missing on server" });
   }
   try {
@@ -1976,7 +2569,8 @@ app.post("/admin/settings/auth-email", requireAuth, requireRole(["super_admin"])
     requestLimitPerWindow: Math.max(1, Number(req.body?.requestLimitPerWindow || 8)),
     requestWindowMinutes: Math.max(1, Number(req.body?.requestWindowMinutes || 15)),
     verifyLimitPerWindow: Math.max(1, Number(req.body?.verifyLimitPerWindow || 10)),
-    verifyWindowMinutes: Math.max(1, Number(req.body?.verifyWindowMinutes || 15))
+    verifyWindowMinutes: Math.max(1, Number(req.body?.verifyWindowMinutes || 15)),
+    adminTwoFactorRequired: parseBoolean(req.body?.adminTwoFactorRequired, true)
   };
   saveDatabase(db);
   return res.json({
@@ -2002,14 +2596,14 @@ async function attachFrontend() {
   const isProd = process.env.NODE_ENV === "production";
   const appRoot = process.cwd();
   if (isProd) {
-    const distPath = path4.resolve(appRoot, "dist");
+    const distPath = path5.resolve(appRoot, "dist");
     app.use(express.static(distPath, { index: false }));
     app.use((req, res, next) => {
       if (req.method !== "GET" && req.method !== "HEAD") {
         next();
         return;
       }
-      res.sendFile(path4.join(distPath, "index.html"));
+      res.sendFile(path5.join(distPath, "index.html"));
     });
     return;
   }
@@ -2028,8 +2622,8 @@ async function attachFrontend() {
       return;
     }
     try {
-      const templatePath = path4.resolve(appRoot, "index.html");
-      const template = fs4.readFileSync(templatePath, "utf-8");
+      const templatePath = path5.resolve(appRoot, "index.html");
+      const template = fs5.readFileSync(templatePath, "utf-8");
       const html = await vite.transformIndexHtml(req.originalUrl, template);
       res.status(200).set({ "Content-Type": "text/html" }).end(html);
     } catch (error) {

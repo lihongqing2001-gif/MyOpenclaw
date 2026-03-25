@@ -9,6 +9,8 @@ import {
   CloudConsoleAccessCode,
   CloudConsoleGrant,
   GithubOAuthState,
+  LocalComputeNode,
+  LocalComputeTask,
   PackageRecord,
   ReviewDecision,
   SecurityEvent,
@@ -32,6 +34,8 @@ export interface WebPlatformDatabase {
   securityEvents: SecurityEvent[];
   cloudConsoleAccessCodes: CloudConsoleAccessCode[];
   cloudConsoleGrants: CloudConsoleGrant[];
+  localComputeNodes: LocalComputeNode[];
+  localComputeTasks: LocalComputeTask[];
   settings: PlatformSettings;
 }
 
@@ -42,6 +46,7 @@ const dataDir = path.resolve(
 const storageDir = path.join(dataDir, "storage");
 const packagesDir = path.join(storageDir, "packages");
 const submissionsDir = path.join(storageDir, "submissions");
+const localComputeDir = path.join(storageDir, "local-compute");
 const databasePath = path.join(dataDir, "db.json");
 const postgresStateKey = "primary";
 
@@ -60,6 +65,8 @@ const emptyDatabase = (): WebPlatformDatabase => ({
   securityEvents: [],
   cloudConsoleAccessCodes: [],
   cloudConsoleGrants: [],
+  localComputeNodes: [],
+  localComputeTasks: [],
   settings: {
     github: {
       clientId: "",
@@ -83,6 +90,7 @@ const emptyDatabase = (): WebPlatformDatabase => ({
       requestWindowMinutes: 15,
       verifyLimitPerWindow: 10,
       verifyWindowMinutes: 15,
+      adminTwoFactorRequired: true,
     },
   },
 });
@@ -104,6 +112,8 @@ export function normalizeDatabase(payload: Partial<WebPlatformDatabase> | null |
     securityEvents: arrayOrEmpty<SecurityEvent>(payload?.securityEvents),
     cloudConsoleAccessCodes: arrayOrEmpty<CloudConsoleAccessCode>(payload?.cloudConsoleAccessCodes),
     cloudConsoleGrants: arrayOrEmpty<CloudConsoleGrant>(payload?.cloudConsoleGrants),
+    localComputeNodes: arrayOrEmpty<LocalComputeNode>(payload?.localComputeNodes),
+    localComputeTasks: arrayOrEmpty<LocalComputeTask>(payload?.localComputeTasks),
     settings: {
       github: {
         clientId: payload?.settings?.github?.clientId || "",
@@ -127,6 +137,7 @@ export function normalizeDatabase(payload: Partial<WebPlatformDatabase> | null |
         requestWindowMinutes: Math.max(1, Number(payload?.settings?.authEmail?.requestWindowMinutes || 15)),
         verifyLimitPerWindow: Math.max(1, Number(payload?.settings?.authEmail?.verifyLimitPerWindow || 10)),
         verifyWindowMinutes: Math.max(1, Number(payload?.settings?.authEmail?.verifyWindowMinutes || 15)),
+        adminTwoFactorRequired: payload?.settings?.authEmail?.adminTwoFactorRequired !== false,
       },
     },
   };
@@ -256,6 +267,7 @@ export function getWebPlatformPaths() {
     storageDir,
     packagesDir,
     submissionsDir,
+    localComputeDir,
     databasePath,
   };
 }
@@ -265,6 +277,7 @@ export function ensureWebPlatformStorage() {
   ensureDir(storageDir);
   ensureDir(packagesDir);
   ensureDir(submissionsDir);
+  ensureDir(localComputeDir);
   ensurePostgresStorage();
   if (!fs.existsSync(databasePath)) {
     writeLocalMirror(emptyDatabase());
@@ -329,4 +342,8 @@ export function publishPackageArchive(packageId: string, version: string, archiv
 
 export function createId(prefix: string) {
   return `${prefix}_${randomUUID()}`;
+}
+
+export function localComputeTaskDir(taskId: string) {
+  return path.join(localComputeDir, "tasks", taskId);
 }

@@ -1,10 +1,13 @@
 import type {
   AdminUserSummary,
   AdminCloudConsoleAccessSnapshot,
+  AdminLocalComputeSnapshot,
   AuditLogEntry,
   CloudConsoleAccessCode,
   CloudConsoleAccessOverview,
   CloudOpenClawSummary,
+  LocalComputeNode,
+  LocalComputeTask,
   PackageRecord,
   SecurityEvent,
   SubmissionRecord,
@@ -279,6 +282,38 @@ export async function getSecurityEvents() {
   return apiRequest<{ securityEvents: SecurityEvent[] }>("/admin/security-events");
 }
 
+export async function getAdminOverview() {
+  return apiRequest<{
+    counts: {
+      users: number;
+      sessions: number;
+      pendingReviews: number;
+      publishedPackages: number;
+      auditLogs: number;
+      securityEvents: number;
+      activeCloudCodes: number;
+      activeCloudGrants: number;
+      onlineLocalComputeNodes: number;
+      localComputeTasks: number;
+    };
+    moduleHealth: Array<{
+      id: string;
+      label: string;
+      status: "healthy" | "warning" | "critical" | "idle";
+      summary: string;
+      href: string;
+    }>;
+    alerts: Array<{
+      id: string;
+      severity: "critical" | "warning" | "info";
+      title: string;
+      detail: string;
+      href: string;
+    }>;
+    recentCriticalActivity: AuditLogEntry[];
+  }>("/admin/overview");
+}
+
 export async function getAdminUsers() {
   return apiRequest<{ users: AdminUserSummary[] }>("/admin/users");
 }
@@ -364,6 +399,57 @@ export async function revokeAdminCloudConsoleAccessCode(codeId: string, csrfToke
       "x-openclaw-csrf": csrfToken,
     },
     body: JSON.stringify({}),
+  });
+}
+
+export async function getAdminLocalComputeSnapshot() {
+  return apiRequest<AdminLocalComputeSnapshot>("/admin/local-compute/nodes");
+}
+
+export async function registerAdminLocalComputeNode(
+  payload: {
+    label: string;
+    allowedPackageIds?: string[];
+    allowedNodeIds?: string[];
+    capabilities?: Array<{ id: string; label: string; kind: "package" | "skill-node" | "system"; command?: string }>;
+  },
+  csrfToken: string,
+) {
+  return apiRequest<{
+    success: true;
+    node: LocalComputeNode;
+    plainToken: string;
+  }>("/admin/local-compute/nodes/register", {
+    method: "POST",
+    headers: {
+      "x-openclaw-csrf": csrfToken,
+    },
+    body: JSON.stringify(payload),
+  });
+}
+
+export async function createAdminLocalComputeTask(
+  payload: {
+    nodeId: string;
+    taskKind: "package" | "skill-node";
+    packageId?: string;
+    packageVersion?: string;
+    targetNodeId?: string;
+    targetLabel?: string;
+    command?: string;
+    inputValues?: Record<string, string>;
+  },
+  csrfToken: string,
+) {
+  return apiRequest<{
+    success: true;
+    task: LocalComputeTask;
+  }>("/admin/local-compute/tasks", {
+    method: "POST",
+    headers: {
+      "x-openclaw-csrf": csrfToken,
+    },
+    body: JSON.stringify(payload),
   });
 }
 
@@ -531,6 +617,7 @@ export async function getAuthEmailSettings() {
     requestWindowMinutes: number;
     verifyLimitPerWindow: number;
     verifyWindowMinutes: number;
+    adminTwoFactorRequired: boolean;
   }>("/admin/settings/auth-email");
 }
 
@@ -542,6 +629,7 @@ export async function saveAuthEmailSettings(
     requestWindowMinutes: number;
     verifyLimitPerWindow: number;
     verifyWindowMinutes: number;
+    adminTwoFactorRequired: boolean;
   },
   csrfToken: string,
 ) {
@@ -554,6 +642,7 @@ export async function saveAuthEmailSettings(
       requestWindowMinutes: number;
       verifyLimitPerWindow: number;
       verifyWindowMinutes: number;
+      adminTwoFactorRequired: boolean;
     };
   }>("/admin/settings/auth-email", {
     method: "POST",
