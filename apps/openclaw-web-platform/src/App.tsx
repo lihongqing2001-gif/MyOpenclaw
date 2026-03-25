@@ -1,6 +1,7 @@
 import { Suspense, lazy, type ReactElement } from "react";
 import { BrowserRouter as Router, Navigate, Route, Routes, useLocation } from "react-router-dom";
 import { Layout } from "@/components/layout/Layout";
+import { AdminWorkspace } from "@/components/layout/AdminWorkspace";
 import { Home } from "@/pages/Home";
 import { Download } from "@/pages/Download";
 import { Community } from "@/pages/Community";
@@ -15,6 +16,10 @@ const MySubmissions = lazy(() => import("@/pages/MySubmissions").then((module) =
 const ReviewQueue = lazy(() => import("@/pages/ReviewQueue").then((module) => ({ default: module.ReviewQueue })));
 const AdminDashboard = lazy(() => import("@/pages/AdminDashboard").then((module) => ({ default: module.AdminDashboard })));
 const Admin2FA = lazy(() => import("@/pages/Admin2FA").then((module) => ({ default: module.Admin2FA })));
+const AdminSecurity = lazy(() => import("@/pages/AdminSecurity").then((module) => ({ default: module.AdminSecurity })));
+const AdminPlatform = lazy(() => import("@/pages/AdminPlatform").then((module) => ({ default: module.AdminPlatform })));
+const AdminCloudAccess = lazy(() => import("@/pages/AdminCloudAccess").then((module) => ({ default: module.AdminCloudAccess })));
+const AdminLocalCompute = lazy(() => import("@/pages/AdminLocalCompute").then((module) => ({ default: module.AdminLocalCompute })));
 const UserManagement = lazy(() => import("@/pages/UserManagement").then((module) => ({ default: module.UserManagement })));
 const CloudOpenClaw = lazy(() => import("@/pages/CloudOpenClaw").then((module) => ({ default: module.CloudOpenClaw })));
 const CloudConsoleAccess = lazy(() => import("@/pages/CloudConsoleAccess").then((module) => ({ default: module.CloudConsoleAccess })));
@@ -77,6 +82,22 @@ function AdminTwoFactorRoute() {
   );
 }
 
+function AdminIndexRoute() {
+  const { loading, session } = usePlatform();
+
+  if (loading || !session) {
+    return <div className="min-h-screen bg-[#0a0e17]" />;
+  }
+  if (session.user?.role === "reviewer") {
+    return <Navigate to="/admin/review" replace />;
+  }
+  return (
+    <DeferredPage>
+      <AdminDashboard />
+    </DeferredPage>
+  );
+}
+
 export default function App() {
   return (
     <Router>
@@ -134,46 +155,87 @@ export default function App() {
               element={<Navigate to="/me" replace />}
             />
             <Route
-              path="review"
+              path="admin"
               element={
                 <ProtectedRoute roles={["reviewer", "super_admin"]} requireTwoFactor>
+                  <AdminWorkspace />
+                </ProtectedRoute>
+              }
+            >
+              <Route index element={<AdminIndexRoute />} />
+              <Route path="overview" element={<Navigate to="/admin" replace />} />
+              <Route
+                path="review"
+                element={
                   <DeferredPage>
                     <ReviewQueue />
                   </DeferredPage>
-                </ProtectedRoute>
-              }
-            />
-            <Route path="review-queue" element={<Navigate to="/review" replace />} />
-            <Route
-              path="admin"
-              element={
-                <ProtectedRoute roles={["super_admin"]} requireTwoFactor>
-                  <DeferredPage>
-                    <AdminDashboard />
-                  </DeferredPage>
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="admin/users"
-              element={
-                <ProtectedRoute roles={["super_admin"]} requireTwoFactor>
-                  <DeferredPage>
-                    <UserManagement />
-                  </DeferredPage>
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="admin/cloud-openclaw"
-              element={
-                <ProtectedRoute roles={["super_admin"]} requireTwoFactor>
-                  <DeferredPage>
-                    <CloudOpenClaw />
-                  </DeferredPage>
-                </ProtectedRoute>
-              }
-            />
+                }
+              />
+              <Route
+                path="users"
+                element={
+                  <ProtectedRoute roles={["super_admin"]} requireTwoFactor>
+                    <DeferredPage>
+                      <UserManagement />
+                    </DeferredPage>
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="security"
+                element={
+                  <ProtectedRoute roles={["super_admin"]} requireTwoFactor>
+                    <DeferredPage>
+                      <AdminSecurity />
+                    </DeferredPage>
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="platform"
+                element={
+                  <ProtectedRoute roles={["super_admin"]} requireTwoFactor>
+                    <DeferredPage>
+                      <AdminPlatform />
+                    </DeferredPage>
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="cloud-access"
+                element={
+                  <ProtectedRoute roles={["super_admin"]} requireTwoFactor>
+                    <DeferredPage>
+                      <AdminCloudAccess />
+                    </DeferredPage>
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="runtime"
+                element={
+                  <ProtectedRoute roles={["super_admin"]} requireTwoFactor>
+                    <DeferredPage>
+                      <CloudOpenClaw />
+                    </DeferredPage>
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="local-compute"
+                element={
+                  <ProtectedRoute roles={["super_admin"]} requireTwoFactor>
+                    <DeferredPage>
+                      <AdminLocalCompute />
+                    </DeferredPage>
+                  </ProtectedRoute>
+                }
+              />
+              <Route path="cloud-openclaw" element={<Navigate to="/admin/runtime" replace />} />
+            </Route>
+            <Route path="review" element={<Navigate to="/admin/review" replace />} />
+            <Route path="review-queue" element={<Navigate to="/admin/review" replace />} />
             <Route path="admin-dashboard" element={<Navigate to="/admin" replace />} />
           </Route>
           <Route

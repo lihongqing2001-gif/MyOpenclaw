@@ -30,4 +30,10 @@ export const apiContract = {
     "POST /admin/users/:userId/role",
     "POST /admin/users/:userId/revoke-sessions",
   ],
+  admin: [
+    "GET /admin/overview",
+    "GET /admin/local-compute/nodes",
+    "POST /admin/local-compute/nodes/register",
+    "POST /admin/local-compute/tasks",
+  ],
 } as const;

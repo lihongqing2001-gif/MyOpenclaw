@@ -101,6 +101,12 @@ export function Layout() {
                       Admin
                     </Button>
                   </Link>
+                ) : session?.user?.role === "reviewer" ? (
+                  <Link to="/admin/review">
+                    <Button variant="outline" size="sm" className="gap-2">
+                      Review
+                    </Button>
+                  </Link>
                 ) : null}
                 <Button variant="outline" size="sm" className="gap-2" onClick={() => void handleLogout()}>
                   Sign Out
@@ -166,6 +172,10 @@ export function Layout() {
                         <Button variant="outline" className="w-full justify-start">Users & Roles</Button>
                       </Link>
                     </>
+                  ) : session?.user?.role === "reviewer" ? (
+                    <Link to="/admin/review" onClick={() => setIsMobileMenuOpen(false)}>
+                      <Button variant="outline" className="w-full justify-start">Review Queue</Button>
+                    </Link>
                   ) : null}
                   <Button
                     variant="ghost"
@@ -240,7 +250,7 @@ export function Layout() {
           <div>
             <h4 className="font-semibold text-slate-100 mb-4">Admin</h4>
             <ul className="space-y-2 text-sm text-slate-400">
-              <li><Link to="/review" className="hover:text-blue-400 transition-colors">Review Queue</Link></li>
+              <li><Link to="/admin/review" className="hover:text-blue-400 transition-colors">Review Queue</Link></li>
               <li><Link to="/admin" className="hover:text-blue-400 transition-colors">Dashboard</Link></li>
               <li><a href="/health" className="hover:text-blue-400 transition-colors">Health</a></li>
             </ul>
@@ -249,7 +259,9 @@ export function Layout() {
         <div className="container mx-auto px-4 mt-12 pt-8 border-t border-slate-800/60 text-sm text-slate-500 flex justify-between items-center">
           <p>© {new Date().getFullYear()} SoloCore Hub. All rights reserved.</p>
           <div className="flex items-center gap-4">
-            <Link to="/admin" className="hover:text-slate-300 transition-colors">Admin</Link>
+            <Link to={session?.user?.role === "reviewer" ? "/admin/review" : "/admin"} className="hover:text-slate-300 transition-colors">
+              {session?.user?.role === "reviewer" ? "Review" : "Admin"}
+            </Link>
           </div>
         </div>
       </footer>

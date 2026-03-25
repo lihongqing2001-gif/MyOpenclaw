@@ -109,6 +109,7 @@ function normalizeDatabase(payload) {
     securityEvents: arrayOrEmpty(payload?.securityEvents),
     cloudConsoleAccessCodes: arrayOrEmpty(payload?.cloudConsoleAccessCodes),
     cloudConsoleGrants: arrayOrEmpty(payload?.cloudConsoleGrants),
+<<<<<<< HEAD
     localComputeNodes: arrayOrEmpty(payload?.localComputeNodes).map((node) => ({
       ...node,
       sharingMode: node?.sharingMode === "trusted-shared" ? "trusted-shared" : "author-only",
@@ -124,6 +125,10 @@ function normalizeDatabase(payload) {
       ownerUserId: task?.ownerUserId || task.createdByUserId,
       accessMode: task?.accessMode === "trusted-shared" ? "trusted-shared" : "owner"
     })),
+=======
+    localComputeNodes: arrayOrEmpty(payload?.localComputeNodes),
+    localComputeTasks: arrayOrEmpty(payload?.localComputeTasks),
+>>>>>>> codex/user-management-redesign
     settings: {
       github: {
         clientId: payload?.settings?.github?.clientId || "",
@@ -918,6 +923,7 @@ function generateToken2() {
 function createTokenPreview(token) {
   return `${token.slice(0, 8)}...${token.slice(-6)}`;
 }
+<<<<<<< HEAD
 function normalizeCapabilityKey(value) {
   return value.trim().toLowerCase();
 }
@@ -942,6 +948,8 @@ function buildOnboardingCapabilityKeys(manifest) {
     )
   );
 }
+=======
+>>>>>>> codex/user-management-redesign
 function refreshLocalComputeNodes(db) {
   const now = Date.now();
   db.localComputeNodes = db.localComputeNodes.map((node) => {
@@ -969,15 +977,21 @@ function createLocalComputeNode(db, ownerUser, input) {
     label: input.label.trim() || "Local Compute Node",
     ownerUserId: ownerUser.id,
     mode: "local-compute",
+<<<<<<< HEAD
     sharingMode: input.sharingMode,
     sharedWithUserIds: input.sharedWithUserIds,
+=======
+>>>>>>> codex/user-management-redesign
     status: "offline",
     resultPolicy: "full-sync",
     capabilities: input.capabilities,
     allowedPackageIds: input.allowedPackageIds,
     allowedNodeIds: input.allowedNodeIds,
+<<<<<<< HEAD
     allowedPathScopes: input.allowedPathScopes,
     allowedAuthCapabilities: input.allowedAuthCapabilities.map(normalizeCapabilityKey),
+=======
+>>>>>>> codex/user-management-redesign
     tokenHash: hashToken(plainToken),
     tokenPreview: createTokenPreview(plainToken),
     createdAt: now,
@@ -1005,9 +1019,12 @@ function markLocalComputeHeartbeat(node, input) {
   node.lastError = input.lastError;
   node.heartbeatMeta = input.heartbeatMeta;
 }
+<<<<<<< HEAD
 function canUserAccessLocalComputeNode(node, user) {
   return node.ownerUserId === user.id || node.sharingMode === "trusted-shared" && node.sharedWithUserIds.includes(user.id);
 }
+=======
+>>>>>>> codex/user-management-redesign
 function firstPackageCapability(manifest) {
   return manifest.capabilities.find((item) => Boolean(item.entrypoint)) || manifest.capabilities[0] || null;
 }
@@ -1036,9 +1053,12 @@ function createLocalComputeTask(db, input) {
     taskKind: input.taskKind,
     status: "queued",
     createdByUserId: input.createdByUser.id,
+<<<<<<< HEAD
     requestedByUserId: input.requestedByUserId || input.createdByUser.id,
     ownerUserId: input.ownerUserId || input.node.ownerUserId,
     accessMode: input.accessMode || (input.createdByUser.id === input.node.ownerUserId ? "owner" : "trusted-shared"),
+=======
+>>>>>>> codex/user-management-redesign
     createdAt: now,
     updatedAt: now,
     packageId: input.packageId,
@@ -1123,6 +1143,7 @@ function updateLocalComputeTask(task, node, input) {
 }
 function buildAdminLocalComputeSnapshot(db) {
   refreshLocalComputeNodes(db);
+<<<<<<< HEAD
   const emailById = new Map(db.users.map((user) => [user.id, user.email]));
   return {
     nodes: [...db.localComputeNodes].map((node) => ({
@@ -1187,6 +1208,13 @@ function assertSharedRuntimePackageAccess(node, user, record) {
     }
   }
 }
+=======
+  return {
+    nodes: [...db.localComputeNodes].sort((a, b) => Date.parse(b.updatedAt) - Date.parse(a.updatedAt)),
+    tasks: [...db.localComputeTasks].sort((a, b) => Date.parse(b.updatedAt) - Date.parse(a.updatedAt))
+  };
+}
+>>>>>>> codex/user-management-redesign
 
 // server.ts
 dotenv.config();
@@ -1281,6 +1309,30 @@ function buildAdminUserSummary(db, user) {
     recentAudit: auditLogs.slice(0, 8)
   };
 }
+function parseBoolean(value, fallback = true) {
+  if (typeof value === "boolean") {
+    return value;
+  }
+  if (typeof value === "string") {
+    const normalized = value.trim().toLowerCase();
+    if (["false", "0", "off", "no"].includes(normalized)) {
+      return false;
+    }
+    if (["true", "1", "on", "yes"].includes(normalized)) {
+      return true;
+    }
+  }
+  return fallback;
+}
+function auditSeverity(action) {
+  if (["user_role_update", "user_sessions_revoked"].includes(action)) {
+    return "critical";
+  }
+  if (["cloud_console_code_create", "cloud_console_code_revoke", "admin_2fa_verify"].includes(action)) {
+    return "warning";
+  }
+  return "info";
+}
 async function cloudOpenClawFetch(targetPath, init) {
   const nextHeaders = new Headers(init?.headers || {});
   if (cloudOpenClawInternalToken) {
@@ -1346,6 +1398,7 @@ function parseDelimitedList(value) {
   }
   return [];
 }
+<<<<<<< HEAD
 function normalizeCapabilityList(value) {
   return parseDelimitedList(value).map((item) => item.toLowerCase());
 }
@@ -1358,6 +1411,8 @@ function resolveSharedUsersByEmail(db, emails) {
     unresolvedEmails
   };
 }
+=======
+>>>>>>> codex/user-management-redesign
 function buildCloudConsoleAccessResponse(userId) {
   const db = loadDatabase();
   expireCloudConsoleRecords(db);
@@ -2034,6 +2089,157 @@ app.get("/admin/security-events", requireAuth, requireRole(["super_admin"]), req
   const db = loadDatabase();
   res.json({ securityEvents: db.securityEvents });
 });
+app.get("/admin/overview", requireAuth, requireRole(["super_admin"]), requireAdminTwoFactor, async (_req, res) => {
+  const db = loadDatabase();
+  expireCloudConsoleRecords(db);
+  const localComputeSnapshot = buildAdminLocalComputeSnapshot(db);
+  saveDatabase(db);
+  const activeCloudCodes = db.cloudConsoleAccessCodes.filter((item) => !item.revokedAt && Date.parse(item.expiresAt) > Date.now());
+  const activeCloudGrants = db.cloudConsoleGrants.filter((item) => item.status === "active" && Date.parse(item.expiresAt) > Date.now());
+  const onlineLocalComputeNodes = localComputeSnapshot.nodes.filter((node) => node.status === "online" || node.status === "busy");
+  const pendingReviews = db.submissions.filter((item) => ["submitted", "under_review"].includes(item.status)).length;
+  const recentSecurityEvents = [...db.securityEvents].sort((a, b) => Date.parse(b.createdAt) - Date.parse(a.createdAt)).slice(0, 6);
+  const recentCriticalActivity = [...db.auditLogs].filter((item) => ["user_role_update", "user_sessions_revoked", "cloud_console_code_create", "cloud_console_code_revoke", "admin_2fa_verify", "publish_github_release", "local_compute_task_create"].includes(item.action)).sort((a, b) => Date.parse(b.createdAt) - Date.parse(a.createdAt)).slice(0, 8);
+  let runtimeReachable = false;
+  try {
+    await cloudOpenClawFetch("/api/health");
+    runtimeReachable = true;
+  } catch {
+    runtimeReachable = false;
+  }
+  const alerts = [];
+  if (!smtpConfigured()) {
+    alerts.push({
+      id: "smtp-missing",
+      severity: "critical",
+      title: "SMTP delivery is not configured",
+      detail: "Email sign-in and operator notifications are still relying on fallback behavior.",
+      href: "/admin/platform"
+    });
+  }
+  if (!githubOauthConfigured()) {
+    alerts.push({
+      id: "github-oauth-missing",
+      severity: "warning",
+      title: "GitHub OAuth is not configured",
+      detail: "Users can still sign in by email, but GitHub identity linking and OAuth sign-in are unavailable.",
+      href: "/admin/platform"
+    });
+  }
+  if (pendingReviews > 0) {
+    alerts.push({
+      id: "pending-reviews",
+      severity: "warning",
+      title: `${pendingReviews} submissions need moderation`,
+      detail: "Reviewer action is required before these packages can move forward.",
+      href: "/admin/review"
+    });
+  }
+  if (!runtimeReachable) {
+    alerts.push({
+      id: "runtime-unreachable",
+      severity: "critical",
+      title: "Cloud runtime is unreachable",
+      detail: "Server-side OpenClaw runtime checks are failing. Runtime operations should be investigated before dispatching work.",
+      href: "/admin/runtime"
+    });
+  }
+  if (localComputeSnapshot.nodes.length > 0 && onlineLocalComputeNodes.length === 0) {
+    alerts.push({
+      id: "local-compute-offline",
+      severity: "warning",
+      title: "All local compute nodes are offline",
+      detail: "Dispatch is configured, but no trusted local machine is currently reporting online.",
+      href: "/admin/local-compute"
+    });
+  }
+  if (recentSecurityEvents.length > 0) {
+    alerts.push({
+      id: "security-events",
+      severity: "info",
+      title: `${recentSecurityEvents.length} recent security signals`,
+      detail: "Review recent events and correlate them with audit activity if anything looks unusual.",
+      href: "/admin/security"
+    });
+  }
+  const moduleHealth = [
+    {
+      id: "users",
+      label: "Users & Roles",
+      status: db.users.length > 0 ? "healthy" : "warning",
+      summary: `${db.users.length} accounts, ${db.sessions.length} persisted sessions, ${activeCloudGrants.length} live grants.`,
+      href: "/admin/users"
+    },
+    {
+      id: "review",
+      label: "Review Moderation",
+      status: pendingReviews > 0 ? "warning" : "healthy",
+      summary: pendingReviews > 0 ? `${pendingReviews} submissions still need a decision.` : "Review queue is currently clear.",
+      href: "/admin/review"
+    },
+    {
+      id: "security",
+      label: "Security & Audit",
+      status: recentSecurityEvents.length > 0 ? "warning" : "healthy",
+      summary: `${db.auditLogs.length} audit logs and ${db.securityEvents.length} security events recorded.`,
+      href: "/admin/security"
+    },
+    {
+      id: "platform",
+      label: "Platform Settings",
+      status: smtpConfigured() && githubOauthConfigured() ? "healthy" : "warning",
+      summary: `${githubOauthConfigured() ? "GitHub OAuth ready" : "GitHub OAuth missing"} \xB7 ${smtpConfigured() ? "SMTP ready" : "SMTP fallback only"}.`,
+      href: "/admin/platform"
+    },
+    {
+      id: "cloud-access",
+      label: "Cloud Access",
+      status: activeCloudCodes.length > 0 || activeCloudGrants.length > 0 ? "healthy" : "idle",
+      summary: `${activeCloudCodes.length} active codes and ${activeCloudGrants.length} live grants.`,
+      href: "/admin/cloud-access"
+    },
+    {
+      id: "runtime",
+      label: "Runtime Ops",
+      status: runtimeReachable ? "healthy" : "critical",
+      summary: runtimeReachable ? "Cloud runtime is reachable for package install and node execution." : "Cloud runtime health checks are failing.",
+      href: "/admin/runtime"
+    },
+    {
+      id: "local-compute",
+      label: "Local Compute",
+      status: localComputeSnapshot.nodes.length === 0 ? "idle" : onlineLocalComputeNodes.length > 0 ? "healthy" : "warning",
+      summary: `${onlineLocalComputeNodes.length}/${localComputeSnapshot.nodes.length} nodes online, ${localComputeSnapshot.tasks.length} tracked tasks.`,
+      href: "/admin/local-compute"
+    }
+  ];
+  return res.json({
+    counts: {
+      users: db.users.length,
+      sessions: db.sessions.length,
+      pendingReviews,
+      publishedPackages: db.packages.filter((item) => item.reviewStatus === "published").length,
+      auditLogs: db.auditLogs.length,
+      securityEvents: db.securityEvents.length,
+      activeCloudCodes: activeCloudCodes.length,
+      activeCloudGrants: activeCloudGrants.length,
+      onlineLocalComputeNodes: onlineLocalComputeNodes.length,
+      localComputeTasks: localComputeSnapshot.tasks.length
+    },
+    moduleHealth: moduleHealth.map((item) => ({ ...item })),
+    alerts: alerts.sort((a, b) => {
+      const rank = { critical: 0, warning: 1, info: 2 };
+      return rank[a.severity] - rank[b.severity];
+    }),
+    recentCriticalActivity: recentCriticalActivity.map((item) => ({
+      ...item,
+      metadata: {
+        ...item.metadata || {},
+        severity: auditSeverity(item.action)
+      }
+    }))
+  });
+});
 app.get("/admin/users", requireAuth, requireRole(["super_admin"]), requireAdminTwoFactor, (_req, res) => {
   const db = loadDatabase();
   const roleWeight = {
@@ -2186,19 +2392,25 @@ app.post("/admin/local-compute/nodes/register", requireAuth, requireRole(["super
     return res.status(400).json({ error: "label is required" });
   }
   const db = loadDatabase();
+<<<<<<< HEAD
   const sharedWithEmails = parseDelimitedList(req.body?.sharedWithEmails);
   const { sharedUsers, unresolvedEmails } = resolveSharedUsersByEmail(db, sharedWithEmails);
   if (unresolvedEmails.length > 0) {
     return res.status(400).json({ error: `Shared users not found: ${unresolvedEmails.join(", ")}` });
   }
+=======
+>>>>>>> codex/user-management-redesign
   const { node, plainToken } = createLocalComputeNode(db, auth.user, {
     label,
     allowedPackageIds: parseDelimitedList(req.body?.allowedPackageIds),
     allowedNodeIds: parseDelimitedList(req.body?.allowedNodeIds),
+<<<<<<< HEAD
     sharedWithUserIds: sharedUsers.map((user) => user.id),
     sharingMode: req.body?.sharingMode === "trusted-shared" ? "trusted-shared" : "author-only",
     allowedPathScopes: parseDelimitedList(req.body?.allowedPathScopes),
     allowedAuthCapabilities: normalizeCapabilityList(req.body?.allowedAuthCapabilities),
+=======
+>>>>>>> codex/user-management-redesign
     capabilities: Array.isArray(req.body?.capabilities) ? req.body.capabilities.filter((item) => {
       const candidate = item;
       return Boolean(
@@ -2213,6 +2425,7 @@ app.post("/admin/local-compute/nodes/register", requireAuth, requireRole(["super
   });
   saveDatabase(db);
   audit("local_compute_node_register", "local_compute_node", node.nodeId, auth.user.id, {
+<<<<<<< HEAD
     sharingMode: node.sharingMode,
     sharedWithUserIds: node.sharedWithUserIds,
     allowedPackageIds: node.allowedPackageIds,
@@ -2248,6 +2461,13 @@ app.post("/admin/local-compute/nodes/:nodeId/share-policy", requireAuth, require
   });
   return res.json({ success: true, node });
 });
+=======
+    allowedPackageIds: node.allowedPackageIds,
+    allowedNodeIds: node.allowedNodeIds
+  });
+  return res.json({ success: true, node, plainToken });
+});
+>>>>>>> codex/user-management-redesign
 app.post("/admin/local-compute/nodes/heartbeat", rateLimit("local-compute-heartbeat", 300, 60 * 1e3), (req, res) => {
   const { nodeId, token } = localComputeNodeCredentials(req);
   if (!nodeId || !token) {
@@ -2301,9 +2521,12 @@ app.post("/admin/local-compute/tasks", requireAuth, requireRole(["super_admin"])
       task = createLocalComputeTask(db, {
         node,
         createdByUser: auth.user,
+<<<<<<< HEAD
         ownerUserId: node.ownerUserId,
         requestedByUserId: auth.user.id,
         accessMode: auth.user.id === node.ownerUserId ? "owner" : "trusted-shared",
+=======
+>>>>>>> codex/user-management-redesign
         taskKind: "package",
         packageId,
         packageVersion: resolved.packageVersion,
@@ -2325,9 +2548,12 @@ app.post("/admin/local-compute/tasks", requireAuth, requireRole(["super_admin"])
       task = createLocalComputeTask(db, {
         node,
         createdByUser: auth.user,
+<<<<<<< HEAD
         ownerUserId: node.ownerUserId,
         requestedByUserId: auth.user.id,
         accessMode: auth.user.id === node.ownerUserId ? "owner" : "trusted-shared",
+=======
+>>>>>>> codex/user-management-redesign
         taskKind: "skill-node",
         targetNodeId,
         targetLabel,
@@ -2338,9 +2564,12 @@ app.post("/admin/local-compute/tasks", requireAuth, requireRole(["super_admin"])
     saveDatabase(db);
     audit("local_compute_task_create", "local_compute_task", task.id, auth.user.id, {
       nodeId: task.nodeId,
+<<<<<<< HEAD
       ownerUserId: task.ownerUserId,
       requestedByUserId: task.requestedByUserId,
       accessMode: task.accessMode,
+=======
+>>>>>>> codex/user-management-redesign
       taskKind: task.taskKind,
       targetNodeId: task.targetNodeId,
       packageId: task.packageId
@@ -2350,6 +2579,7 @@ app.post("/admin/local-compute/tasks", requireAuth, requireRole(["super_admin"])
     return res.status(400).json({ error: error instanceof Error ? error.message : "Failed to create local compute task" });
   }
 });
+<<<<<<< HEAD
 app.get("/me/shared-runtime", requireAuth, (req, res) => {
   const auth = req.auth;
   const db = loadDatabase();
@@ -2438,6 +2668,8 @@ app.post("/me/shared-runtime/tasks", requireAuth, enforceCsrf, rateLimit("shared
     return res.status(400).json({ error: error instanceof Error ? error.message : "Failed to create shared runtime task" });
   }
 });
+=======
+>>>>>>> codex/user-management-redesign
 app.post("/admin/local-compute/tasks/poll", rateLimit("local-compute-poll", 300, 60 * 1e3), (req, res) => {
   const { nodeId, token } = localComputeNodeCredentials(req);
   if (!nodeId || !token) {

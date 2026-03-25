@@ -283,6 +283,38 @@ export async function getSecurityEvents() {
   return apiRequest<{ securityEvents: SecurityEvent[] }>("/admin/security-events");
 }
 
+export async function getAdminOverview() {
+  return apiRequest<{
+    counts: {
+      users: number;
+      sessions: number;
+      pendingReviews: number;
+      publishedPackages: number;
+      auditLogs: number;
+      securityEvents: number;
+      activeCloudCodes: number;
+      activeCloudGrants: number;
+      onlineLocalComputeNodes: number;
+      localComputeTasks: number;
+    };
+    moduleHealth: Array<{
+      id: string;
+      label: string;
+      status: "healthy" | "warning" | "critical" | "idle";
+      summary: string;
+      href: string;
+    }>;
+    alerts: Array<{
+      id: string;
+      severity: "critical" | "warning" | "info";
+      title: string;
+      detail: string;
+      href: string;
+    }>;
+    recentCriticalActivity: AuditLogEntry[];
+  }>("/admin/overview");
+}
+
 export async function getAdminUsers() {
   return apiRequest<{ users: AdminUserSummary[] }>("/admin/users");
 }
@@ -422,7 +454,6 @@ export async function updateAdminLocalComputeNodeSharePolicy(
     body: JSON.stringify(payload),
   });
 }
-
 export async function createAdminLocalComputeTask(
   payload: {
     nodeId: string;
@@ -476,7 +507,6 @@ export async function createMySharedRuntimeTask(
     body: JSON.stringify(payload),
   });
 }
-
 export async function getCloudOpenClawSummary() {
   return apiRequest<CloudOpenClawSummary>("/admin/cloud-openclaw/summary");
 }

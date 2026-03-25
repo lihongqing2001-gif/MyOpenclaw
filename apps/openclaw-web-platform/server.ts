@@ -181,6 +181,16 @@ function buildAdminUserSummary(db: ReturnType<typeof loadDatabase>, user: Return
   };
 }
 
+function auditSeverity(action: string) {
+  if (["user_role_update", "user_sessions_revoked"].includes(action)) {
+    return "critical";
+  }
+  if (["cloud_console_code_create", "cloud_console_code_revoke", "admin_2fa_verify"].includes(action)) {
+    return "warning";
+  }
+  return "info";
+}
+
 async function cloudOpenClawFetch(targetPath: string, init?: RequestInit) {
   const nextHeaders = new Headers(init?.headers || {});
   if (cloudOpenClawInternalToken) {
@@ -283,7 +293,6 @@ function resolveSharedUsersByEmail(db: ReturnType<typeof loadDatabase>, emails: 
     unresolvedEmails,
   };
 }
-
 function buildCloudConsoleAccessResponse(userId: string) {
   const db = loadDatabase();
   expireCloudConsoleRecords(db);
@@ -1035,6 +1044,179 @@ app.get("/admin/security-events", requireAuth, requireRole(["super_admin"]), req
   res.json({ securityEvents: db.securityEvents });
 });
 
+app.get("/admin/overview", requireAuth, requireRole(["super_admin"]), requireAdminTwoFactor, async (_req, res) => {
+  const db = loadDatabase();
+  expireCloudConsoleRecords(db);
+  const localComputeSnapshot = buildAdminLocalComputeSnapshot(db);
+  saveDatabase(db);
+
+  const activeCloudCodes = db.cloudConsoleAccessCodes.filter((item) => !item.revokedAt && Date.parse(item.expiresAt) > Date.now());
+  const activeCloudGrants = db.cloudConsoleGrants.filter((item) => item.status === "active" && Date.parse(item.expiresAt) > Date.now());
+  const onlineLocalComputeNodes = localComputeSnapshot.nodes.filter((node) => node.status === "online" || node.status === "busy");
+  const pendingReviews = db.submissions.filter((item) => ["submitted", "under_review"].includes(item.status)).length;
+  const recentSecurityEvents = [...db.securityEvents].sort((a, b) => Date.parse(b.createdAt) - Date.parse(a.createdAt)).slice(0, 6);
+  const recentCriticalActivity = [...db.auditLogs]
+    .filter((item) => ["user_role_update", "user_sessions_revoked", "cloud_console_code_create", "cloud_console_code_revoke", "admin_2fa_verify", "publish_github_release", "local_compute_task_create"].includes(item.action))
+    .sort((a, b) => Date.parse(b.createdAt) - Date.parse(a.createdAt))
+    .slice(0, 8);
+
+  let runtimeReachable = false;
+  try {
+    await cloudOpenClawFetch("/api/health");
+    runtimeReachable = true;
+  } catch {
+    runtimeReachable = false;
+  }
+
+  const alerts: Array<{
+    id: string;
+    severity: "critical" | "warning" | "info";
+    title: string;
+    detail: string;
+    href: string;
+  }> = [];
+
+  if (!smtpConfigured()) {
+    alerts.push({
+      id: "smtp-missing",
+      severity: "critical",
+      title: "SMTP delivery is not configured",
+      detail: "Email sign-in and operator notifications are still relying on fallback behavior.",
+      href: "/admin/platform",
+    });
+  }
+
+  if (!githubOauthConfigured()) {
+    alerts.push({
+      id: "github-oauth-missing",
+      severity: "warning",
+      title: "GitHub OAuth is not configured",
+      detail: "Users can still sign in by email, but GitHub identity linking and OAuth sign-in are unavailable.",
+      href: "/admin/platform",
+    });
+  }
+
+  if (pendingReviews > 0) {
+    alerts.push({
+      id: "pending-reviews",
+      severity: "warning",
+      title: `${pendingReviews} submissions need moderation`,
+      detail: "Reviewer action is required before these packages can move forward.",
+      href: "/admin/review",
+    });
+  }
+
+  if (!runtimeReachable) {
+    alerts.push({
+      id: "runtime-unreachable",
+      severity: "critical",
+      title: "Cloud runtime is unreachable",
+      detail: "Server-side OpenClaw runtime checks are failing. Runtime operations should be investigated before dispatching work.",
+      href: "/admin/runtime",
+    });
+  }
+
+  if (localComputeSnapshot.nodes.length > 0 && onlineLocalComputeNodes.length === 0) {
+    alerts.push({
+      id: "local-compute-offline",
+      severity: "warning",
+      title: "All local compute nodes are offline",
+      detail: "Dispatch is configured, but no trusted local machine is currently reporting online.",
+      href: "/admin/local-compute",
+    });
+  }
+
+  if (recentSecurityEvents.length > 0) {
+    alerts.push({
+      id: "security-events",
+      severity: "info",
+      title: `${recentSecurityEvents.length} recent security signals`,
+      detail: "Review recent events and correlate them with audit activity if anything looks unusual.",
+      href: "/admin/security",
+    });
+  }
+
+  const moduleHealth = [
+    {
+      id: "users",
+      label: "Users & Roles",
+      status: db.users.length > 0 ? "healthy" : "warning",
+      summary: `${db.users.length} accounts, ${db.sessions.length} persisted sessions, ${activeCloudGrants.length} live grants.`,
+      href: "/admin/users",
+    },
+    {
+      id: "review",
+      label: "Review Moderation",
+      status: pendingReviews > 0 ? "warning" : "healthy",
+      summary: pendingReviews > 0 ? `${pendingReviews} submissions still need a decision.` : "Review queue is currently clear.",
+      href: "/admin/review",
+    },
+    {
+      id: "security",
+      label: "Security & Audit",
+      status: recentSecurityEvents.length > 0 ? "warning" : "healthy",
+      summary: `${db.auditLogs.length} audit logs and ${db.securityEvents.length} security events recorded.`,
+      href: "/admin/security",
+    },
+    {
+      id: "platform",
+      label: "Platform Settings",
+      status: smtpConfigured() && githubOauthConfigured() ? "healthy" : "warning",
+      summary: `${githubOauthConfigured() ? "GitHub OAuth ready" : "GitHub OAuth missing"} · ${smtpConfigured() ? "SMTP ready" : "SMTP fallback only"}.`,
+      href: "/admin/platform",
+    },
+    {
+      id: "cloud-access",
+      label: "Cloud Access",
+      status: activeCloudCodes.length > 0 || activeCloudGrants.length > 0 ? "healthy" : "idle",
+      summary: `${activeCloudCodes.length} active codes and ${activeCloudGrants.length} live grants.`,
+      href: "/admin/cloud-access",
+    },
+    {
+      id: "runtime",
+      label: "Runtime Ops",
+      status: runtimeReachable ? "healthy" : "critical",
+      summary: runtimeReachable ? "Cloud runtime is reachable for package install and node execution." : "Cloud runtime health checks are failing.",
+      href: "/admin/runtime",
+    },
+    {
+      id: "local-compute",
+      label: "Local Compute",
+      status: localComputeSnapshot.nodes.length === 0 ? "idle" : onlineLocalComputeNodes.length > 0 ? "healthy" : "warning",
+      summary: `${onlineLocalComputeNodes.length}/${localComputeSnapshot.nodes.length} nodes online, ${localComputeSnapshot.tasks.length} tracked tasks.`,
+      href: "/admin/local-compute",
+    },
+  ] as const;
+
+  return res.json({
+    counts: {
+      users: db.users.length,
+      sessions: db.sessions.length,
+      pendingReviews,
+      publishedPackages: db.packages.filter((item) => item.reviewStatus === "published").length,
+      auditLogs: db.auditLogs.length,
+      securityEvents: db.securityEvents.length,
+      activeCloudCodes: activeCloudCodes.length,
+      activeCloudGrants: activeCloudGrants.length,
+      onlineLocalComputeNodes: onlineLocalComputeNodes.length,
+      localComputeTasks: localComputeSnapshot.tasks.length,
+    },
+    moduleHealth: moduleHealth.map((item) => ({ ...item })),
+    alerts: alerts.sort((a, b) => {
+      const rank = { critical: 0, warning: 1, info: 2 } as const;
+      return rank[a.severity] - rank[b.severity];
+    }),
+    recentCriticalActivity: recentCriticalActivity
+      .map((item) => ({
+        ...item,
+        metadata: {
+          ...(item.metadata || {}),
+          severity: auditSeverity(item.action),
+        },
+      })),
+  });
+});
+
 app.get("/admin/users", requireAuth, requireRole(["super_admin"]), requireAdminTwoFactor, (_req, res) => {
   const db = loadDatabase();
   const roleWeight: Record<string, number> = {
@@ -1278,7 +1460,6 @@ app.post("/admin/local-compute/nodes/:nodeId/share-policy", requireAuth, require
   });
   return res.json({ success: true, node });
 });
-
 app.post("/admin/local-compute/nodes/heartbeat", rateLimit("local-compute-heartbeat", 300, 60 * 1000), (req, res) => {
   const { nodeId, token } = localComputeNodeCredentials(req);
   if (!nodeId || !token) {
@@ -1482,7 +1663,6 @@ app.post("/me/shared-runtime/tasks", requireAuth, enforceCsrf, rateLimit("shared
     return res.status(400).json({ error: error instanceof Error ? error.message : "Failed to create shared runtime task" });
   }
 });
-
 app.post("/admin/local-compute/tasks/poll", rateLimit("local-compute-poll", 300, 60 * 1000), (req, res) => {
   const { nodeId, token } = localComputeNodeCredentials(req);
   if (!nodeId || !token) {

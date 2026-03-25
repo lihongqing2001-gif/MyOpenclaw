@@ -258,13 +258,13 @@ export interface LocalComputeNode {
   label: string;
   ownerUserId: string;
   ownerEmail?: string;
-  mode: "local-compute";
   sharingMode: LocalComputeSharingMode;
   sharedWithUserIds: string[];
   sharedWithUsers?: Array<{
     userId: string;
     email: string;
   }>;
+  mode: "local-compute";
   status: LocalComputeNodeStatus;
   lastSeenAt?: string;
   currentTaskId?: string;
@@ -344,7 +344,6 @@ export interface SharedRuntimeSnapshot {
   nodes: SharedRuntimeNodeAccess[];
   tasks: LocalComputeTask[];
 }
-
 export interface CloudOpenClawSummary {
   consoleBaseUrl: string;
   reachable: boolean;
