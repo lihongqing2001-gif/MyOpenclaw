@@ -4,10 +4,13 @@ import { Activity, AlertTriangle, Bot, Database, KeyRound, Package, Settings, Sh
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import {
+  createAdminLocalComputeTask,
   createAdminCloudConsoleAccessCode,
+  getAdminLocalComputeSnapshot,
   getAdminCloudConsoleAccessSnapshot,
   getAuditLogs,
   getGithubSettings,
+  registerAdminLocalComputeNode,
   getPackages,
   getPlatformSummary,
   getReviewQueue,
@@ -19,12 +22,14 @@ import {
   saveGithubSettings,
   saveSmtpSettings,
   sendSmtpTestEmail,
+  updateAdminLocalComputeNodeSharePolicy,
 } from "@/lib/api";
 import { formatRelativeDate } from "@/lib/format";
 import { usePlatform } from "@/lib/platform";
 
 export function AdminDashboard() {
   const { session, refreshSession } = usePlatform();
+  const [packages, setPackages] = useState<Awaited<ReturnType<typeof getPackages>>["packages"]>([]);
   const [packageCount, setPackageCount] = useState(0);
   const [reviewCount, setReviewCount] = useState(0);
   const [auditCount, setAuditCount] = useState(0);
@@ -42,6 +47,34 @@ export function AdminDashboard() {
   });
   const [cloudConsoleMessage, setCloudConsoleMessage] = useState("");
   const [latestCloudConsoleCode, setLatestCloudConsoleCode] = useState("");
+  const [localComputeSnapshot, setLocalComputeSnapshot] = useState<null | Awaited<ReturnType<typeof getAdminLocalComputeSnapshot>>>(null);
+  const [localComputeForm, setLocalComputeForm] = useState({
+    label: "Mobei Local Node",
+    allowedPackageIds: "",
+    allowedNodeIds: "",
+    sharingMode: "author-only" as "author-only" | "trusted-shared",
+    sharedWithEmails: "",
+    allowedPathScopes: "",
+    allowedAuthCapabilities: "",
+  });
+  const [localComputeShareForms, setLocalComputeShareForms] = useState<Record<string, {
+    sharingMode: "author-only" | "trusted-shared";
+    sharedWithEmails: string;
+    allowedPathScopes: string;
+    allowedAuthCapabilities: string;
+  }>>({});
+  const [localComputeTaskForm, setLocalComputeTaskForm] = useState({
+    nodeId: "",
+    taskKind: "package" as "package" | "skill-node",
+    packageId: "",
+    targetNodeId: "",
+    targetLabel: "",
+    command: "",
+    inputValuesJson: "{}",
+  });
+  const [localComputeMessage, setLocalComputeMessage] = useState("");
+  const [latestLocalComputeToken, setLatestLocalComputeToken] = useState("");
+  const [latestLocalComputeNodeId, setLatestLocalComputeNodeId] = useState("");
   const [githubForm, setGithubForm] = useState({
     clientId: "",
     clientSecret: "",
@@ -73,17 +106,42 @@ export function AdminDashboard() {
   const [error, setError] = useState("");
   const activeCloudCodes = (cloudConsoleSnapshot?.codes || []).filter((code) => !code.revokedAt);
   const activeCloudGrants = (cloudConsoleSnapshot?.grants || []).filter((grant) => grant.status === "active");
+  const onlineLocalComputeNodes = (localComputeSnapshot?.nodes || []).filter((node) => node.status === "online" || node.status === "busy");
 
   async function refreshCloudConsoleSnapshot() {
     const snapshot = await getAdminCloudConsoleAccessSnapshot();
     setCloudConsoleSnapshot(snapshot);
   }
 
+  async function refreshLocalComputeSnapshot() {
+    const snapshot = await getAdminLocalComputeSnapshot();
+    setLocalComputeSnapshot(snapshot);
+    setLocalComputeShareForms(
+      Object.fromEntries(
+        snapshot.nodes.map((node) => [
+          node.nodeId,
+          {
+            sharingMode: node.sharingMode || "author-only",
+            sharedWithEmails: (node.sharedWithUsers || []).map((user) => user.email).join("\n"),
+            allowedPathScopes: (node.allowedPathScopes || []).join("\n"),
+            allowedAuthCapabilities: (node.allowedAuthCapabilities || []).join("\n"),
+          },
+        ]),
+      ),
+    );
+    setLocalComputeTaskForm((current) => ({
+      ...current,
+      nodeId: current.nodeId || snapshot.nodes[0]?.nodeId || "",
+      packageId: current.packageId || "",
+    }));
+  }
+
   useEffect(() => {
     let cancelled = false;
-    void Promise.all([getPackages(), getReviewQueue(), getAuditLogs(), getSecurityEvents(), getPlatformSummary(), getGithubSettings(), getSmtpSettings(), getAuthEmailSettings(), getAdminCloudConsoleAccessSnapshot()])
-      .then(([packages, reviewQueue, auditLogs, securityEvents, summary, githubSettings, smtpSettings, authEmailSettings, consoleSnapshot]) => {
+    void Promise.all([getPackages(), getReviewQueue(), getAuditLogs(), getSecurityEvents(), getPlatformSummary(), getGithubSettings(), getSmtpSettings(), getAuthEmailSettings(), getAdminCloudConsoleAccessSnapshot(), getAdminLocalComputeSnapshot()])
+      .then(([packages, reviewQueue, auditLogs, securityEvents, summary, githubSettings, smtpSettings, authEmailSettings, consoleSnapshot, localCompute]) => {
         if (cancelled) return;
+        setPackages(packages.packages);
         setPackageCount(packages.packages.length);
         setReviewCount(reviewQueue.submissions.length);
         setAuditCount(auditLogs.auditLogs.length);
@@ -110,6 +168,25 @@ export function AdminDashboard() {
           adminTwoFactorRequired: authEmailSettings.adminTwoFactorRequired,
         });
         setCloudConsoleSnapshot(consoleSnapshot);
+        setLocalComputeSnapshot(localCompute);
+        setLocalComputeShareForms(
+          Object.fromEntries(
+            localCompute.nodes.map((node) => [
+              node.nodeId,
+              {
+                sharingMode: node.sharingMode || "author-only",
+                sharedWithEmails: (node.sharedWithUsers || []).map((user) => user.email).join("\n"),
+                allowedPathScopes: (node.allowedPathScopes || []).join("\n"),
+                allowedAuthCapabilities: (node.allowedAuthCapabilities || []).join("\n"),
+              },
+            ]),
+          ),
+        );
+        setLocalComputeTaskForm((current) => ({
+          ...current,
+          nodeId: current.nodeId || localCompute.nodes[0]?.nodeId || "",
+          packageId: current.packageId || packages.packages[0]?.packageId || "",
+        }));
         setActivity(
           auditLogs.auditLogs
             .slice(-4)
@@ -250,6 +327,73 @@ export function AdminDashboard() {
     }
   }
 
+  async function handleCreateLocalComputeNode() {
+    if (!session?.csrfToken) {
+      return;
+    }
+    try {
+      const response = await registerAdminLocalComputeNode({
+        label: localComputeForm.label,
+        allowedPackageIds: localComputeForm.allowedPackageIds.split(/[\n,]/).map((item) => item.trim()).filter(Boolean),
+        allowedNodeIds: localComputeForm.allowedNodeIds.split(/[\n,]/).map((item) => item.trim()).filter(Boolean),
+        sharingMode: localComputeForm.sharingMode,
+        sharedWithEmails: localComputeForm.sharedWithEmails.split(/[\n,]/).map((item) => item.trim()).filter(Boolean),
+        allowedPathScopes: localComputeForm.allowedPathScopes.split(/[\n,]/).map((item) => item.trim()).filter(Boolean),
+        allowedAuthCapabilities: localComputeForm.allowedAuthCapabilities.split(/[\n,]/).map((item) => item.trim()).filter(Boolean),
+      }, session.csrfToken);
+      setLatestLocalComputeToken(response.plainToken);
+      setLatestLocalComputeNodeId(response.node.nodeId);
+      setLocalComputeMessage("Local compute node registered. Copy the node token now and start the local bridge script on your machine.");
+      await refreshLocalComputeSnapshot();
+    } catch (cause) {
+      setLocalComputeMessage(cause instanceof Error ? cause.message : "Failed to register local compute node");
+    }
+  }
+
+  async function handleCreateLocalComputeTask() {
+    if (!session?.csrfToken || !localComputeTaskForm.nodeId) {
+      return;
+    }
+    try {
+      const inputValues = JSON.parse(localComputeTaskForm.inputValuesJson || "{}") as Record<string, string>;
+      const response = await createAdminLocalComputeTask({
+        nodeId: localComputeTaskForm.nodeId,
+        taskKind: localComputeTaskForm.taskKind,
+        packageId: localComputeTaskForm.taskKind === "package" ? localComputeTaskForm.packageId : undefined,
+        targetNodeId: localComputeTaskForm.taskKind === "skill-node" ? localComputeTaskForm.targetNodeId : undefined,
+        targetLabel: localComputeTaskForm.taskKind === "skill-node" ? localComputeTaskForm.targetLabel : undefined,
+        command: localComputeTaskForm.taskKind === "skill-node" ? localComputeTaskForm.command : undefined,
+        inputValues,
+      }, session.csrfToken);
+      setLocalComputeMessage(`Queued local compute task: ${response.task.targetLabel} (${response.task.id})`);
+      await refreshLocalComputeSnapshot();
+    } catch (cause) {
+      setLocalComputeMessage(cause instanceof Error ? cause.message : "Failed to queue local compute task");
+    }
+  }
+
+  async function handleSaveLocalComputeSharePolicy(nodeId: string) {
+    if (!session?.csrfToken) {
+      return;
+    }
+    const form = localComputeShareForms[nodeId];
+    if (!form) {
+      return;
+    }
+    try {
+      await updateAdminLocalComputeNodeSharePolicy(nodeId, {
+        sharingMode: form.sharingMode,
+        sharedWithEmails: form.sharedWithEmails.split(/[\n,]/).map((item) => item.trim()).filter(Boolean),
+        allowedPathScopes: form.allowedPathScopes.split(/[\n,]/).map((item) => item.trim()).filter(Boolean),
+        allowedAuthCapabilities: form.allowedAuthCapabilities.split(/[\n,]/).map((item) => item.trim()).filter(Boolean),
+      }, session.csrfToken);
+      setLocalComputeMessage(`Updated sharing policy for ${nodeId}.`);
+      await refreshLocalComputeSnapshot();
+    } catch (cause) {
+      setLocalComputeMessage(cause instanceof Error ? cause.message : "Failed to update sharing policy");
+    }
+  }
+
   return (
     <div className="container mx-auto px-4 py-12 max-w-7xl">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-12 gap-6">
@@ -333,6 +477,11 @@ export function AdminDashboard() {
               <div className="text-xs uppercase tracking-[0.18em] text-slate-500">Active Grants</div>
               <div className="mt-2 text-3xl font-semibold text-white">{activeCloudGrants.length}</div>
               <div className="mt-1 text-xs text-slate-400">Users currently holding live cloud-console grants</div>
+            </div>
+            <div className="rounded-2xl border border-slate-800 bg-slate-950/50 px-4 py-4">
+              <div className="text-xs uppercase tracking-[0.18em] text-slate-500">Local Compute Nodes</div>
+              <div className="mt-2 text-3xl font-semibold text-white">{onlineLocalComputeNodes.length}</div>
+              <div className="mt-1 text-xs text-slate-400">Admin-only local compute nodes currently online</div>
             </div>
           </div>
         </div>
@@ -657,6 +806,167 @@ export function AdminDashboard() {
                 Runtime Ops
               </Button>
             </Link>
+          </CardContent>
+        </Card>
+      </div>
+
+      <div className="mb-3">
+        <div className="text-xs uppercase tracking-[0.2em] text-blue-300/80">Local Compute Nodes</div>
+        <h2 className="mt-1 text-xl font-semibold text-white">Private local-first compute nodes for super admins</h2>
+      </div>
+      <div className="grid lg:grid-cols-2 gap-6 mb-8">
+        <Card className="border-slate-800/60 bg-[#0f172a]/50">
+          <CardHeader>
+            <CardTitle className="text-lg">Register Local Node</CardTitle>
+            <CardDescription>Create a node token and whitelist the packages / SOP nodes this machine is allowed to run.</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-3 text-sm text-slate-300">
+            <input className="rounded-md border border-slate-700 bg-[#0a0e17] px-3 py-2 text-sm" placeholder="Node label" value={localComputeForm.label} onChange={(e) => setLocalComputeForm((current) => ({ ...current, label: e.target.value }))} />
+            <textarea className="min-h-24 rounded-md border border-slate-700 bg-[#0a0e17] px-3 py-2 text-sm" placeholder="Allowed package IDs, one per line or comma-separated" value={localComputeForm.allowedPackageIds} onChange={(e) => setLocalComputeForm((current) => ({ ...current, allowedPackageIds: e.target.value }))} />
+            <textarea className="min-h-24 rounded-md border border-slate-700 bg-[#0a0e17] px-3 py-2 text-sm" placeholder="Allowed skill node IDs, one per line or comma-separated" value={localComputeForm.allowedNodeIds} onChange={(e) => setLocalComputeForm((current) => ({ ...current, allowedNodeIds: e.target.value }))} />
+            <select className="rounded-md border border-slate-700 bg-[#0a0e17] px-3 py-2 text-sm text-slate-200" value={localComputeForm.sharingMode} onChange={(e) => setLocalComputeForm((current) => ({ ...current, sharingMode: e.target.value === "trusted-shared" ? "trusted-shared" : "author-only" }))}>
+              <option value="author-only">Author only</option>
+              <option value="trusted-shared">Trusted shared runtime</option>
+            </select>
+            <textarea className="min-h-24 rounded-md border border-slate-700 bg-[#0a0e17] px-3 py-2 text-sm" placeholder="Trusted user emails, one per line or comma-separated" value={localComputeForm.sharedWithEmails} onChange={(e) => setLocalComputeForm((current) => ({ ...current, sharedWithEmails: e.target.value }))} />
+            <textarea className="min-h-20 rounded-md border border-slate-700 bg-[#0a0e17] px-3 py-2 text-sm" placeholder="Allowed path scopes for shared runs" value={localComputeForm.allowedPathScopes} onChange={(e) => setLocalComputeForm((current) => ({ ...current, allowedPathScopes: e.target.value }))} />
+            <textarea className="min-h-20 rounded-md border border-slate-700 bg-[#0a0e17] px-3 py-2 text-sm" placeholder="Allowed auth capabilities, e.g. consent:gemini-web" value={localComputeForm.allowedAuthCapabilities} onChange={(e) => setLocalComputeForm((current) => ({ ...current, allowedAuthCapabilities: e.target.value }))} />
+            <Button variant="secondary" className="bg-slate-800 hover:bg-slate-700 text-slate-200" onClick={() => void handleCreateLocalComputeNode()}>
+              Register Local Compute Node
+            </Button>
+            {latestLocalComputeToken ? (
+              <div className="rounded-lg border border-emerald-900/40 bg-emerald-950/20 px-4 py-3">
+                <div className="text-xs uppercase tracking-wide text-emerald-300 mb-2">Copy Node Token Now</div>
+                <div className="font-mono text-emerald-100 break-all">{latestLocalComputeToken}</div>
+              </div>
+            ) : null}
+            <div className="rounded-lg border border-slate-800 bg-[#0a0e17] px-4 py-3 text-xs text-slate-400">
+              Start command:
+              <pre className="mt-2 whitespace-pre-wrap break-all text-blue-300">python3 /Users/liumobei/.openclaw/workspace/scripts/run_local_compute_node.py --hub-base-url {platformSummary?.baseUrl || "http://47.250.188.70"} --node-id {latestLocalComputeNodeId || "<node-id>"} --node-token {latestLocalComputeToken || "<node-token>"}</pre>
+            </div>
+            {localComputeMessage ? <div className="text-xs text-slate-400">{localComputeMessage}</div> : null}
+          </CardContent>
+        </Card>
+
+        <Card className="border-slate-800/60 bg-[#0f172a]/50">
+          <CardHeader>
+            <CardTitle className="text-lg">Queue Local Compute Task</CardTitle>
+            <CardDescription>Dispatch a reviewed package or a whitelisted SOP node to your local machine.</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-3 text-sm text-slate-300">
+            <select className="w-full rounded-md border border-slate-700 bg-[#0a0e17] px-3 py-2 text-sm text-slate-200" value={localComputeTaskForm.nodeId} onChange={(e) => setLocalComputeTaskForm((current) => ({ ...current, nodeId: e.target.value }))}>
+              <option value="">Select local node</option>
+              {(localComputeSnapshot?.nodes || []).map((node) => (
+                <option key={node.nodeId} value={node.nodeId}>{node.label} · {node.status}</option>
+              ))}
+            </select>
+            <select className="w-full rounded-md border border-slate-700 bg-[#0a0e17] px-3 py-2 text-sm text-slate-200" value={localComputeTaskForm.taskKind} onChange={(e) => setLocalComputeTaskForm((current) => ({ ...current, taskKind: e.target.value === "skill-node" ? "skill-node" : "package" }))}>
+              <option value="package">Published Package</option>
+              <option value="skill-node">Whitelisted Skill Node</option>
+            </select>
+            {localComputeTaskForm.taskKind === "package" ? (
+              <select className="w-full rounded-md border border-slate-700 bg-[#0a0e17] px-3 py-2 text-sm text-slate-200" value={localComputeTaskForm.packageId} onChange={(e) => setLocalComputeTaskForm((current) => ({ ...current, packageId: e.target.value }))}>
+                <option value="">Select package</option>
+                {((localComputeSnapshot?.nodes.find((node) => node.nodeId === localComputeTaskForm.nodeId)?.allowedPackageIds?.length ?? 0) > 0
+                  ? packages.filter((pkg) => (localComputeSnapshot?.nodes.find((node) => node.nodeId === localComputeTaskForm.nodeId)?.allowedPackageIds || []).includes(pkg.packageId))
+                  : packages
+                ).map((pkg) => (
+                  <option key={pkg.packageId} value={pkg.packageId}>{pkg.name} · {pkg.packageId}</option>
+                ))}
+              </select>
+            ) : (
+              <>
+                <input className="rounded-md border border-slate-700 bg-[#0a0e17] px-3 py-2 text-sm" placeholder="Target node ID" value={localComputeTaskForm.targetNodeId} onChange={(e) => setLocalComputeTaskForm((current) => ({ ...current, targetNodeId: e.target.value }))} />
+                <input className="rounded-md border border-slate-700 bg-[#0a0e17] px-3 py-2 text-sm" placeholder="Target label" value={localComputeTaskForm.targetLabel} onChange={(e) => setLocalComputeTaskForm((current) => ({ ...current, targetLabel: e.target.value }))} />
+                <textarea className="min-h-24 rounded-md border border-slate-700 bg-[#0a0e17] px-3 py-2 text-sm" placeholder="Command" value={localComputeTaskForm.command} onChange={(e) => setLocalComputeTaskForm((current) => ({ ...current, command: e.target.value }))} />
+              </>
+            )}
+            <textarea className="min-h-24 rounded-md border border-slate-700 bg-[#0a0e17] px-3 py-2 text-sm font-mono" placeholder='Input values JSON, e.g. {"目标目录":"..."}' value={localComputeTaskForm.inputValuesJson} onChange={(e) => setLocalComputeTaskForm((current) => ({ ...current, inputValuesJson: e.target.value }))} />
+            <Button variant="secondary" className="bg-slate-800 hover:bg-slate-700 text-slate-200" onClick={() => void handleCreateLocalComputeTask()}>
+              Queue On Local Compute Node
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+
+      <div className="grid lg:grid-cols-2 gap-6 mb-8">
+        <Card className="border-slate-800/60 bg-[#0f172a]/50">
+          <CardHeader>
+            <CardTitle className="text-lg">Nodes</CardTitle>
+            <CardDescription>Current online status, heartbeats, and whitelist coverage.</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-3 text-sm text-slate-300">
+            {(localComputeSnapshot?.nodes || []).map((node) => (
+              <div key={node.nodeId} className="rounded-lg border border-slate-800 bg-[#0a0e17] p-4 space-y-2">
+                <div className="flex items-start justify-between gap-3">
+                  <div>
+                    <div className="font-medium text-slate-100">{node.label}</div>
+                    <div className="text-xs text-slate-500 font-mono">{node.nodeId}</div>
+                  </div>
+                  <div className="text-xs text-slate-200">{node.status}</div>
+                </div>
+                <div className="text-xs text-slate-400">
+                  Last seen {node.lastSeenAt ? formatRelativeDate(node.lastSeenAt) : "never"} · packages {node.allowedPackageIds.length} · nodes {node.allowedNodeIds.length}
+                </div>
+                <div className="text-xs text-slate-500">
+                  {node.sharingMode === "trusted-shared" ? "trusted shared runtime" : "author only"} · shared users {(node.sharedWithUsers || []).length}
+                </div>
+                {node.ownerEmail ? <div className="text-xs text-slate-500">Owner {node.ownerEmail}</div> : null}
+                {node.lastError ? <div className="text-xs text-red-300">{node.lastError}</div> : null}
+                {node.heartbeatMeta ? (
+                  <div className="text-xs text-slate-500">
+                    {node.heartbeatMeta.localConsoleBaseUrl || "local console unknown"} · agent {node.heartbeatMeta.onlineAgent ? "online" : "offline"}
+                  </div>
+                ) : null}
+                <div className="grid gap-2 pt-2">
+                  <select className="rounded-md border border-slate-700 bg-[#111827] px-3 py-2 text-xs text-slate-200" value={localComputeShareForms[node.nodeId]?.sharingMode || "author-only"} onChange={(e) => setLocalComputeShareForms((current) => ({ ...current, [node.nodeId]: { ...(current[node.nodeId] || { sharingMode: "author-only", sharedWithEmails: "", allowedPathScopes: "", allowedAuthCapabilities: "" }), sharingMode: e.target.value === "trusted-shared" ? "trusted-shared" : "author-only" } }))}>
+                    <option value="author-only">Author only</option>
+                    <option value="trusted-shared">Trusted shared runtime</option>
+                  </select>
+                  <textarea className="min-h-20 rounded-md border border-slate-700 bg-[#111827] px-3 py-2 text-xs text-slate-200" placeholder="Trusted user emails" value={localComputeShareForms[node.nodeId]?.sharedWithEmails || ""} onChange={(e) => setLocalComputeShareForms((current) => ({ ...current, [node.nodeId]: { ...(current[node.nodeId] || { sharingMode: "author-only", sharedWithEmails: "", allowedPathScopes: "", allowedAuthCapabilities: "" }), sharedWithEmails: e.target.value } }))} />
+                  <textarea className="min-h-16 rounded-md border border-slate-700 bg-[#111827] px-3 py-2 text-xs text-slate-200" placeholder="Allowed path scopes" value={localComputeShareForms[node.nodeId]?.allowedPathScopes || ""} onChange={(e) => setLocalComputeShareForms((current) => ({ ...current, [node.nodeId]: { ...(current[node.nodeId] || { sharingMode: "author-only", sharedWithEmails: "", allowedPathScopes: "", allowedAuthCapabilities: "" }), allowedPathScopes: e.target.value } }))} />
+                  <textarea className="min-h-16 rounded-md border border-slate-700 bg-[#111827] px-3 py-2 text-xs text-slate-200" placeholder="Allowed auth capabilities" value={localComputeShareForms[node.nodeId]?.allowedAuthCapabilities || ""} onChange={(e) => setLocalComputeShareForms((current) => ({ ...current, [node.nodeId]: { ...(current[node.nodeId] || { sharingMode: "author-only", sharedWithEmails: "", allowedPathScopes: "", allowedAuthCapabilities: "" }), allowedAuthCapabilities: e.target.value } }))} />
+                  <Button variant="outline" size="sm" className="justify-center" onClick={() => void handleSaveLocalComputeSharePolicy(node.nodeId)}>
+                    Save Sharing Policy
+                  </Button>
+                </div>
+              </div>
+            ))}
+            {!localComputeSnapshot?.nodes?.length ? (
+              <div className="rounded-lg border border-slate-800 bg-[#0a0e17] px-4 py-3 text-slate-500">
+                No local compute nodes registered yet.
+              </div>
+            ) : null}
+          </CardContent>
+        </Card>
+
+        <Card className="border-slate-800/60 bg-[#0f172a]/50">
+          <CardHeader>
+            <CardTitle className="text-lg">Recent Local Compute Tasks</CardTitle>
+            <CardDescription>Task history, summaries, and synced artifacts.</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-3 text-sm text-slate-300">
+            {(localComputeSnapshot?.tasks || []).slice(0, 8).map((task) => (
+              <div key={task.id} className="rounded-lg border border-slate-800 bg-[#0a0e17] p-4 space-y-2">
+                <div className="flex items-start justify-between gap-3">
+                  <div>
+                    <div className="font-medium text-slate-100">{task.targetLabel}</div>
+                    <div className="text-xs text-slate-500 font-mono">{task.id}</div>
+                  </div>
+                  <div className="text-xs text-slate-200">{task.status}</div>
+                </div>
+                <div className="text-xs text-slate-400">
+                  {task.taskKind} · {task.packageId || task.targetNodeId || "custom"} · artifacts {task.artifacts.length} · {task.accessMode}
+                </div>
+                {task.summary ? <div className="text-xs text-slate-300">{task.summary}</div> : null}
+                {task.error ? <div className="text-xs text-red-300">{task.error}</div> : null}
+              </div>
+            ))}
+            {!localComputeSnapshot?.tasks?.length ? (
+              <div className="rounded-lg border border-slate-800 bg-[#0a0e17] px-4 py-3 text-slate-500">
+                No local compute tasks yet.
+              </div>
+            ) : null}
           </CardContent>
         </Card>
       </div>

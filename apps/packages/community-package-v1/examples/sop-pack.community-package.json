@@ -34,6 +34,41 @@
       "reason": "Read SOP, docs, and local support files during install and execution."
     }
   ],
+  "onboarding": {
+    "mode": "guided-first-run",
+    "autoRunEntrypoint": "__OPENCLAW_WORKFLOW__ sop-content-schedule-planning",
+    "requirements": [
+      {
+        "type": "permission",
+        "permissionKey": "filesystem.read",
+        "reason": "Read SOP and support files for first-run checks.",
+        "required": true
+      },
+      {
+        "type": "config",
+        "configKey": "workspace.defaultTimezone",
+        "prompt": "Confirm your workspace timezone before first run.",
+        "required": false
+      },
+      {
+        "type": "login",
+        "provider": "calendar",
+        "prompt": "Connect your calendar account to enable schedule checks.",
+        "required": false
+      },
+      {
+        "type": "consent",
+        "consentKey": "first-run",
+        "text": "Run the package entrypoint once to initialize this SOP.",
+        "required": true
+      },
+      {
+        "type": "dependency",
+        "dependencyId": "cap.openclaw.foundation.calendar-core",
+        "required": false
+      }
+    ]
+  },
   "checksums": {
     "algorithm": "sha256",
     "files": []

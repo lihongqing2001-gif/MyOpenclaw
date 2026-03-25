@@ -373,6 +373,45 @@ def build_community_capabilities(node: dict[str, Any], packaged_capabilities: li
     return capabilities
 
 
+def build_community_onboarding(
+    entrypoint: str,
+    permissions: list[dict[str, Any]],
+    dependencies: list[dict[str, Any]],
+) -> dict[str, Any]:
+    requirements: list[dict[str, Any]] = [
+        {
+            "type": "consent",
+            "consentKey": "first-run",
+            "text": f"Run `{entrypoint}` once after install to complete guided first-run setup.",
+            "required": True,
+        }
+    ]
+    for permission in permissions:
+        if permission.get("required"):
+            requirements.append(
+                {
+                    "type": "permission",
+                    "permissionKey": permission["key"],
+                    "reason": permission.get("reason") or "Required by package behavior.",
+                    "required": True,
+                }
+            )
+    for dependency in dependencies:
+        if dependency.get("required"):
+            requirements.append(
+                {
+                    "type": "dependency",
+                    "dependencyId": dependency["id"],
+                    "required": True,
+                }
+            )
+    return {
+        "mode": "guided-first-run",
+        "autoRunEntrypoint": entrypoint,
+        "requirements": requirements,
+    }
+
+
 def collect_bundle_docs_and_assets(bundle_root: Path) -> tuple[list[dict[str, str]], list[dict[str, str]]]:
     docs: list[dict[str, str]] = []
     assets: list[dict[str, str]] = []
@@ -956,6 +995,15 @@ def export_bundle_from_nodes(
         "reviewStatus": "draft",
         "visibility": "private",
     }
+    primary_entrypoint = (
+        (community_package.get("capabilities") or [{}])[0].get("entrypoint")
+        or f"__OPENCLAW_WORKFLOW__ {node['id']}"
+    )
+    community_package["onboarding"] = build_community_onboarding(
+        primary_entrypoint,
+        community_package["permissions"],
+        community_package["dependencies"],
+    )
     write_file(
         bundle_root / "community-package.json",
         json.dumps(community_package, ensure_ascii=False, indent=2),

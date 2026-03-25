@@ -18,6 +18,7 @@ const Admin2FA = lazy(() => import("@/pages/Admin2FA").then((module) => ({ defau
 const UserManagement = lazy(() => import("@/pages/UserManagement").then((module) => ({ default: module.UserManagement })));
 const CloudOpenClaw = lazy(() => import("@/pages/CloudOpenClaw").then((module) => ({ default: module.CloudOpenClaw })));
 const CloudConsoleAccess = lazy(() => import("@/pages/CloudConsoleAccess").then((module) => ({ default: module.CloudConsoleAccess })));
+const SharedRuntime = lazy(() => import("@/pages/SharedRuntime").then((module) => ({ default: module.SharedRuntime })));
 
 function RouteFallback() {
   return <div className="min-h-screen bg-[#0a0e17]" />;
@@ -114,6 +115,16 @@ export default function App() {
                 <ProtectedRoute>
                   <DeferredPage>
                     <CloudConsoleAccess />
+                  </DeferredPage>
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="shared-runtime"
+              element={
+                <ProtectedRoute>
+                  <DeferredPage>
+                    <SharedRuntime />
                   </DeferredPage>
                 </ProtectedRoute>
               }

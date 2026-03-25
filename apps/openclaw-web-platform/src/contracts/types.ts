@@ -3,6 +3,11 @@ export type AuthProvider = "github" | "email";
 export type GithubSyncStatus = "pending" | "synced" | "failed";
 export type ResourceMirrorStatus = "official" | "mirrored" | "upstream-only";
 export type CloudConsoleGrantStatus = "active" | "revoked" | "expired";
+export type LocalComputeNodeStatus = "offline" | "online" | "busy" | "error";
+export type LocalComputeTaskStatus = "queued" | "running" | "completed" | "failed";
+export type LocalComputeTaskKind = "package" | "skill-node";
+export type LocalComputeSharingMode = "author-only" | "trusted-shared";
+export type LocalComputeTaskAccessMode = "owner" | "trusted-shared";
 
 export type SubmissionStatus =
   | "draft"
@@ -239,6 +244,105 @@ export interface AdminCloudConsoleAccessSnapshot {
   publicBaseUrl: string;
   codes: CloudConsoleAccessCode[];
   grants: CloudConsoleGrant[];
+}
+
+export interface LocalComputeNodeCapability {
+  id: string;
+  label: string;
+  kind: "package" | "skill-node" | "system";
+  command?: string;
+}
+
+export interface LocalComputeNode {
+  nodeId: string;
+  label: string;
+  ownerUserId: string;
+  ownerEmail?: string;
+  mode: "local-compute";
+  sharingMode: LocalComputeSharingMode;
+  sharedWithUserIds: string[];
+  sharedWithUsers?: Array<{
+    userId: string;
+    email: string;
+  }>;
+  status: LocalComputeNodeStatus;
+  lastSeenAt?: string;
+  currentTaskId?: string;
+  lastError?: string;
+  resultPolicy: "full-sync";
+  capabilities: LocalComputeNodeCapability[];
+  allowedPackageIds: string[];
+  allowedNodeIds: string[];
+  allowedPathScopes: string[];
+  allowedAuthCapabilities: string[];
+  tokenHash: string;
+  tokenPreview: string;
+  createdAt: string;
+  updatedAt: string;
+  heartbeatMeta?: {
+    localConsoleBaseUrl?: string;
+    localBrokerVersion?: string;
+    onlineAgent?: boolean;
+  };
+}
+
+export interface LocalComputeArtifact {
+  id: string;
+  fileName: string;
+  contentType: string;
+  label?: string;
+  path: string;
+  sizeBytes: number;
+  uploadedAt: string;
+}
+
+export interface LocalComputeTask {
+  id: string;
+  nodeId: string;
+  taskKind: LocalComputeTaskKind;
+  status: LocalComputeTaskStatus;
+  createdByUserId: string;
+  requestedByUserId: string;
+  ownerUserId: string;
+  accessMode: LocalComputeTaskAccessMode;
+  createdAt: string;
+  updatedAt: string;
+  startedAt?: string;
+  completedAt?: string;
+  packageId?: string;
+  packageVersion?: string;
+  targetNodeId?: string;
+  targetLabel: string;
+  command: string;
+  inputValues: Record<string, string>;
+  localBrokerTaskId?: string;
+  summary?: string;
+  resultDetail?: string;
+  error?: string;
+  syncManifest?: Record<string, unknown>;
+  artifacts: LocalComputeArtifact[];
+}
+
+export interface AdminLocalComputeSnapshot {
+  nodes: LocalComputeNode[];
+  tasks: LocalComputeTask[];
+}
+
+export interface SharedRuntimeNodeAccess {
+  node: LocalComputeNode;
+  availablePackages: Array<{
+    packageId: string;
+    name: string;
+    latestVersion: string;
+    description: string;
+    visibility: PackageRecord["visibility"];
+    requiredAuthCapabilities: string[];
+  }>;
+}
+
+export interface SharedRuntimeSnapshot {
+  nodes: SharedRuntimeNodeAccess[];
+  tasks: LocalComputeTask[];
 }
 
 export interface CloudOpenClawSummary {

@@ -1,11 +1,15 @@
 import type {
   AdminUserSummary,
   AdminCloudConsoleAccessSnapshot,
+  AdminLocalComputeSnapshot,
   AuditLogEntry,
   CloudConsoleAccessCode,
   CloudConsoleAccessOverview,
   CloudOpenClawSummary,
+  LocalComputeNode,
+  LocalComputeTask,
   PackageRecord,
+  SharedRuntimeSnapshot,
   SecurityEvent,
   SubmissionRecord,
   User,
@@ -364,6 +368,112 @@ export async function revokeAdminCloudConsoleAccessCode(codeId: string, csrfToke
       "x-openclaw-csrf": csrfToken,
     },
     body: JSON.stringify({}),
+  });
+}
+
+export async function getAdminLocalComputeSnapshot() {
+  return apiRequest<AdminLocalComputeSnapshot>("/admin/local-compute/nodes");
+}
+
+export async function registerAdminLocalComputeNode(
+  payload: {
+    label: string;
+    allowedPackageIds?: string[];
+    allowedNodeIds?: string[];
+    sharingMode?: "author-only" | "trusted-shared";
+    sharedWithEmails?: string[];
+    allowedPathScopes?: string[];
+    allowedAuthCapabilities?: string[];
+    capabilities?: Array<{ id: string; label: string; kind: "package" | "skill-node" | "system"; command?: string }>;
+  },
+  csrfToken: string,
+) {
+  return apiRequest<{
+    success: true;
+    node: LocalComputeNode;
+    plainToken: string;
+  }>("/admin/local-compute/nodes/register", {
+    method: "POST",
+    headers: {
+      "x-openclaw-csrf": csrfToken,
+    },
+    body: JSON.stringify(payload),
+  });
+}
+
+export async function updateAdminLocalComputeNodeSharePolicy(
+  nodeId: string,
+  payload: {
+    sharingMode: "author-only" | "trusted-shared";
+    sharedWithEmails?: string[];
+    allowedPathScopes?: string[];
+    allowedAuthCapabilities?: string[];
+  },
+  csrfToken: string,
+) {
+  return apiRequest<{
+    success: true;
+    node: LocalComputeNode;
+  }>(`/admin/local-compute/nodes/${encodeURIComponent(nodeId)}/share-policy`, {
+    method: "POST",
+    headers: {
+      "x-openclaw-csrf": csrfToken,
+    },
+    body: JSON.stringify(payload),
+  });
+}
+
+export async function createAdminLocalComputeTask(
+  payload: {
+    nodeId: string;
+    taskKind: "package" | "skill-node";
+    packageId?: string;
+    packageVersion?: string;
+    targetNodeId?: string;
+    targetLabel?: string;
+    command?: string;
+    inputValues?: Record<string, string>;
+  },
+  csrfToken: string,
+) {
+  return apiRequest<{
+    success: true;
+    task: LocalComputeTask;
+  }>("/admin/local-compute/tasks", {
+    method: "POST",
+    headers: {
+      "x-openclaw-csrf": csrfToken,
+    },
+    body: JSON.stringify(payload),
+  });
+}
+
+export async function getMySharedRuntimeSnapshot() {
+  return apiRequest<SharedRuntimeSnapshot>("/me/shared-runtime");
+}
+
+export async function createMySharedRuntimeTask(
+  payload: {
+    nodeId: string;
+    taskKind: "package" | "skill-node";
+    packageId?: string;
+    packageVersion?: string;
+    targetNodeId?: string;
+    targetLabel?: string;
+    command?: string;
+    inputValues?: Record<string, string>;
+  },
+  csrfToken: string,
+) {
+  return apiRequest<{
+    success: true;
+    task: LocalComputeTask;
+  }>("/me/shared-runtime/tasks", {
+    method: "POST",
+    headers: {
+      "x-openclaw-csrf": csrfToken,
+    },
+    body: JSON.stringify(payload),
   });
 }
 

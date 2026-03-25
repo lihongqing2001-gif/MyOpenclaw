@@ -3,6 +3,7 @@ import {
   AgentTask,
   AssetRootConfig,
   CommunityPackageInspection,
+  CommunityPackageInstallResult,
   InstalledCommunityPackage,
   ControlPlaneState,
   HeartbeatPayload,
@@ -532,12 +533,7 @@ export const installLocalPackage = async (options: {
   releaseUrl?: string;
   sourceRepo?: string;
   sourceTag?: string;
-}): Promise<{
-  success: boolean;
-  packageId: string;
-  version: string;
-  installPath: string;
-}> => {
+}): Promise<CommunityPackageInstallResult> => {
   const response = await fetch("/api/v1/local-packages/install", {
     method: "POST",
     headers: {
