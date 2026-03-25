@@ -83,6 +83,7 @@ const emptyDatabase = (): WebPlatformDatabase => ({
       requestWindowMinutes: 15,
       verifyLimitPerWindow: 10,
       verifyWindowMinutes: 15,
+      adminTwoFactorRequired: true,
     },
   },
 });
@@ -127,6 +128,7 @@ export function normalizeDatabase(payload: Partial<WebPlatformDatabase> | null |
         requestWindowMinutes: Math.max(1, Number(payload?.settings?.authEmail?.requestWindowMinutes || 15)),
         verifyLimitPerWindow: Math.max(1, Number(payload?.settings?.authEmail?.verifyLimitPerWindow || 10)),
         verifyWindowMinutes: Math.max(1, Number(payload?.settings?.authEmail?.verifyWindowMinutes || 15)),
+        adminTwoFactorRequired: payload?.settings?.authEmail?.adminTwoFactorRequired !== false,
       },
     },
   };

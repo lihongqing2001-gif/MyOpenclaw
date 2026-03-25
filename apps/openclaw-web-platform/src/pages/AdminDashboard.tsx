@@ -67,6 +67,7 @@ export function AdminDashboard() {
     requestWindowMinutes: "15",
     verifyLimitPerWindow: "10",
     verifyWindowMinutes: "15",
+    adminTwoFactorRequired: true,
   });
   const [authEmailMessage, setAuthEmailMessage] = useState("");
   const [error, setError] = useState("");
@@ -106,6 +107,7 @@ export function AdminDashboard() {
           requestWindowMinutes: String(authEmailSettings.requestWindowMinutes),
           verifyLimitPerWindow: String(authEmailSettings.verifyLimitPerWindow),
           verifyWindowMinutes: String(authEmailSettings.verifyWindowMinutes),
+          adminTwoFactorRequired: authEmailSettings.adminTwoFactorRequired,
         });
         setCloudConsoleSnapshot(consoleSnapshot);
         setActivity(
@@ -195,6 +197,7 @@ export function AdminDashboard() {
         requestWindowMinutes: Number(authEmailForm.requestWindowMinutes || 15),
         verifyLimitPerWindow: Number(authEmailForm.verifyLimitPerWindow || 10),
         verifyWindowMinutes: Number(authEmailForm.verifyWindowMinutes || 15),
+        adminTwoFactorRequired: authEmailForm.adminTwoFactorRequired,
       }, session.csrfToken);
       setAuthEmailForm({
         codeTtlMinutes: String(response.settings.codeTtlMinutes),
@@ -203,6 +206,7 @@ export function AdminDashboard() {
         requestWindowMinutes: String(response.settings.requestWindowMinutes),
         verifyLimitPerWindow: String(response.settings.verifyLimitPerWindow),
         verifyWindowMinutes: String(response.settings.verifyWindowMinutes),
+        adminTwoFactorRequired: response.settings.adminTwoFactorRequired,
       });
       setAuthEmailMessage("Email login policy saved.");
     } catch (cause) {
@@ -276,9 +280,21 @@ export function AdminDashboard() {
             <div>
               <h2 className="text-2xl font-semibold text-white">Moderation, cloud access, and runtime controls live here.</h2>
               <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-300">
-                Normal users should only see Community, package details, and their own account. Review queue, cloud authorization codes,
-                security logs, and runtime operations stay inside this administrator surface.
+                `reviewer` only handles the review queue. `super_admin` includes reviewer powers plus security settings, audit logs,
+                cloud authorization, runtime operations, and role management. Normal users stay on community and account surfaces.
               </p>
+            </div>
+            <div className="grid gap-3 md:grid-cols-2">
+              <div className="rounded-2xl border border-slate-800 bg-slate-950/50 px-4 py-4">
+                <div className="text-xs uppercase tracking-[0.18em] text-amber-300">Reviewer</div>
+                <div className="mt-2 text-sm text-slate-300">Can review, approve, reject, request changes, and publish reviewed submissions.</div>
+                <div className="mt-2 text-xs text-slate-500">No access to security settings, audit logs, cloud access codes, or runtime controls.</div>
+              </div>
+              <div className="rounded-2xl border border-slate-800 bg-slate-950/50 px-4 py-4">
+                <div className="text-xs uppercase tracking-[0.18em] text-blue-300">Super Admin</div>
+                <div className="mt-2 text-sm text-slate-300">Includes reviewer capabilities plus full admin surfaces and platform security controls.</div>
+                <div className="mt-2 text-xs text-slate-500">Admin 2FA policy below only affects `super_admin`, not `reviewer`.</div>
+              </div>
             </div>
             <div className="flex flex-wrap gap-3">
               <Link to="/review">
@@ -382,7 +398,19 @@ export function AdminDashboard() {
                 </div>
                 <div className="grid gap-3 pt-6 border-t border-slate-800/60">
                   <div className="text-sm font-medium text-slate-100">Email Login Policy</div>
-                  <div className="text-xs text-slate-500">控制验证码有效期、每邮箱重发冷却、请求窗口和验证窗口。</div>
+                  <div className="text-xs text-slate-500">控制验证码有效期、每邮箱重发冷却、请求窗口和验证窗口，并决定是否要求 super admin 登录后再做一次 2FA。</div>
+                  <label className="flex items-start gap-3 rounded-xl border border-slate-800 bg-slate-950/40 px-3 py-3">
+                    <input
+                      type="checkbox"
+                      className="mt-1 h-4 w-4 rounded border-slate-700 bg-[#0a0e17]"
+                      checked={authEmailForm.adminTwoFactorRequired}
+                      onChange={(e) => setAuthEmailForm((cur) => ({ ...cur, adminTwoFactorRequired: e.target.checked }))}
+                    />
+                    <span className="space-y-1">
+                      <span className="block text-sm text-slate-100">Require 2FA for super admin sessions</span>
+                      <span className="block text-xs text-slate-500">关闭后，super admin 登录后会直接进入后台；reviewer 的 review 权限不受这个开关影响。</span>
+                    </span>
+                  </label>
                   <div className="grid grid-cols-2 gap-3">
                     <input className="rounded-md border border-slate-700 bg-[#0a0e17] px-3 py-2 text-sm" placeholder="Code TTL (minutes)" value={authEmailForm.codeTtlMinutes} onChange={(e) => setAuthEmailForm((cur) => ({ ...cur, codeTtlMinutes: e.target.value }))} />
                     <input className="rounded-md border border-slate-700 bg-[#0a0e17] px-3 py-2 text-sm" placeholder="Resend cooldown (seconds)" value={authEmailForm.resendCooldownSeconds} onChange={(e) => setAuthEmailForm((cur) => ({ ...cur, resendCooldownSeconds: e.target.value }))} />

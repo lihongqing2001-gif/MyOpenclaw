@@ -193,6 +193,7 @@ export interface AuthEmailSettings {
   requestWindowMinutes: number;
   verifyLimitPerWindow: number;
   verifyWindowMinutes: number;
+  adminTwoFactorRequired: boolean;
 }
 
 export interface PlatformSettings {
