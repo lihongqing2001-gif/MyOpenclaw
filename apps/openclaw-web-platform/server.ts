@@ -109,6 +109,46 @@ function authEmailSettings() {
   return loadDatabase().settings.authEmail;
 }
 
+function collectUserAuditLogs(db: ReturnType<typeof loadDatabase>, userId: string) {
+  return db.auditLogs
+    .filter((item) => item.actorUserId === userId || (item.targetType === "user" && item.targetId === userId))
+    .sort((a, b) => Date.parse(b.createdAt) - Date.parse(a.createdAt));
+}
+
+function buildAdminUserSummary(db: ReturnType<typeof loadDatabase>, user: ReturnType<typeof safeUser>) {
+  const now = Date.now();
+  const sessions = db.sessions.filter((item) => item.userId === user.id);
+  const activeSessions = sessions.filter((item) => Date.parse(item.expiresAt) > now);
+  const submissions = db.submissions.filter((item) => item.authorUserId === user.id);
+  const reviews = db.reviewDecisions.filter((item) => item.reviewerUserId === user.id);
+  const auditLogs = collectUserAuditLogs(db, user.id);
+  const authLogs = auditLogs.filter((item) => item.action.startsWith("auth_") || item.action === "admin_2fa_verify");
+  const activeCloudGrantCount = db.cloudConsoleGrants.filter(
+    (item) => item.userId === user.id && item.status === "active" && Date.parse(item.expiresAt) > now,
+  ).length;
+  const lastActivityAt = [
+    ...activeSessions.map((item) => item.createdAt),
+    ...submissions.map((item) => item.updatedAt),
+    ...reviews.map((item) => item.createdAt),
+    ...auditLogs.map((item) => item.createdAt),
+  ]
+    .filter(Boolean)
+    .sort((a, b) => Date.parse(b) - Date.parse(a))[0];
+
+  return {
+    ...user,
+    sessionCount: sessions.length,
+    activeSessionCount: activeSessions.length,
+    submissionCount: submissions.length,
+    reviewCount: reviews.length,
+    auditCount: auditLogs.length,
+    activeCloudGrantCount,
+    lastActivityAt,
+    lastAuthAt: authLogs[0]?.createdAt,
+    recentAudit: auditLogs.slice(0, 8),
+  };
+}
+
 async function cloudOpenClawFetch(targetPath: string, init?: RequestInit) {
   const nextHeaders = new Headers(init?.headers || {});
   if (cloudOpenClawInternalToken) {
@@ -928,6 +968,78 @@ app.get("/admin/audit-logs", requireAuth, requireRole(["super_admin"]), requireA
 app.get("/admin/security-events", requireAuth, requireRole(["super_admin"]), requireAdminTwoFactor, (_req, res) => {
   const db = loadDatabase();
   res.json({ securityEvents: db.securityEvents });
+});
+
+app.get("/admin/users", requireAuth, requireRole(["super_admin"]), requireAdminTwoFactor, (_req, res) => {
+  const db = loadDatabase();
+  const roleWeight: Record<string, number> = {
+    super_admin: 0,
+    reviewer: 1,
+    user: 2,
+    guest: 3,
+  };
+  const users = [...db.users]
+    .map((user) => buildAdminUserSummary(db, safeUser(user)))
+    .sort((a, b) => {
+      const byRole = (roleWeight[a.role] ?? 99) - (roleWeight[b.role] ?? 99);
+      if (byRole !== 0) {
+        return byRole;
+      }
+      return Date.parse(b.lastActivityAt || b.createdAt) - Date.parse(a.lastActivityAt || a.createdAt);
+    });
+  res.json({ users });
+});
+
+app.post("/admin/users/:userId/role", requireAuth, requireRole(["super_admin"]), requireAdminTwoFactor, enforceCsrf, (req, res) => {
+  const auth = (req as Request & { auth?: ReturnType<typeof authContext> }).auth!;
+  const nextRole = typeof req.body?.role === "string" ? req.body.role.trim() : "";
+  if (!["user", "reviewer", "super_admin"].includes(nextRole)) {
+    return res.status(400).json({ error: "role must be user, reviewer, or super_admin" });
+  }
+
+  const db = loadDatabase();
+  const targetUser = db.users.find((item) => item.id === req.params.userId);
+  if (!targetUser) {
+    return res.status(404).json({ error: "User not found" });
+  }
+  if (targetUser.id === auth.user.id) {
+    return res.status(400).json({ error: "Use another super admin to change your own role" });
+  }
+  if (targetUser.role === nextRole) {
+    return res.json({ success: true, user: buildAdminUserSummary(db, safeUser(targetUser)) });
+  }
+
+  const superAdminCount = db.users.filter((item) => item.role === "super_admin").length;
+  if (targetUser.role === "super_admin" && nextRole !== "super_admin" && superAdminCount <= 1) {
+    return res.status(400).json({ error: "At least one super admin must remain" });
+  }
+
+  const previousRole = targetUser.role;
+  targetUser.role = nextRole as typeof targetUser.role;
+  saveDatabase(db);
+  audit("user_role_update", "user", targetUser.id, auth.user.id, {
+    fromRole: previousRole,
+    toRole: nextRole,
+  });
+  return res.json({ success: true, user: buildAdminUserSummary(loadDatabase(), safeUser(targetUser)) });
+});
+
+app.post("/admin/users/:userId/revoke-sessions", requireAuth, requireRole(["super_admin"]), requireAdminTwoFactor, enforceCsrf, (req, res) => {
+  const auth = (req as Request & { auth?: ReturnType<typeof authContext> }).auth!;
+  const db = loadDatabase();
+  const targetUser = db.users.find((item) => item.id === req.params.userId);
+  if (!targetUser) {
+    return res.status(404).json({ error: "User not found" });
+  }
+  if (targetUser.id === auth.user.id) {
+    return res.status(400).json({ error: "Use sign out if you want to close your own current session" });
+  }
+
+  const revokedCount = db.sessions.filter((item) => item.userId === targetUser.id).length;
+  db.sessions = db.sessions.filter((item) => item.userId !== targetUser.id);
+  saveDatabase(db);
+  audit("user_sessions_revoked", "user", targetUser.id, auth.user.id, { revokedCount });
+  return res.json({ success: true, revokedCount, user: buildAdminUserSummary(loadDatabase(), safeUser(targetUser)) });
 });
 
 app.get("/admin/platform-summary", requireAuth, requireRole(["super_admin"]), requireAdminTwoFactor, (_req, res) => {

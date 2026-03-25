@@ -25,4 +25,9 @@ export const apiContract = {
     "GET /admin/audit-logs",
     "GET /admin/security-events",
   ],
+  users: [
+    "GET /admin/users",
+    "POST /admin/users/:userId/role",
+    "POST /admin/users/:userId/revoke-sessions",
+  ],
 } as const;

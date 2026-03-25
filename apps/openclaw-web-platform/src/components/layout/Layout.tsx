@@ -150,9 +150,14 @@ export function Layout() {
                     <Button variant="outline" className="w-full justify-start">My Submissions</Button>
                   </Link>
                   {session?.user?.role === "super_admin" ? (
-                    <Link to="/admin" onClick={() => setIsMobileMenuOpen(false)}>
-                      <Button variant="outline" className="w-full justify-start">Admin Dashboard</Button>
-                    </Link>
+                    <>
+                      <Link to="/admin" onClick={() => setIsMobileMenuOpen(false)}>
+                        <Button variant="outline" className="w-full justify-start">Admin Dashboard</Button>
+                      </Link>
+                      <Link to="/admin/users" onClick={() => setIsMobileMenuOpen(false)}>
+                        <Button variant="outline" className="w-full justify-start">Users & Roles</Button>
+                      </Link>
+                    </>
                   ) : null}
                   <Button
                     variant="ghost"

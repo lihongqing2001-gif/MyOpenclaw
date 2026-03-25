@@ -281,6 +281,12 @@ export function AdminDashboard() {
               </p>
             </div>
             <div className="flex flex-wrap gap-3">
+              <Link to="/admin/users">
+                <Button variant="outline" className="gap-2 border-slate-700 text-slate-200 hover:bg-slate-800">
+                  <Users className="w-4 h-4" />
+                  Users & Roles
+                </Button>
+              </Link>
               <Link to="/review">
                 <Button className="gap-2 shadow-sm shadow-blue-950/30">
                   <ShieldCheck className="w-4 h-4" />
