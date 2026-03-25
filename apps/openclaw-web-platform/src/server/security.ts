@@ -153,11 +153,18 @@ export function requireAdminTwoFactor(req: Request, res: Response, next: NextFun
     res.status(401).json({ error: "Authentication required" });
     return;
   }
-  if (auth.user.role === "super_admin" && !auth.session.twoFactorPassed) {
+  if (adminTwoFactorRequiredForRole(auth.user.role) && !auth.session.twoFactorPassed) {
     res.status(403).json({ error: "Admin 2FA required" });
     return;
   }
   next();
+}
+
+export function adminTwoFactorRequiredForRole(role: UserRole | undefined) {
+  if (role !== "super_admin") {
+    return false;
+  }
+  return loadDatabase().settings.authEmail.adminTwoFactorRequired !== false;
 }
 
 export function enforceCsrf(req: Request, res: Response, next: NextFunction) {

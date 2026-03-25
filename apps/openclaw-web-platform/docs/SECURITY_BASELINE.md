@@ -3,7 +3,7 @@
 ## Authentication
 
 - users: email magic link / verification code
-- super admins: email login + mandatory 2FA
+- super admins: email login + policy-controlled 2FA (enabled by default)
 
 ## Session Controls
 

@@ -19,6 +19,7 @@ import {
   writeSubmissionPackage,
 } from "./src/server/store";
 import {
+  adminTwoFactorRequiredForRole,
   clearSessionCookie,
   checkRateLimit,
   enforceCsrf,
@@ -107,6 +108,22 @@ function authContext(req: Request) {
 
 function authEmailSettings() {
   return loadDatabase().settings.authEmail;
+}
+
+function parseBoolean(value: unknown, fallback = true) {
+  if (typeof value === "boolean") {
+    return value;
+  }
+  if (typeof value === "string") {
+    const normalized = value.trim().toLowerCase();
+    if (["false", "0", "off", "no"].includes(normalized)) {
+      return false;
+    }
+    if (["true", "1", "on", "yes"].includes(normalized)) {
+      return true;
+    }
+  }
+  return fallback;
 }
 
 async function cloudOpenClawFetch(targetPath: string, init?: RequestInit) {
@@ -357,7 +374,7 @@ app.get("/auth/github/callback", async (req, res) => {
       id: generateToken(24),
       userId: user.id,
       csrfToken: generateToken(16),
-      twoFactorPassed: user.role !== "super_admin",
+      twoFactorPassed: !adminTwoFactorRequiredForRole(user.role),
       createdAt: new Date().toISOString(),
       expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
     };
@@ -369,7 +386,7 @@ app.get("/auth/github/callback", async (req, res) => {
       githubLogin: identity.githubLogin,
       githubUserId: identity.githubUserId,
     });
-    res.redirect(user.role === "super_admin" ? "/admin/2fa" : state.redirectTo || "/me");
+    res.redirect(adminTwoFactorRequiredForRole(user.role) ? "/admin/2fa" : state.redirectTo || "/me");
   } catch (error) {
     res.status(500).send(error instanceof Error ? error.message : "GitHub OAuth failed");
   }
@@ -408,7 +425,7 @@ app.get("/auth/session", (req, res) => {
     user: safeUser(auth.user),
     csrfToken: auth.session.csrfToken,
     twoFactorPassed: auth.session.twoFactorPassed,
-    requiresAdminTwoFactor: auth.user.role === "super_admin" && !auth.session.twoFactorPassed,
+    requiresAdminTwoFactor: adminTwoFactorRequiredForRole(auth.user.role) && !auth.session.twoFactorPassed,
     githubOauthConfigured: githubOauthConfigured(),
   });
 });
@@ -634,7 +651,7 @@ app.post("/auth/email/verify", (req, res) => {
     id: generateToken(24),
     userId: user.id,
     csrfToken: generateToken(16),
-    twoFactorPassed: user.role !== "super_admin",
+    twoFactorPassed: !adminTwoFactorRequiredForRole(user.role),
     createdAt: new Date().toISOString(),
     expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
   };
@@ -648,7 +665,7 @@ app.post("/auth/email/verify", (req, res) => {
     success: true,
     user: safeUser(user),
     csrfToken: session.csrfToken,
-    requiresAdminTwoFactor: user.role === "super_admin",
+    requiresAdminTwoFactor: adminTwoFactorRequiredForRole(user.role),
   });
 });
 
@@ -1199,6 +1216,7 @@ app.post("/admin/settings/auth-email", requireAuth, requireRole(["super_admin"])
     requestWindowMinutes: Math.max(1, Number(req.body?.requestWindowMinutes || 15)),
     verifyLimitPerWindow: Math.max(1, Number(req.body?.verifyLimitPerWindow || 10)),
     verifyWindowMinutes: Math.max(1, Number(req.body?.verifyWindowMinutes || 15)),
+    adminTwoFactorRequired: parseBoolean(req.body?.adminTwoFactorRequired, true),
   };
   saveDatabase(db);
   return res.json({

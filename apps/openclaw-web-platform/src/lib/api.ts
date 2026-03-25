@@ -499,6 +499,7 @@ export async function getAuthEmailSettings() {
     requestWindowMinutes: number;
     verifyLimitPerWindow: number;
     verifyWindowMinutes: number;
+    adminTwoFactorRequired: boolean;
   }>("/admin/settings/auth-email");
 }
 
@@ -510,6 +511,7 @@ export async function saveAuthEmailSettings(
     requestWindowMinutes: number;
     verifyLimitPerWindow: number;
     verifyWindowMinutes: number;
+    adminTwoFactorRequired: boolean;
   },
   csrfToken: string,
 ) {
@@ -522,6 +524,7 @@ export async function saveAuthEmailSettings(
       requestWindowMinutes: number;
       verifyLimitPerWindow: number;
       verifyWindowMinutes: number;
+      adminTwoFactorRequired: boolean;
     };
   }>("/admin/settings/auth-email", {
     method: "POST",
