@@ -4281,6 +4281,167 @@ function runLocalPackageRegistry(args) {
   }
   return JSON.parse(result.stdout);
 }
+function asRecord(value) {
+  return value && typeof value === "object" && !Array.isArray(value) ? value : null;
+}
+function asString(value) {
+  return typeof value === "string" && value.trim() ? value.trim() : void 0;
+}
+function asNumber(value) {
+  if (typeof value !== "number" || !Number.isFinite(value) || value <= 0) {
+    return void 0;
+  }
+  return value;
+}
+function asBoolean(value) {
+  return typeof value === "boolean" ? value : void 0;
+}
+function normalizeOnboardingStep(raw, index) {
+  const item = asRecord(raw);
+  if (!item) {
+    return null;
+  }
+  const id = asString(item.id) || `step-${index + 1}`;
+  const title = asString(item.title) || asString(item.label) || `Step ${index + 1}`;
+  const kind = asString(item.kind);
+  return {
+    id,
+    title,
+    description: asString(item.description) || asString(item.summary),
+    kind: kind === "permission" || kind === "dependency" || kind === "action" || kind === "verification" || kind === "docs" ? kind : "action",
+    required: asBoolean(item.required) ?? true,
+    command: asString(item.command) || asString(item.installCommand),
+    installUrl: asString(item.installUrl),
+    docPath: asString(item.docPath) || asString(item.path)
+  };
+}
+function deriveOnboardingSteps(manifest) {
+  const steps = [];
+  const permissions = Array.isArray(manifest.permissions) ? manifest.permissions : [];
+  for (const permission of permissions) {
+    const item = asRecord(permission);
+    if (!item) {
+      continue;
+    }
+    const key = asString(item.key) || "permission";
+    steps.push({
+      id: `permission-${key.replace(/[^a-zA-Z0-9_-]+/g, "-").toLowerCase()}`,
+      title: `Review permission: ${key}`,
+      description: asString(item.reason) || "Confirm this permission is acceptable for your environment.",
+      kind: "permission",
+      required: asBoolean(item.required) ?? true
+    });
+  }
+  const dependencies = Array.isArray(manifest.dependencies) ? manifest.dependencies : [];
+  for (const dependency of dependencies) {
+    const item = asRecord(dependency);
+    if (!item) {
+      continue;
+    }
+    const dependencyId = asString(item.id) || "dependency";
+    const dependencyLabel = asString(item.label) || dependencyId;
+    steps.push({
+      id: `dependency-${dependencyId.replace(/[^a-zA-Z0-9_-]+/g, "-").toLowerCase()}`,
+      title: `Satisfy dependency: ${dependencyLabel}`,
+      description: `Prepare required dependency ${dependencyId}.`,
+      kind: "dependency",
+      required: asBoolean(item.required) ?? true,
+      command: asString(item.installCommand),
+      installUrl: asString(item.installUrl)
+    });
+  }
+  const docs = Array.isArray(manifest.docs) ? manifest.docs : [];
+  for (const doc of docs) {
+    const item = asRecord(doc);
+    if (!item) {
+      continue;
+    }
+    const title = asString(item.title) || "";
+    const docPath = asString(item.path);
+    if (!docPath) {
+      continue;
+    }
+    const normalizedTitle = title.toLowerCase();
+    if (normalizedTitle.includes("install") || normalizedTitle.includes("setup") || normalizedTitle.includes("onboarding") || normalizedTitle.includes("quick start")) {
+      steps.push({
+        id: `docs-${steps.length + 1}`,
+        title: title || "Read setup documentation",
+        description: "Review package docs before first run.",
+        kind: "docs",
+        required: false,
+        docPath
+      });
+    }
+  }
+  return steps;
+}
+function buildPackageOnboarding(manifestInput, stage) {
+  const manifest = asRecord(manifestInput);
+  if (!manifest) {
+    return {
+      onboarding: {
+        available: false,
+        source: "derived",
+        title: "Package onboarding",
+        description: "No onboarding metadata was provided by this package.",
+        firstRunWizard: false,
+        steps: []
+      },
+      onboardingState: {
+        phase: "not-required",
+        completion: "complete",
+        totalSteps: 0,
+        requiredSteps: 0,
+        pendingRequiredSteps: 0
+      }
+    };
+  }
+  const manifestOnboarding = asRecord(manifest.onboarding);
+  const declaredSteps = Array.isArray(manifestOnboarding?.steps) ? manifestOnboarding.steps.map((step, index) => normalizeOnboardingStep(step, index)).filter((step) => Boolean(step)) : [];
+  const derivedSteps = deriveOnboardingSteps(manifest);
+  const useManifest = declaredSteps.length > 0;
+  const steps = useManifest ? declaredSteps : derivedSteps;
+  const requiredSteps = steps.filter((step) => step.required).length;
+  const pendingRequiredSteps = requiredSteps;
+  const nextStep = steps.find((step) => step.required) || steps[0];
+  const onboarding = {
+    available: steps.length > 0,
+    source: useManifest ? "manifest" : "derived",
+    title: asString(manifestOnboarding?.title) || "Package onboarding",
+    description: asString(manifestOnboarding?.description) || "Review package prerequisites before running capabilities the first time.",
+    estimatedMinutes: asNumber(manifestOnboarding?.estimatedMinutes),
+    firstRunWizard: asBoolean(manifestOnboarding?.firstRunWizard) ?? steps.length > 0,
+    steps
+  };
+  const onboardingState = {
+    phase: !onboarding.available ? "not-required" : stage === "inspect" ? "inspect-ready" : pendingRequiredSteps > 0 ? "installed-pending" : "completed",
+    completion: !onboarding.available ? "complete" : pendingRequiredSteps > 0 ? "not-started" : "complete",
+    totalSteps: onboarding.steps.length,
+    requiredSteps,
+    pendingRequiredSteps,
+    nextStepId: nextStep?.id
+  };
+  return { onboarding, onboardingState };
+}
+function resolveInstalledVersionState(packageId, version) {
+  try {
+    const listed = runLocalPackageRegistry(["list"]);
+    const packages = Array.isArray(listed?.packages) ? listed.packages : [];
+    const packageRecord = packages.find((item) => item?.packageId === packageId);
+    const versionRecord = Array.isArray(packageRecord?.installedVersions) ? packageRecord.installedVersions.find((item) => item?.version === version) : null;
+    return {
+      installed: Boolean(versionRecord),
+      activeVersion: typeof packageRecord?.activeVersion === "string" ? packageRecord.activeVersion : void 0,
+      versionStatus: versionRecord?.status === "enabled" || versionRecord?.status === "disabled" ? versionRecord.status : void 0
+    };
+  } catch {
+    return {
+      installed: false,
+      activeVersion: void 0,
+      versionStatus: void 0
+    };
+  }
+}
 function runQmdUpdateSync() {
   const process2 = spawnSync("qmd", ["update"], {
     cwd: workspaceRoot3,
@@ -4850,7 +5011,13 @@ async function startServer() {
       if (!contentBase64 && !isAllowedFileActionPath(packagePath)) {
         return res.status(403).json({ error: "Package path not allowed" });
       }
-      return res.json(runLocalPackageRegistry(["inspect", "--package-path", path7.resolve(packagePath)]));
+      const inspectionResult = runLocalPackageRegistry(["inspect", "--package-path", path7.resolve(packagePath)]);
+      const { onboarding, onboardingState } = buildPackageOnboarding(inspectionResult?.manifest, "inspect");
+      return res.json({
+        ...inspectionResult,
+        onboarding,
+        onboardingState
+      });
     } catch (error) {
       return res.status(500).json({
         error: error instanceof Error ? error.message : "Failed to inspect local package"
@@ -4870,21 +5037,31 @@ async function startServer() {
       if (!isAllowedFileActionPath(packagePath) && !isAllowedCloudPackagePath(packagePath)) {
         return res.status(403).json({ error: "Package path not allowed" });
       }
-      return res.json(
-        runLocalPackageRegistry([
-          "install",
-          "--package-path",
-          path7.resolve(packagePath),
-          "--distribution-channel",
-          distributionChannel,
-          "--release-url",
-          releaseUrl,
-          "--source-repo",
-          sourceRepo,
-          "--source-tag",
-          sourceTag
-        ])
-      );
+      const resolvedPackagePath = path7.resolve(packagePath);
+      const installResult = runLocalPackageRegistry([
+        "install",
+        "--package-path",
+        resolvedPackagePath,
+        "--distribution-channel",
+        distributionChannel,
+        "--release-url",
+        releaseUrl,
+        "--source-repo",
+        sourceRepo,
+        "--source-tag",
+        sourceTag
+      ]);
+      const manifestForOnboarding = installResult?.manifest || runLocalPackageRegistry(["inspect", "--package-path", resolvedPackagePath])?.manifest;
+      const { onboarding, onboardingState } = buildPackageOnboarding(manifestForOnboarding, "install");
+      return res.json({
+        ...installResult,
+        onboarding,
+        onboardingState,
+        installState: resolveInstalledVersionState(
+          String(installResult?.packageId || ""),
+          String(installResult?.version || "")
+        )
+      });
     } catch (error) {
       return res.status(500).json({
         error: error instanceof Error ? error.message : "Failed to install local package"
