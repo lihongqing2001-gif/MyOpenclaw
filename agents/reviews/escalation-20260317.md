@@ -1,0 +1,14 @@
+# Escalation Reports
+
+- 2026-03-17 17:55 +0800 | request_id=heartbeat-20260317-1755 | idle_minutes=unknown | owner=system | issue=monitoring backend unhealthy; `http://127.0.0.1:8000/api/health` unreachable (curl code 7) | follow_up=restart monitoring backend and verify health endpoint
+- 2026-03-17 17:55 +0800 | request_id=heartbeat-20260317-1755 | idle_minutes=unknown | owner=system | issue=expected task directories missing: `api/main-tasks` and `api/tasks/active` not found | follow_up=restore task state source or update heartbeat checklist path
+- 2026-03-17 17:55 +0800 | request_id=heartbeat-20260317-1755 | idle_minutes=unknown | owner=system | issue=WhatsApp channel linked but disconnected | follow_up=run WhatsApp recovery checklist and confirm reconnect
+- 2026-03-17 18:20 +0800 | request_id=heartbeat-20260317-1820 | idle_minutes=unknown | owner=system | issue=monitoring backend still unhealthy; `http://127.0.0.1:8000/api/health` unreachable (curl code 7) | follow_up=restart monitoring backend and verify health endpoint
+- 2026-03-17 18:20 +0800 | request_id=heartbeat-20260317-1820 | idle_minutes=unknown | owner=system | issue=expected task directories still missing: `api/main-tasks` and `api/tasks/active` not found | follow_up=restore task state source or update heartbeat checklist path
+- 2026-03-17 18:20 +0800 | request_id=heartbeat-20260317-1820 | idle_minutes=unknown | owner=system | issue=WhatsApp channel still linked but disconnected | follow_up=run WhatsApp recovery checklist and confirm reconnect
+- 2026-03-17 18:28 +0800 | request_id=heartbeat-20260317-1828 | idle_minutes=unknown | owner=system | issue=monitoring backend still unhealthy; `http://127.0.0.1:8000/api/health` unreachable (curl code 7) | follow_up=restart monitoring backend and verify health endpoint
+- 2026-03-17 18:28 +0800 | request_id=heartbeat-20260317-1828 | idle_minutes=unknown | owner=system | issue=expected task directories still missing: `api/main-tasks` and `api/tasks/active` not found | follow_up=restore task state source or update heartbeat checklist path
+- 2026-03-17 18:28 +0800 | request_id=heartbeat-20260317-1828 | idle_minutes=unknown | owner=system | issue=WhatsApp failed to reconnect; running=false connected=false reconnectAttempts=3 lastError=opening handshake timed out (408) | follow_up=run WhatsApp recovery checklist and inspect network/session state
+- 2026-03-17 18:38 +0800 | request_id=heartbeat-20260317-1838 | idle_minutes=unknown | owner=system | issue=monitoring backend still unhealthy; `http://127.0.0.1:8000/api/health` unreachable (curl code 7) | follow_up=restart monitoring backend and verify health endpoint
+- 2026-03-17 18:38 +0800 | request_id=heartbeat-20260317-1838 | idle_minutes=unknown | owner=system | issue=expected task directories still missing: `api/main-tasks` and `api/tasks/active` not found | follow_up=restore task state source or update heartbeat checklist path
+

@@ -1,0 +1,19 @@
+{
+  "allowlistSha256": "3705cac6b689d1cb5eeabb146dddbbd17a2d8c7bd4b58b49c20de4443ca26b13",
+  "denylistSha256": "de0b1ca9222214bac7b692d2e27a5764a2f41770644bcdbf879215e1915bde3b",
+  "fileCount": 10,
+  "files": [
+    "AGENTS.md",
+    "IDENTITY.md",
+    "README.md",
+    "SOUL.md",
+    "TOOLS.md",
+    "USER.md",
+    "auth-profiles.json",
+    "models.json",
+    "seed/allowlist.txt",
+    "seed/denylist.txt"
+  ],
+  "generatedAt": "2026-03-25T02:35:35.773370+00:00",
+  "sourceCommit": "21f5b6c44ec8d5d7e3b014018d3b97bfb38654cb"
+}

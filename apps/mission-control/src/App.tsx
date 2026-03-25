@@ -594,7 +594,7 @@ const ConsoleStatusCard = ({
             className="text-[1.15rem] font-semibold tracking-tight"
             style={{ color: "var(--text-primary)" }}
           >
-            OpenClaw Console
+            SoloCore Console
           </h2>
         </div>
 

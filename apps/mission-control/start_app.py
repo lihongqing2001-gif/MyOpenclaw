@@ -5,7 +5,7 @@ import time
 from pathlib import Path
 
 def main():
-    print("Starting OpenClaw Visual Control Terminal...")
+    print("Starting SoloCore Console...")
     
     # Check if node_modules exists
     if not os.path.exists('node_modules'):

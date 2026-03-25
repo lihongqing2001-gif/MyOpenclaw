@@ -1,0 +1,19 @@
+# Paths relative to workspace root
+AGENTS.md
+SOUL.md
+USER.md
+TOOLS.md
+IDENTITY.md
+README.md
+auth-profiles.json
+models.json
+# openclaw.json may be absent; build script skips missing entries
+openclaw.json
+skills
+agents/knowledge
+agents/reviews
+agents/monitoring-self
+scripts/seed
+seed/allowlist.txt
+seed/denylist.txt
+seed/templates

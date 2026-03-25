@@ -1,15 +1,19 @@
 [Unit]
-Description=OpenClaw Web Platform
+Description=SoloCore Hub
 After=network.target
 
 [Service]
 Type=simple
 WorkingDirectory=/opt/openclaw/openclaw-web-platform
 Environment=NODE_ENV=production
+Environment=NODE_OPTIONS=--max-old-space-size=256
 EnvironmentFile=/opt/openclaw/openclaw-web-platform/.env
-ExecStart=/usr/bin/npm run start
+ExecStart=/usr/bin/node /opt/openclaw/openclaw-web-platform/dist-server/server.js
 Restart=always
 RestartSec=5
+MemoryAccounting=true
+MemoryMax=450M
+TasksMax=256
 User=openclaw
 Group=openclaw
 

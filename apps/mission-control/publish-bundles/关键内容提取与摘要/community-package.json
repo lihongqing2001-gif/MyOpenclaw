@@ -1,0 +1,135 @@
+{
+  "schemaVersion": "community-package-v1",
+  "packageId": "cap.openclaw.sop.content-project-extract-summary",
+  "type": "sop-pack",
+  "name": "关键内容提取与摘要",
+  "version": "0.2.0",
+  "author": {
+    "name": "OpenClaw",
+    "id": "official/openclaw"
+  },
+  "description": "报告摘要、资料综述",
+  "source": {
+    "kind": "local-export",
+    "createdAt": "2026-03-24T10:52:07Z"
+  },
+  "capabilities": [
+    {
+      "id": "cap.openclaw.sop.content-project-extract-summary",
+      "label": "关键内容提取与摘要",
+      "summary": "报告摘要、资料综述",
+      "entrypoint": "__OPENCLAW_WORKFLOW__ sop-content-project-extract-summary"
+    }
+  ],
+  "dependencies": [
+    {
+      "id": "cap.openclaw.foundation.files-repo",
+      "label": "文件与版本管理",
+      "kind": "foundation",
+      "required": true,
+      "installCommand": "read/write/edit/exec + git",
+      "installUrl": "",
+      "bundled": false
+    },
+    {
+      "id": "cap.openclaw.foundation.knowledge-index",
+      "label": "知识库归档与标签",
+      "kind": "foundation",
+      "required": true,
+      "installCommand": "/knowledge ingest --domain <领域> --platform <平台>",
+      "installUrl": "",
+      "bundled": false
+    }
+  ],
+  "compatibility": {
+    "openclawMinVersion": "2026.3.2",
+    "installMode": "local-console",
+    "platforms": [
+      "macos",
+      "linux",
+      "windows"
+    ]
+  },
+  "permissions": [
+    {
+      "key": "filesystem.read",
+      "required": true,
+      "reason": "Read packaged SOP, docs, and supporting local files."
+    }
+  ],
+  "checksums": {
+    "algorithm": "sha256",
+    "files": [
+      {
+        "path": "OPENCLAW.md",
+        "sha256": "ebfe8ef82dae32038783b4128eafb9fa1fc9b6524728a1c19b0970806bb307c5"
+      },
+      {
+        "path": "README.md",
+        "sha256": "312d8ae3aacbef45c41b23a87764cde6aab83aa9a6f888fb956b78e2c46fe916"
+      },
+      {
+        "path": "capability-manifest.json",
+        "sha256": "d554c3108915772b6eeb499661a1a2a2337ed0798110c61b0a125dcf119afd5e"
+      },
+      {
+        "path": "dependency-hints.json",
+        "sha256": "afd6c8fe96087b9067433473b44c82476453fff6128ecba27db767ef25e1f87c"
+      },
+      {
+        "path": "healthcheck.py",
+        "sha256": "489fb7d59fe3e51c392b9c12d8c3fb3f5013496415f7d7e8f97a463fd64babe2"
+      },
+      {
+        "path": "install.py",
+        "sha256": "fc19457d1c6340b5472acbe5e51338a1fa47912c08ffe7b836b03ae01f0018ed"
+      },
+      {
+        "path": "schemas/community-package-v1.schema.json",
+        "sha256": "fbfce78f0b3bea1bb68dc0d51ca99e2149cb1743fae6f3c4825d1e881e7ec8d8"
+      },
+      {
+        "path": "sops/关键内容提取与摘要.md",
+        "sha256": "bd29f7889dd7854a2bf2c9c29ed33ab87f705e94c3e6ab291139ff667bda4d0e"
+      }
+    ]
+  },
+  "docs": [
+    {
+      "title": "OPENCLAW",
+      "path": "OPENCLAW.md"
+    },
+    {
+      "title": "README",
+      "path": "README.md"
+    },
+    {
+      "title": "关键内容提取与摘要",
+      "path": "sops/关键内容提取与摘要.md"
+    }
+  ],
+  "assets": [
+    {
+      "path": "OPENCLAW.md",
+      "kind": "knowledge",
+      "label": "OPENCLAW.md"
+    },
+    {
+      "path": "README.md",
+      "kind": "knowledge",
+      "label": "README.md"
+    },
+    {
+      "path": "schemas/community-package-v1.schema.json",
+      "kind": "document",
+      "label": "community-package-v1.schema.json"
+    },
+    {
+      "path": "sops/关键内容提取与摘要.md",
+      "kind": "knowledge",
+      "label": "关键内容提取与摘要.md"
+    }
+  ],
+  "reviewStatus": "draft",
+  "visibility": "private"
+}

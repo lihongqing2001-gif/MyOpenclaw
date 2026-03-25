@@ -1,0 +1,22 @@
+import json
+from pathlib import Path
+
+
+MANIFEST = json.loads(r'''{"id": "cap.openclaw.sop.telegram-4567deb0", "name": "邮件每日分诊与 Telegram 推送", "version": "0.2.0", "description": "每天自动读取一个已保存的邮箱账户档案，只抓新增/未处理邮件，产出一份分诊报告，并优先通过 OpenClaw 已连通的 WhatsApp 主通道把待你拍板的重点推送给你。", "domain": "个人管理", "category": "沟通与邮件", "tags": ["个人管理", "沟通与邮件", "sop"], "ownership": "openclaw", "publish": "local-bundle", "dependencies": ["cap.openclaw.integration.openclaw-notifier"], "requires": ">=2026.3.2", "skills": ["skills/assistant-orchestrator/SKILL.md", "skills/email-sequence/SKILL.md"], "sops": ["sops/邮件每日分诊与-telegram-推送.md"], "install": "python3 install.py", "healthcheck": "python3 healthcheck.py", "outputs": ["outputs/cap.openclaw.sop.telegram-4567deb0/"], "packaged_capabilities": ["cap.openclaw.skill.assistant-orchestrator", "cap.openclaw.skill.email-sequence"], "entrypoints": [{"label": "邮件每日分诊与 Telegram 推送", "command": "python3 /Users/liumobei/.openclaw/workspace/apps/mission-control/scripts/run_email_daily_triage.py --email-profile <邮箱账户档案> --notify-channel <通知通道（可选覆盖）> --mailbox-scope <邮箱范围> --time-window <时间窗口> --unread-only <是否需要只看未读> --only-unprocessed <是否需要只看未处理> --max-messages <最大邮件数> --push-mode <推送模式>"}]}''')
+
+
+def main():
+    workspace = Path.home() / ".openclaw" / "workspace"
+    required = [
+        workspace / "sops/邮件每日分诊与-telegram-推送.md",
+        workspace / "agents" / "knowledge" / "portable" / MANIFEST["id"],
+        workspace / "portable-bundles" / MANIFEST["id"] / "bundle" / "capability-manifest.json",
+    ]
+    missing = [str(path) for path in required if not path.exists()]
+    if missing:
+        raise SystemExit("Missing required paths: " + ", ".join(missing))
+    print(f"Healthcheck OK for {MANIFEST['id']}")
+
+
+if __name__ == "__main__":
+    main()

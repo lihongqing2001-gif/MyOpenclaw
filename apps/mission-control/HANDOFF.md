@@ -1,8 +1,8 @@
-# Mission Control Handoff
+# SoloCore Console Handoff
 
 ## Product Role
 
-`mission-control` is the local-first OpenClaw product line.
+`mission-control` powers SoloCore Console, the local-first operator product line.
 
 It owns:
 

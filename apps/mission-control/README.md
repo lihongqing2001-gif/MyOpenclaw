@@ -1,10 +1,10 @@
-# OpenClaw Web App
+# SoloCore Console
 
-OpenClaw Web is now a lightweight mission-control console for a resident OpenClaw agent. The frontend focuses on runtime control, decision support, evidence search, and asset intake, while the broker server and the standalone agent own task execution, heartbeats, and knowledge updates.
+SoloCore Console is the operator console for a resident OpenClaw runtime. It can run locally during development and can also be deployed server-side as a cloud OpenClaw control plane, so long as the broker stays on a server-local interface and is only exposed through an authenticated panel.
 
 ## What Runs Where
 
-### Web broker
+### Broker runtime
 - Serves the React UI and the SSE stream at `GET /api/v1/stream`
 - Accepts drawer execution requests at `POST /api/v1/node-execute`
 - Serves control-plane state at `GET /api/v1/control-plane/state`
@@ -31,11 +31,11 @@ OpenClaw Web is now a lightweight mission-control console for a resident OpenCla
 ### 1. Install dependencies
 
 ```bash
-cd /Users/liumobei/.codex/worktrees/0721/text/skillstree-main
+cd /Users/liumobei/.openclaw/workspace/apps/mission-control
 npm install
 ```
 
-### 2. Start the web broker
+### 2. Start the local broker
 
 ```bash
 npm run dev
@@ -48,7 +48,7 @@ Open the panel at [http://127.0.0.1:3000](http://127.0.0.1:3000).
 In a second terminal:
 
 ```bash
-cd /Users/liumobei/.codex/worktrees/0721/text/skillstree-main
+cd /Users/liumobei/.openclaw/workspace/apps/mission-control
 python3 openclaw_agent.py
 ```
 
@@ -71,7 +71,18 @@ This starts both:
 - the broker
 - the resident agent
 
-and opens the Web console automatically.
+and opens SoloCore Console automatically.
+
+## Cloud OpenClaw Deployment
+
+`mission-control` can also run as the server-side OpenClaw runtime behind `SoloCore Hub`.
+
+Rules:
+
+- bind the broker to `127.0.0.1`
+- do not expose the broker directly on a public port
+- reach it only through the authenticated admin surface in `SoloCore Hub`
+- deploy from local source / GitHub-tracked versions, not by hand-editing the server copy
 
 ## Packaging a Release Bundle
 

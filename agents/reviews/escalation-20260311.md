@@ -1,0 +1,348 @@
+# Escalation Reports
+
+- 2026-03-11 00:49:49 +0800 | type=slow_progress | request_id=REQ-SOP-20260305-002-PM | idle_min=8041 | agent=product-manager-v1 | action=escalate_and_report | task=整理SOP上线说明与对外沟通口径
+- 2026-03-11 00:49:49 +0800 | type=slow_progress | request_id=REQ-SOP-20260305-002-OPS | idle_min=8041 | agent=operations-manager-v1 | action=escalate_and_report | task=维护看板与交付回报，确保dispatch/complete闭环
+- 2026-03-11 00:49:49 +0800 | type=slow_progress | request_id=REQ-SOP-20260305-002-QA | idle_min=8042 | agent=qa-auditor-v1 | action=escalate_and_report | task=验证SOP落地证据与DoD，出审计结论
+- 2026-03-11 00:49:49 +0800 | type=slow_progress | request_id=REQ-SOP-20260305-002-ADMIN | idle_min=8042 | agent=admin-v1 | action=escalate_and_report | task=执行会话控制SOP：分发/验收/回填/恢复演练，产出证据
+- 2026-03-11 01:19:50 +0800 | type=slow_progress | request_id=REQ-MAIN-0008-001 | idle_min=4434 | agent=designer-v1 | action=escalate_and_report | task=拆解主任务: 修复 self-improvement 模块：/api/self-improvement/health 返回 404；恢复健康检查并记录运行状态
+- 2026-03-11 01:49:50 +0800 | type=slow_progress | request_id=REQ-MC-20260305-001-PM | idle_min=8031 | agent=product-manager-v1 | action=escalate_and_report | task=Mission Control 计划：页面结构与优先级梳理、对外说明口径
+- 2026-03-11 01:49:50 +0800 | type=slow_progress | request_id=REQ-MC-20260305-001-OPS | idle_min=8031 | agent=operations-manager-v1 | action=escalate_and_report | task=Mission Control 计划：看板与任务流维护、进度回填与交付报告
+- 2026-03-11 01:49:50 +0800 | type=slow_progress | request_id=REQ-MC-20260305-001-QA | idle_min=8031 | agent=qa-auditor-v1 | action=escalate_and_report | task=Mission Control 计划：回归 Operations 不回退，验收新页功能与证据链
+- 2026-03-11 01:49:50 +0800 | type=slow_progress | request_id=REQ-MC-20260305-001-ENG | idle_min=8032 | agent=engineer-v1 | action=escalate_and_report | task=Mission Control 计划：落地 Memory/Team 页面与数据接口实现
+- 2026-03-11 01:49:50 +0800 | type=slow_progress | request_id=REQ-MC-20260305-001-ADMIN | idle_min=8032 | agent=admin-v1 | action=escalate_and_report | task=Mission Control 计划：制定执行清单与验收标准（DoD），保证流程闭环
+- 2026-03-11 03:49:52 +0800 | type=slow_progress | request_id=REQ-SOP-20260305-002-PM | idle_min=8221 | agent=product-manager-v1 | action=escalate_and_report | task=整理SOP上线说明与对外沟通口径
+- 2026-03-11 03:49:52 +0800 | type=slow_progress | request_id=REQ-SOP-20260305-002-OPS | idle_min=8221 | agent=operations-manager-v1 | action=escalate_and_report | task=维护看板与交付回报，确保dispatch/complete闭环
+- 2026-03-11 03:49:52 +0800 | type=slow_progress | request_id=REQ-SOP-20260305-002-QA | idle_min=8222 | agent=qa-auditor-v1 | action=escalate_and_report | task=验证SOP落地证据与DoD，出审计结论
+- 2026-03-11 03:49:52 +0800 | type=slow_progress | request_id=REQ-SOP-20260305-002-ADMIN | idle_min=8222 | agent=admin-v1 | action=escalate_and_report | task=执行会话控制SOP：分发/验收/回填/恢复演练，产出证据
+[2026-03-11 04:10] Idle task escalation (>4h):
+- request_id=REQ-MAIN-0008-001 idle_min=5083 owner=designer-v1 follow_up=confirm status + unblock self-improvement health repair
+- request_id=REQ-MC-20260305-001-PM idle_min=8651 owner=product-manager-v1 follow_up=request progress update + ETA
+- request_id=REQ-MC-20260305-001-OPS idle_min=8651 owner=operations-manager-v1 follow_up=request progress update + ETA
+- request_id=REQ-MC-20260305-001-QA idle_min=8651 owner=qa-auditor-v1 follow_up=request progress update + ETA
+- request_id=REQ-MC-20260305-001-ENG idle_min=8651 owner=engineer-v1 follow_up=request progress update + ETA
+- request_id=REQ-MC-20260305-001-ADMIN idle_min=8651 owner=admin-v1 follow_up=request progress update + ETA
+- request_id=REQ-SOP-20260305-002-PM idle_min=8721 owner=product-manager-v1 follow_up=request progress update + ETA
+- request_id=REQ-SOP-20260305-002-OPS idle_min=8721 owner=operations-manager-v1 follow_up=request progress update + ETA
+- request_id=REQ-SOP-20260305-002-QA idle_min=8721 owner=qa-auditor-v1 follow_up=request progress update + ETA
+- request_id=REQ-SOP-20260305-002-ADMIN idle_min=8721 owner=admin-v1 follow_up=request progress update + ETA
+- 2026-03-11 04:19:53 +0800 | type=slow_progress | request_id=REQ-MAIN-0008-001 | idle_min=4614 | agent=designer-v1 | action=escalate_and_report | task=拆解主任务: 修复 self-improvement 模块：/api/self-improvement/health 返回 404；恢复健康检查并记录运行状态
+[2026-03-11 04:38] Idle task escalation (>4h):
+- request_id=REQ-MAIN-0008-001 idle_min=5112 owner=designer-v1 follow_up=confirm status + unblock self-improvement health repair
+- request_id=REQ-MC-20260305-001-PM idle_min=8680 owner=product-manager-v1 follow_up=request progress update + ETA
+- request_id=REQ-MC-20260305-001-OPS idle_min=8680 owner=operations-manager-v1 follow_up=request progress update + ETA
+- request_id=REQ-MC-20260305-001-QA idle_min=8680 owner=qa-auditor-v1 follow_up=request progress update + ETA
+- request_id=REQ-MC-20260305-001-ENG idle_min=8680 owner=engineer-v1 follow_up=request progress update + ETA
+- request_id=REQ-MC-20260305-001-ADMIN idle_min=8680 owner=admin-v1 follow_up=request progress update + ETA
+- request_id=REQ-SOP-20260305-002-PM idle_min=8750 owner=product-manager-v1 follow_up=request progress update + ETA
+- request_id=REQ-SOP-20260305-002-OPS idle_min=8750 owner=operations-manager-v1 follow_up=request progress update + ETA
+- request_id=REQ-SOP-20260305-002-QA idle_min=8750 owner=qa-auditor-v1 follow_up=request progress update + ETA
+- request_id=REQ-SOP-20260305-002-ADMIN idle_min=8750 owner=admin-v1 follow_up=request progress update + ETA
+- 2026-03-11 04:49:53 +0800 | type=slow_progress | request_id=REQ-MC-20260305-001-PM | idle_min=8211 | agent=product-manager-v1 | action=escalate_and_report | task=Mission Control 计划：页面结构与优先级梳理、对外说明口径
+- 2026-03-11 04:49:53 +0800 | type=slow_progress | request_id=REQ-MC-20260305-001-OPS | idle_min=8211 | agent=operations-manager-v1 | action=escalate_and_report | task=Mission Control 计划：看板与任务流维护、进度回填与交付报告
+- 2026-03-11 04:49:53 +0800 | type=slow_progress | request_id=REQ-MC-20260305-001-QA | idle_min=8212 | agent=qa-auditor-v1 | action=escalate_and_report | task=Mission Control 计划：回归 Operations 不回退，验收新页功能与证据链
+- 2026-03-11 04:49:53 +0800 | type=slow_progress | request_id=REQ-MC-20260305-001-ENG | idle_min=8212 | agent=engineer-v1 | action=escalate_and_report | task=Mission Control 计划：落地 Memory/Team 页面与数据接口实现
+- 2026-03-11 04:49:53 +0800 | type=slow_progress | request_id=REQ-MC-20260305-001-ADMIN | idle_min=8212 | agent=admin-v1 | action=escalate_and_report | task=Mission Control 计划：制定执行清单与验收标准（DoD），保证流程闭环
+[2026-03-11 05:08] Idle task escalation (>4h):
+- request_id=REQ-MAIN-0008-001 idle_min=5142 owner=designer-v1 follow_up=confirm status + unblock self-improvement health repair
+- request_id=REQ-MC-20260305-001-PM idle_min=8710 owner=product-manager-v1 follow_up=request progress update + ETA
+- request_id=REQ-MC-20260305-001-OPS idle_min=8710 owner=operations-manager-v1 follow_up=request progress update + ETA
+- request_id=REQ-MC-20260305-001-QA idle_min=8710 owner=qa-auditor-v1 follow_up=request progress update + ETA
+- request_id=REQ-MC-20260305-001-ENG idle_min=8710 owner=engineer-v1 follow_up=request progress update + ETA
+- request_id=REQ-MC-20260305-001-ADMIN idle_min=8710 owner=admin-v1 follow_up=request progress update + ETA
+- request_id=REQ-SOP-20260305-002-PM idle_min=8780 owner=product-manager-v1 follow_up=request progress update + ETA
+- request_id=REQ-SOP-20260305-002-OPS idle_min=8780 owner=operations-manager-v1 follow_up=request progress update + ETA
+- request_id=REQ-SOP-20260305-002-QA idle_min=8780 owner=qa-auditor-v1 follow_up=request progress update + ETA
+- request_id=REQ-SOP-20260305-002-ADMIN idle_min=8780 owner=admin-v1 follow_up=request progress update + ETA
+[2026-03-11 05:38] Idle task escalation (>4h):
+- request_id=REQ-MAIN-0008-001 idle_min=5172 owner=designer-v1 follow_up=confirm status + unblock self-improvement health repair
+- request_id=REQ-MC-20260305-001-PM idle_min=8740 owner=product-manager-v1 follow_up=request progress update + ETA
+- request_id=REQ-MC-20260305-001-OPS idle_min=8740 owner=operations-manager-v1 follow_up=request progress update + ETA
+- request_id=REQ-MC-20260305-001-QA idle_min=8740 owner=qa-auditor-v1 follow_up=request progress update + ETA
+- request_id=REQ-MC-20260305-001-ENG idle_min=8740 owner=engineer-v1 follow_up=request progress update + ETA
+- request_id=REQ-MC-20260305-001-ADMIN idle_min=8740 owner=admin-v1 follow_up=request progress update + ETA
+- request_id=REQ-SOP-20260305-002-PM idle_min=8810 owner=product-manager-v1 follow_up=request progress update + ETA
+- request_id=REQ-SOP-20260305-002-OPS idle_min=8810 owner=operations-manager-v1 follow_up=request progress update + ETA
+- request_id=REQ-SOP-20260305-002-QA idle_min=8810 owner=qa-auditor-v1 follow_up=request progress update + ETA
+- request_id=REQ-SOP-20260305-002-ADMIN idle_min=8810 owner=admin-v1 follow_up=request progress update + ETA
+[2026-03-11 06:08] Idle task escalation (>4h):
+- request_id=REQ-MAIN-0008-001 idle_min=5202 owner=designer-v1 follow_up=confirm status + unblock self-improvement health repair
+- request_id=REQ-MC-20260305-001-PM idle_min=8770 owner=product-manager-v1 follow_up=request progress update + ETA
+- request_id=REQ-MC-20260305-001-OPS idle_min=8770 owner=operations-manager-v1 follow_up=request progress update + ETA
+- request_id=REQ-MC-20260305-001-QA idle_min=8770 owner=qa-auditor-v1 follow_up=request progress update + ETA
+- request_id=REQ-MC-20260305-001-ENG idle_min=8770 owner=engineer-v1 follow_up=request progress update + ETA
+- request_id=REQ-MC-20260305-001-ADMIN idle_min=8770 owner=admin-v1 follow_up=request progress update + ETA
+- request_id=REQ-SOP-20260305-002-PM idle_min=8840 owner=product-manager-v1 follow_up=request progress update + ETA
+- request_id=REQ-SOP-20260305-002-OPS idle_min=8840 owner=operations-manager-v1 follow_up=request progress update + ETA
+- request_id=REQ-SOP-20260305-002-QA idle_min=8840 owner=qa-auditor-v1 follow_up=request progress update + ETA
+- request_id=REQ-SOP-20260305-002-ADMIN idle_min=8840 owner=admin-v1 follow_up=request progress update + ETA
+[2026-03-11 06:38] Idle task escalation (>4h):
+- request_id=REQ-MAIN-0008-001 idle_min=5232 owner=designer-v1 follow_up=confirm status + unblock self-improvement health repair
+- request_id=REQ-MC-20260305-001-PM idle_min=8800 owner=product-manager-v1 follow_up=request progress update + ETA
+- request_id=REQ-MC-20260305-001-OPS idle_min=8800 owner=operations-manager-v1 follow_up=request progress update + ETA
+- request_id=REQ-MC-20260305-001-QA idle_min=8800 owner=qa-auditor-v1 follow_up=request progress update + ETA
+- request_id=REQ-MC-20260305-001-ENG idle_min=8800 owner=engineer-v1 follow_up=request progress update + ETA
+- request_id=REQ-MC-20260305-001-ADMIN idle_min=8800 owner=admin-v1 follow_up=request progress update + ETA
+- request_id=REQ-SOP-20260305-002-PM idle_min=8870 owner=product-manager-v1 follow_up=request progress update + ETA
+- request_id=REQ-SOP-20260305-002-OPS idle_min=8870 owner=operations-manager-v1 follow_up=request progress update + ETA
+- request_id=REQ-SOP-20260305-002-QA idle_min=8870 owner=qa-auditor-v1 follow_up=request progress update + ETA
+- request_id=REQ-SOP-20260305-002-ADMIN idle_min=8870 owner=admin-v1 follow_up=request progress update + ETA
+- 2026-03-11 06:49:56 +0800 | type=slow_progress | request_id=REQ-SOP-20260305-002-PM | idle_min=8401 | agent=product-manager-v1 | action=escalate_and_report | task=整理SOP上线说明与对外沟通口径
+- 2026-03-11 06:49:56 +0800 | type=slow_progress | request_id=REQ-SOP-20260305-002-OPS | idle_min=8402 | agent=operations-manager-v1 | action=escalate_and_report | task=维护看板与交付回报，确保dispatch/complete闭环
+- 2026-03-11 06:49:56 +0800 | type=slow_progress | request_id=REQ-SOP-20260305-002-QA | idle_min=8402 | agent=qa-auditor-v1 | action=escalate_and_report | task=验证SOP落地证据与DoD，出审计结论
+- 2026-03-11 06:49:56 +0800 | type=slow_progress | request_id=REQ-SOP-20260305-002-ADMIN | idle_min=8402 | agent=admin-v1 | action=escalate_and_report | task=执行会话控制SOP：分发/验收/回填/恢复演练，产出证据
+[2026-03-11 07:08] Idle task escalation (>4h):
+- request_id=REQ-MAIN-0008-001 idle_min=5262 owner=designer-v1 follow_up=confirm status + unblock self-improvement health repair
+- request_id=REQ-MC-20260305-001-PM idle_min=8830 owner=product-manager-v1 follow_up=request progress update + ETA
+- request_id=REQ-MC-20260305-001-OPS idle_min=8830 owner=operations-manager-v1 follow_up=request progress update + ETA
+- request_id=REQ-MC-20260305-001-QA idle_min=8830 owner=qa-auditor-v1 follow_up=request progress update + ETA
+- request_id=REQ-MC-20260305-001-ENG idle_min=8830 owner=engineer-v1 follow_up=request progress update + ETA
+- request_id=REQ-MC-20260305-001-ADMIN idle_min=8830 owner=admin-v1 follow_up=request progress update + ETA
+- request_id=REQ-SOP-20260305-002-PM idle_min=8900 owner=product-manager-v1 follow_up=request progress update + ETA
+- request_id=REQ-SOP-20260305-002-OPS idle_min=8900 owner=operations-manager-v1 follow_up=request progress update + ETA
+- request_id=REQ-SOP-20260305-002-QA idle_min=8900 owner=qa-auditor-v1 follow_up=request progress update + ETA
+- request_id=REQ-SOP-20260305-002-ADMIN idle_min=8900 owner=admin-v1 follow_up=request progress update + ETA
+- 2026-03-11 07:19:56 +0800 | type=slow_progress | request_id=REQ-MAIN-0008-001 | idle_min=4794 | agent=designer-v1 | action=escalate_and_report | task=拆解主任务: 修复 self-improvement 模块：/api/self-improvement/health 返回 404；恢复健康检查并记录运行状态
+[2026-03-11 07:38] Idle task escalation (>4h):
+- request_id=REQ-MAIN-0008-001 idle_min=5292 owner=designer-v1 follow_up=confirm status + unblock self-improvement health repair
+- request_id=REQ-MC-20260305-001-PM idle_min=8860 owner=product-manager-v1 follow_up=request progress update + ETA
+- request_id=REQ-MC-20260305-001-OPS idle_min=8860 owner=operations-manager-v1 follow_up=request progress update + ETA
+- request_id=REQ-MC-20260305-001-QA idle_min=8860 owner=qa-auditor-v1 follow_up=request progress update + ETA
+- request_id=REQ-MC-20260305-001-ENG idle_min=8860 owner=engineer-v1 follow_up=request progress update + ETA
+- request_id=REQ-MC-20260305-001-ADMIN idle_min=8860 owner=admin-v1 follow_up=request progress update + ETA
+- request_id=REQ-SOP-20260305-002-PM idle_min=8930 owner=product-manager-v1 follow_up=request progress update + ETA
+- request_id=REQ-SOP-20260305-002-OPS idle_min=8930 owner=operations-manager-v1 follow_up=request progress update + ETA
+- request_id=REQ-SOP-20260305-002-QA idle_min=8930 owner=qa-auditor-v1 follow_up=request progress update + ETA
+- request_id=REQ-SOP-20260305-002-ADMIN idle_min=8930 owner=admin-v1 follow_up=request progress update + ETA
+- 2026-03-11 07:49:56 +0800 | type=slow_progress | request_id=REQ-MC-20260305-001-PM | idle_min=8391 | agent=product-manager-v1 | action=escalate_and_report | task=Mission Control 计划：页面结构与优先级梳理、对外说明口径
+- 2026-03-11 07:49:56 +0800 | type=slow_progress | request_id=REQ-MC-20260305-001-OPS | idle_min=8391 | agent=operations-manager-v1 | action=escalate_and_report | task=Mission Control 计划：看板与任务流维护、进度回填与交付报告
+- 2026-03-11 07:49:56 +0800 | type=slow_progress | request_id=REQ-MC-20260305-001-QA | idle_min=8392 | agent=qa-auditor-v1 | action=escalate_and_report | task=Mission Control 计划：回归 Operations 不回退，验收新页功能与证据链
+- 2026-03-11 07:49:56 +0800 | type=slow_progress | request_id=REQ-MC-20260305-001-ENG | idle_min=8392 | agent=engineer-v1 | action=escalate_and_report | task=Mission Control 计划：落地 Memory/Team 页面与数据接口实现
+- 2026-03-11 07:49:56 +0800 | type=slow_progress | request_id=REQ-MC-20260305-001-ADMIN | idle_min=8392 | agent=admin-v1 | action=escalate_and_report | task=Mission Control 计划：制定执行清单与验收标准（DoD），保证流程闭环
+[2026-03-11 08:08] Idle task escalation (>4h):
+- request_id=REQ-MAIN-0008-001 idle_min=5322 owner=designer-v1 follow_up=confirm status + unblock self-improvement health repair
+- request_id=REQ-MC-20260305-001-PM idle_min=8890 owner=product-manager-v1 follow_up=request progress update + ETA
+- request_id=REQ-MC-20260305-001-OPS idle_min=8890 owner=operations-manager-v1 follow_up=request progress update + ETA
+- request_id=REQ-MC-20260305-001-QA idle_min=8890 owner=qa-auditor-v1 follow_up=request progress update + ETA
+- request_id=REQ-MC-20260305-001-ENG idle_min=8890 owner=engineer-v1 follow_up=request progress update + ETA
+- request_id=REQ-MC-20260305-001-ADMIN idle_min=8890 owner=admin-v1 follow_up=request progress update + ETA
+- request_id=REQ-SOP-20260305-002-PM idle_min=8960 owner=product-manager-v1 follow_up=request progress update + ETA
+- request_id=REQ-SOP-20260305-002-OPS idle_min=8960 owner=operations-manager-v1 follow_up=request progress update + ETA
+- request_id=REQ-SOP-20260305-002-QA idle_min=8960 owner=qa-auditor-v1 follow_up=request progress update + ETA
+- request_id=REQ-SOP-20260305-002-ADMIN idle_min=8960 owner=admin-v1 follow_up=request progress update + ETA
+[2026-03-11 08:38] Idle task escalation (>4h):
+- request_id=REQ-MAIN-0008-001 idle_min=5352 owner=designer-v1 follow_up=confirm status + unblock self-improvement health repair
+- request_id=REQ-MC-20260305-001-PM idle_min=8920 owner=product-manager-v1 follow_up=request progress update + ETA
+- request_id=REQ-MC-20260305-001-OPS idle_min=8920 owner=operations-manager-v1 follow_up=request progress update + ETA
+- request_id=REQ-MC-20260305-001-QA idle_min=8920 owner=qa-auditor-v1 follow_up=request progress update + ETA
+- request_id=REQ-MC-20260305-001-ENG idle_min=8920 owner=engineer-v1 follow_up=request progress update + ETA
+- request_id=REQ-MC-20260305-001-ADMIN idle_min=8920 owner=admin-v1 follow_up=request progress update + ETA
+- request_id=REQ-SOP-20260305-002-PM idle_min=8990 owner=product-manager-v1 follow_up=request progress update + ETA
+- request_id=REQ-SOP-20260305-002-OPS idle_min=8990 owner=operations-manager-v1 follow_up=request progress update + ETA
+- request_id=REQ-SOP-20260305-002-QA idle_min=8990 owner=qa-auditor-v1 follow_up=request progress update + ETA
+- request_id=REQ-SOP-20260305-002-ADMIN idle_min=8990 owner=admin-v1 follow_up=request progress update + ETA
+[2026-03-11 09:08] Idle task escalation (>4h):
+- request_id=REQ-MAIN-0008-001 idle_min=5382 owner=designer-v1 follow_up=confirm status + unblock self-improvement health repair
+- request_id=REQ-MC-20260305-001-PM idle_min=8950 owner=product-manager-v1 follow_up=request progress update + ETA
+- request_id=REQ-MC-20260305-001-OPS idle_min=8950 owner=operations-manager-v1 follow_up=request progress update + ETA
+- request_id=REQ-MC-20260305-001-QA idle_min=8950 owner=qa-auditor-v1 follow_up=request progress update + ETA
+- request_id=REQ-MC-20260305-001-ENG idle_min=8950 owner=engineer-v1 follow_up=request progress update + ETA
+- request_id=REQ-MC-20260305-001-ADMIN idle_min=8950 owner=admin-v1 follow_up=request progress update + ETA
+- request_id=REQ-SOP-20260305-002-PM idle_min=9020 owner=product-manager-v1 follow_up=request progress update + ETA
+- request_id=REQ-SOP-20260305-002-OPS idle_min=9020 owner=operations-manager-v1 follow_up=request progress update + ETA
+- request_id=REQ-SOP-20260305-002-QA idle_min=9020 owner=qa-auditor-v1 follow_up=request progress update + ETA
+- request_id=REQ-SOP-20260305-002-ADMIN idle_min=9020 owner=admin-v1 follow_up=request progress update + ETA
+[2026-03-11 09:38] Idle task escalation (>4h):
+- request_id=REQ-MAIN-0008-001 idle_min=5412 owner=designer-v1 follow_up=confirm status + unblock self-improvement health repair
+- request_id=REQ-MC-20260305-001-PM idle_min=8980 owner=product-manager-v1 follow_up=request progress update + ETA
+- request_id=REQ-MC-20260305-001-OPS idle_min=8980 owner=operations-manager-v1 follow_up=request progress update + ETA
+- request_id=REQ-MC-20260305-001-QA idle_min=8980 owner=qa-auditor-v1 follow_up=request progress update + ETA
+- request_id=REQ-MC-20260305-001-ENG idle_min=8980 owner=engineer-v1 follow_up=request progress update + ETA
+- request_id=REQ-MC-20260305-001-ADMIN idle_min=8980 owner=admin-v1 follow_up=request progress update + ETA
+- request_id=REQ-SOP-20260305-002-PM idle_min=9050 owner=product-manager-v1 follow_up=request progress update + ETA
+- request_id=REQ-SOP-20260305-002-OPS idle_min=9050 owner=operations-manager-v1 follow_up=request progress update + ETA
+- request_id=REQ-SOP-20260305-002-QA idle_min=9050 owner=qa-auditor-v1 follow_up=request progress update + ETA
+- request_id=REQ-SOP-20260305-002-ADMIN idle_min=9050 owner=admin-v1 follow_up=request progress update + ETA
+- 2026-03-11 09:49:58 +0800 | type=slow_progress | request_id=REQ-SOP-20260305-002-PM | idle_min=8581 | agent=product-manager-v1 | action=escalate_and_report | task=整理SOP上线说明与对外沟通口径
+- 2026-03-11 09:49:58 +0800 | type=slow_progress | request_id=REQ-SOP-20260305-002-OPS | idle_min=8582 | agent=operations-manager-v1 | action=escalate_and_report | task=维护看板与交付回报，确保dispatch/complete闭环
+- 2026-03-11 09:49:58 +0800 | type=slow_progress | request_id=REQ-SOP-20260305-002-QA | idle_min=8582 | agent=qa-auditor-v1 | action=escalate_and_report | task=验证SOP落地证据与DoD，出审计结论
+- 2026-03-11 09:49:58 +0800 | type=slow_progress | request_id=REQ-SOP-20260305-002-ADMIN | idle_min=8582 | agent=admin-v1 | action=escalate_and_report | task=执行会话控制SOP：分发/验收/回填/恢复演练，产出证据
+[2026-03-11 10:08] Idle task escalation (>4h):
+- request_id=REQ-MAIN-0008-001 idle_min=5442 owner=designer-v1 follow_up=confirm status + unblock self-improvement health repair
+- request_id=REQ-MC-20260305-001-PM idle_min=9010 owner=product-manager-v1 follow_up=request progress update + ETA
+- request_id=REQ-MC-20260305-001-OPS idle_min=9010 owner=operations-manager-v1 follow_up=request progress update + ETA
+- request_id=REQ-MC-20260305-001-QA idle_min=9010 owner=qa-auditor-v1 follow_up=request progress update + ETA
+- request_id=REQ-MC-20260305-001-ENG idle_min=9010 owner=engineer-v1 follow_up=request progress update + ETA
+- request_id=REQ-MC-20260305-001-ADMIN idle_min=9010 owner=admin-v1 follow_up=request progress update + ETA
+- request_id=REQ-SOP-20260305-002-PM idle_min=9080 owner=product-manager-v1 follow_up=request progress update + ETA
+- request_id=REQ-SOP-20260305-002-OPS idle_min=9080 owner=operations-manager-v1 follow_up=request progress update + ETA
+- request_id=REQ-SOP-20260305-002-QA idle_min=9080 owner=qa-auditor-v1 follow_up=request progress update + ETA
+- request_id=REQ-SOP-20260305-002-ADMIN idle_min=9080 owner=admin-v1 follow_up=request progress update + ETA
+- 2026-03-11 10:19:58 +0800 | type=slow_progress | request_id=REQ-MAIN-0008-001 | idle_min=4974 | agent=designer-v1 | action=escalate_and_report | task=拆解主任务: 修复 self-improvement 模块：/api/self-improvement/health 返回 404；恢复健康检查并记录运行状态
+[2026-03-11 10:38] Idle task escalation (>4h):
+- request_id=REQ-MAIN-0008-001 idle_min=5472 owner=designer-v1 follow_up=confirm status + unblock self-improvement health repair
+- request_id=REQ-MC-20260305-001-PM idle_min=9040 owner=product-manager-v1 follow_up=request progress update + ETA
+- request_id=REQ-MC-20260305-001-OPS idle_min=9040 owner=operations-manager-v1 follow_up=request progress update + ETA
+- request_id=REQ-MC-20260305-001-QA idle_min=9040 owner=qa-auditor-v1 follow_up=request progress update + ETA
+- request_id=REQ-MC-20260305-001-ENG idle_min=9040 owner=engineer-v1 follow_up=request progress update + ETA
+- request_id=REQ-MC-20260305-001-ADMIN idle_min=9040 owner=admin-v1 follow_up=request progress update + ETA
+- request_id=REQ-SOP-20260305-002-PM idle_min=9110 owner=product-manager-v1 follow_up=request progress update + ETA
+- request_id=REQ-SOP-20260305-002-OPS idle_min=9110 owner=operations-manager-v1 follow_up=request progress update + ETA
+- request_id=REQ-SOP-20260305-002-QA idle_min=9110 owner=qa-auditor-v1 follow_up=request progress update + ETA
+- request_id=REQ-SOP-20260305-002-ADMIN idle_min=9110 owner=admin-v1 follow_up=request progress update + ETA
+- 2026-03-11 10:49:59 +0800 | type=slow_progress | request_id=REQ-MC-20260305-001-PM | idle_min=8571 | agent=product-manager-v1 | action=escalate_and_report | task=Mission Control 计划：页面结构与优先级梳理、对外说明口径
+- 2026-03-11 10:49:59 +0800 | type=slow_progress | request_id=REQ-MC-20260305-001-OPS | idle_min=8571 | agent=operations-manager-v1 | action=escalate_and_report | task=Mission Control 计划：看板与任务流维护、进度回填与交付报告
+- 2026-03-11 10:49:59 +0800 | type=slow_progress | request_id=REQ-MC-20260305-001-QA | idle_min=8572 | agent=qa-auditor-v1 | action=escalate_and_report | task=Mission Control 计划：回归 Operations 不回退，验收新页功能与证据链
+- 2026-03-11 10:49:59 +0800 | type=slow_progress | request_id=REQ-MC-20260305-001-ENG | idle_min=8572 | agent=engineer-v1 | action=escalate_and_report | task=Mission Control 计划：落地 Memory/Team 页面与数据接口实现
+- 2026-03-11 10:49:59 +0800 | type=slow_progress | request_id=REQ-MC-20260305-001-ADMIN | idle_min=8572 | agent=admin-v1 | action=escalate_and_report | task=Mission Control 计划：制定执行清单与验收标准（DoD），保证流程闭环
+[2026-03-11 11:08] Idle task escalation (>4h):
+- request_id=REQ-MAIN-0008-001 idle_min=5502 owner=designer-v1 follow_up=confirm status + unblock self-improvement health repair
+- request_id=REQ-MC-20260305-001-PM idle_min=9070 owner=product-manager-v1 follow_up=request progress update + ETA
+- request_id=REQ-MC-20260305-001-OPS idle_min=9070 owner=operations-manager-v1 follow_up=request progress update + ETA
+- request_id=REQ-MC-20260305-001-QA idle_min=9070 owner=qa-auditor-v1 follow_up=request progress update + ETA
+- request_id=REQ-MC-20260305-001-ENG idle_min=9070 owner=engineer-v1 follow_up=request progress update + ETA
+- request_id=REQ-MC-20260305-001-ADMIN idle_min=9070 owner=admin-v1 follow_up=request progress update + ETA
+- request_id=REQ-SOP-20260305-002-PM idle_min=9140 owner=product-manager-v1 follow_up=request progress update + ETA
+- request_id=REQ-SOP-20260305-002-OPS idle_min=9140 owner=operations-manager-v1 follow_up=request progress update + ETA
+- request_id=REQ-SOP-20260305-002-QA idle_min=9140 owner=qa-auditor-v1 follow_up=request progress update + ETA
+- request_id=REQ-SOP-20260305-002-ADMIN idle_min=9140 owner=admin-v1 follow_up=request progress update + ETA
+[2026-03-11 11:38] Idle task escalation (>4h):
+- request_id=REQ-MAIN-0008-001 idle_min=5532 owner=designer-v1 follow_up=confirm status + unblock self-improvement health repair
+- request_id=REQ-MC-20260305-001-PM idle_min=9100 owner=product-manager-v1 follow_up=request progress update + ETA
+- request_id=REQ-MC-20260305-001-OPS idle_min=9100 owner=operations-manager-v1 follow_up=request progress update + ETA
+- request_id=REQ-MC-20260305-001-QA idle_min=9100 owner=qa-auditor-v1 follow_up=request progress update + ETA
+- request_id=REQ-MC-20260305-001-ENG idle_min=9100 owner=engineer-v1 follow_up=request progress update + ETA
+- request_id=REQ-MC-20260305-001-ADMIN idle_min=9100 owner=admin-v1 follow_up=request progress update + ETA
+- request_id=REQ-SOP-20260305-002-PM idle_min=9170 owner=product-manager-v1 follow_up=request progress update + ETA
+- request_id=REQ-SOP-20260305-002-OPS idle_min=9170 owner=operations-manager-v1 follow_up=request progress update + ETA
+- request_id=REQ-SOP-20260305-002-QA idle_min=9170 owner=qa-auditor-v1 follow_up=request progress update + ETA
+- request_id=REQ-SOP-20260305-002-ADMIN idle_min=9170 owner=admin-v1 follow_up=request progress update + ETA
+[2026-03-11 12:08] Idle task escalation (>4h):
+- request_id=REQ-MAIN-0008-001 idle_min=5562 owner=designer-v1 follow_up=confirm status + unblock self-improvement health repair
+- request_id=REQ-MC-20260305-001-PM idle_min=9130 owner=product-manager-v1 follow_up=request progress update + ETA
+- request_id=REQ-MC-20260305-001-OPS idle_min=9130 owner=operations-manager-v1 follow_up=request progress update + ETA
+- request_id=REQ-MC-20260305-001-QA idle_min=9130 owner=qa-auditor-v1 follow_up=request progress update + ETA
+- request_id=REQ-MC-20260305-001-ENG idle_min=9130 owner=engineer-v1 follow_up=request progress update + ETA
+- request_id=REQ-MC-20260305-001-ADMIN idle_min=9130 owner=admin-v1 follow_up=request progress update + ETA
+- request_id=REQ-SOP-20260305-002-PM idle_min=9200 owner=product-manager-v1 follow_up=request progress update + ETA
+- request_id=REQ-SOP-20260305-002-OPS idle_min=9200 owner=operations-manager-v1 follow_up=request progress update + ETA
+- request_id=REQ-SOP-20260305-002-QA idle_min=9200 owner=qa-auditor-v1 follow_up=request progress update + ETA
+- request_id=REQ-SOP-20260305-002-ADMIN idle_min=9200 owner=admin-v1 follow_up=request progress update + ETA
+[2026-03-11 12:38] Idle task escalation (>4h):
+- request_id=REQ-MAIN-0008-001 idle_min=5592 owner=designer-v1 follow_up=confirm status + unblock self-improvement health repair
+- request_id=REQ-MC-20260305-001-PM idle_min=9160 owner=product-manager-v1 follow_up=request progress update + ETA
+- request_id=REQ-MC-20260305-001-OPS idle_min=9160 owner=operations-manager-v1 follow_up=request progress update + ETA
+- request_id=REQ-MC-20260305-001-QA idle_min=9160 owner=qa-auditor-v1 follow_up=request progress update + ETA
+- request_id=REQ-MC-20260305-001-ENG idle_min=9160 owner=engineer-v1 follow_up=request progress update + ETA
+- request_id=REQ-MC-20260305-001-ADMIN idle_min=9160 owner=admin-v1 follow_up=request progress update + ETA
+- request_id=REQ-SOP-20260305-002-PM idle_min=9230 owner=product-manager-v1 follow_up=request progress update + ETA
+- request_id=REQ-SOP-20260305-002-OPS idle_min=9230 owner=operations-manager-v1 follow_up=request progress update + ETA
+- request_id=REQ-SOP-20260305-002-QA idle_min=9230 owner=qa-auditor-v1 follow_up=request progress update + ETA
+- request_id=REQ-SOP-20260305-002-ADMIN idle_min=9230 owner=admin-v1 follow_up=request progress update + ETA
+- 2026-03-11 12:50:00 +0800 | type=slow_progress | request_id=REQ-SOP-20260305-002-PM | idle_min=8762 | agent=product-manager-v1 | action=escalate_and_report | task=整理SOP上线说明与对外沟通口径
+- 2026-03-11 12:50:00 +0800 | type=slow_progress | request_id=REQ-SOP-20260305-002-OPS | idle_min=8762 | agent=operations-manager-v1 | action=escalate_and_report | task=维护看板与交付回报，确保dispatch/complete闭环
+- 2026-03-11 12:50:00 +0800 | type=slow_progress | request_id=REQ-SOP-20260305-002-QA | idle_min=8762 | agent=qa-auditor-v1 | action=escalate_and_report | task=验证SOP落地证据与DoD，出审计结论
+- 2026-03-11 12:50:00 +0800 | type=slow_progress | request_id=REQ-SOP-20260305-002-ADMIN | idle_min=8762 | agent=admin-v1 | action=escalate_and_report | task=执行会话控制SOP：分发/验收/回填/恢复演练，产出证据
+[2026-03-11 13:08] Idle task escalation (>4h):
+- request_id=REQ-MAIN-0008-001 idle_min=5622 owner=designer-v1 follow_up=confirm status + unblock self-improvement health repair
+- request_id=REQ-MC-20260305-001-PM idle_min=9190 owner=product-manager-v1 follow_up=request progress update + ETA
+- request_id=REQ-MC-20260305-001-OPS idle_min=9190 owner=operations-manager-v1 follow_up=request progress update + ETA
+- request_id=REQ-MC-20260305-001-QA idle_min=9190 owner=qa-auditor-v1 follow_up=request progress update + ETA
+- request_id=REQ-MC-20260305-001-ENG idle_min=9190 owner=engineer-v1 follow_up=request progress update + ETA
+- request_id=REQ-MC-20260305-001-ADMIN idle_min=9190 owner=admin-v1 follow_up=request progress update + ETA
+- request_id=REQ-SOP-20260305-002-PM idle_min=9260 owner=product-manager-v1 follow_up=request progress update + ETA
+- request_id=REQ-SOP-20260305-002-OPS idle_min=9260 owner=operations-manager-v1 follow_up=request progress update + ETA
+- request_id=REQ-SOP-20260305-002-QA idle_min=9260 owner=qa-auditor-v1 follow_up=request progress update + ETA
+- request_id=REQ-SOP-20260305-002-ADMIN idle_min=9260 owner=admin-v1 follow_up=request progress update + ETA
+- 2026-03-11 13:20:01 +0800 | type=slow_progress | request_id=REQ-MAIN-0008-001 | idle_min=5154 | agent=designer-v1 | action=escalate_and_report | task=拆解主任务: 修复 self-improvement 模块：/api/self-improvement/health 返回 404；恢复健康检查并记录运行状态
+- 2026-03-11 13:50:01 +0800 | type=slow_progress | request_id=REQ-MC-20260305-001-PM | idle_min=8751 | agent=product-manager-v1 | action=escalate_and_report | task=Mission Control 计划：页面结构与优先级梳理、对外说明口径
+- 2026-03-11 13:50:01 +0800 | type=slow_progress | request_id=REQ-MC-20260305-001-OPS | idle_min=8752 | agent=operations-manager-v1 | action=escalate_and_report | task=Mission Control 计划：看板与任务流维护、进度回填与交付报告
+- 2026-03-11 13:50:01 +0800 | type=slow_progress | request_id=REQ-MC-20260305-001-QA | idle_min=8752 | agent=qa-auditor-v1 | action=escalate_and_report | task=Mission Control 计划：回归 Operations 不回退，验收新页功能与证据链
+- 2026-03-11 13:50:01 +0800 | type=slow_progress | request_id=REQ-MC-20260305-001-ENG | idle_min=8752 | agent=engineer-v1 | action=escalate_and_report | task=Mission Control 计划：落地 Memory/Team 页面与数据接口实现
+- 2026-03-11 13:50:01 +0800 | type=slow_progress | request_id=REQ-MC-20260305-001-ADMIN | idle_min=8752 | agent=admin-v1 | action=escalate_and_report | task=Mission Control 计划：制定执行清单与验收标准（DoD），保证流程闭环
+[2026-03-11 15:08] Idle task escalation (>4h):
+- request_id=REQ-MAIN-0008-001 idle_min=5742 owner=designer-v1 follow_up=confirm status + unblock self-improvement health repair
+- request_id=REQ-MC-20260305-001-PM idle_min=9310 owner=product-manager-v1 follow_up=request progress update + ETA
+- request_id=REQ-MC-20260305-001-OPS idle_min=9310 owner=operations-manager-v1 follow_up=request progress update + ETA
+- request_id=REQ-MC-20260305-001-QA idle_min=9310 owner=qa-auditor-v1 follow_up=request progress update + ETA
+- request_id=REQ-MC-20260305-001-ENG idle_min=9310 owner=engineer-v1 follow_up=request progress update + ETA
+- request_id=REQ-MC-20260305-001-ADMIN idle_min=9310 owner=admin-v1 follow_up=request progress update + ETA
+- request_id=REQ-SOP-20260305-002-PM idle_min=9380 owner=product-manager-v1 follow_up=request progress update + ETA
+- request_id=REQ-SOP-20260305-002-OPS idle_min=9380 owner=operations-manager-v1 follow_up=request progress update + ETA
+- request_id=REQ-SOP-20260305-002-QA idle_min=9380 owner=qa-auditor-v1 follow_up=request progress update + ETA
+- request_id=REQ-SOP-20260305-002-ADMIN idle_min=9380 owner=admin-v1 follow_up=request progress update + ETA
+[2026-03-11 15:38] Idle task escalation (>4h):
+- request_id=REQ-MAIN-0008-001 idle_min=5772 owner=designer-v1 follow_up=confirm status + unblock self-improvement health repair
+- request_id=REQ-MC-20260305-001-PM idle_min=9340 owner=product-manager-v1 follow_up=request progress update + ETA
+- request_id=REQ-MC-20260305-001-OPS idle_min=9340 owner=operations-manager-v1 follow_up=request progress update + ETA
+- request_id=REQ-MC-20260305-001-QA idle_min=9340 owner=qa-auditor-v1 follow_up=request progress update + ETA
+- request_id=REQ-MC-20260305-001-ENG idle_min=9340 owner=engineer-v1 follow_up=request progress update + ETA
+- request_id=REQ-MC-20260305-001-ADMIN idle_min=9340 owner=admin-v1 follow_up=request progress update + ETA
+- request_id=REQ-SOP-20260305-002-PM idle_min=9410 owner=product-manager-v1 follow_up=request progress update + ETA
+- request_id=REQ-SOP-20260305-002-OPS idle_min=9410 owner=operations-manager-v1 follow_up=request progress update + ETA
+- request_id=REQ-SOP-20260305-002-QA idle_min=9410 owner=qa-auditor-v1 follow_up=request progress update + ETA
+- request_id=REQ-SOP-20260305-002-ADMIN idle_min=9410 owner=admin-v1 follow_up=request progress update + ETA
+- 2026-03-11 15:50:03 +0800 | type=slow_progress | request_id=REQ-SOP-20260305-002-PM | idle_min=8942 | agent=product-manager-v1 | action=escalate_and_report | task=整理SOP上线说明与对外沟通口径
+- 2026-03-11 15:50:03 +0800 | type=slow_progress | request_id=REQ-SOP-20260305-002-OPS | idle_min=8942 | agent=operations-manager-v1 | action=escalate_and_report | task=维护看板与交付回报，确保dispatch/complete闭环
+- 2026-03-11 15:50:03 +0800 | type=slow_progress | request_id=REQ-SOP-20260305-002-QA | idle_min=8942 | agent=qa-auditor-v1 | action=escalate_and_report | task=验证SOP落地证据与DoD，出审计结论
+- 2026-03-11 15:50:03 +0800 | type=slow_progress | request_id=REQ-SOP-20260305-002-ADMIN | idle_min=8942 | agent=admin-v1 | action=escalate_and_report | task=执行会话控制SOP：分发/验收/回填/恢复演练，产出证据
+[2026-03-11 16:08] Idle task escalation (>4h):
+- request_id=REQ-MAIN-0008-001 idle_min=5802 owner=designer-v1 follow_up=confirm status + unblock self-improvement health repair
+- request_id=REQ-MC-20260305-001-PM idle_min=9370 owner=product-manager-v1 follow_up=request progress update + ETA
+- request_id=REQ-MC-20260305-001-OPS idle_min=9370 owner=operations-manager-v1 follow_up=request progress update + ETA
+- request_id=REQ-MC-20260305-001-QA idle_min=9370 owner=qa-auditor-v1 follow_up=request progress update + ETA
+- request_id=REQ-MC-20260305-001-ENG idle_min=9370 owner=engineer-v1 follow_up=request progress update + ETA
+- request_id=REQ-MC-20260305-001-ADMIN idle_min=9370 owner=admin-v1 follow_up=request progress update + ETA
+- request_id=REQ-SOP-20260305-002-PM idle_min=9440 owner=product-manager-v1 follow_up=request progress update + ETA
+- request_id=REQ-SOP-20260305-002-OPS idle_min=9440 owner=operations-manager-v1 follow_up=request progress update + ETA
+- request_id=REQ-SOP-20260305-002-QA idle_min=9440 owner=qa-auditor-v1 follow_up=request progress update + ETA
+- request_id=REQ-SOP-20260305-002-ADMIN idle_min=9440 owner=admin-v1 follow_up=request progress update + ETA
+- 2026-03-11 16:20:04 +0800 | type=slow_progress | request_id=REQ-MAIN-0008-001 | idle_min=5334 | agent=designer-v1 | action=escalate_and_report | task=拆解主任务: 修复 self-improvement 模块：/api/self-improvement/health 返回 404；恢复健康检查并记录运行状态
+[2026-03-11 16:38] Idle task escalation (>4h):
+- request_id=REQ-MAIN-0008-001 idle_min=5832 owner=designer-v1 follow_up=confirm status + unblock self-improvement health repair
+- request_id=REQ-MC-20260305-001-PM idle_min=9400 owner=product-manager-v1 follow_up=request progress update + ETA
+- request_id=REQ-MC-20260305-001-OPS idle_min=9400 owner=operations-manager-v1 follow_up=request progress update + ETA
+- request_id=REQ-MC-20260305-001-QA idle_min=9400 owner=qa-auditor-v1 follow_up=request progress update + ETA
+- request_id=REQ-MC-20260305-001-ENG idle_min=9400 owner=engineer-v1 follow_up=request progress update + ETA
+- request_id=REQ-MC-20260305-001-ADMIN idle_min=9400 owner=admin-v1 follow_up=request progress update + ETA
+- request_id=REQ-SOP-20260305-002-PM idle_min=9470 owner=product-manager-v1 follow_up=request progress update + ETA
+- request_id=REQ-SOP-20260305-002-OPS idle_min=9470 owner=operations-manager-v1 follow_up=request progress update + ETA
+- request_id=REQ-SOP-20260305-002-QA idle_min=9470 owner=qa-auditor-v1 follow_up=request progress update + ETA
+- request_id=REQ-SOP-20260305-002-ADMIN idle_min=9470 owner=admin-v1 follow_up=request progress update + ETA
+- 2026-03-11 16:50:04 +0800 | type=slow_progress | request_id=REQ-MC-20260305-001-PM | idle_min=8931 | agent=product-manager-v1 | action=escalate_and_report | task=Mission Control 计划：页面结构与优先级梳理、对外说明口径
+- 2026-03-11 16:50:04 +0800 | type=slow_progress | request_id=REQ-MC-20260305-001-OPS | idle_min=8932 | agent=operations-manager-v1 | action=escalate_and_report | task=Mission Control 计划：看板与任务流维护、进度回填与交付报告
+- 2026-03-11 16:50:04 +0800 | type=slow_progress | request_id=REQ-MC-20260305-001-QA | idle_min=8932 | agent=qa-auditor-v1 | action=escalate_and_report | task=Mission Control 计划：回归 Operations 不回退，验收新页功能与证据链
+- 2026-03-11 16:50:04 +0800 | type=slow_progress | request_id=REQ-MC-20260305-001-ENG | idle_min=8932 | agent=engineer-v1 | action=escalate_and_report | task=Mission Control 计划：落地 Memory/Team 页面与数据接口实现
+- 2026-03-11 16:50:04 +0800 | type=slow_progress | request_id=REQ-MC-20260305-001-ADMIN | idle_min=8932 | agent=admin-v1 | action=escalate_and_report | task=Mission Control 计划：制定执行清单与验收标准（DoD），保证流程闭环
+[2026-03-11 17:08] Idle task escalation (>4h):
+- request_id=REQ-MAIN-0008-001 idle_min=5862 owner=designer-v1 follow_up=confirm status + unblock self-improvement health repair
+- request_id=REQ-MC-20260305-001-PM idle_min=9430 owner=product-manager-v1 follow_up=request progress update + ETA
+- request_id=REQ-MC-20260305-001-OPS idle_min=9430 owner=operations-manager-v1 follow_up=request progress update + ETA
+- request_id=REQ-MC-20260305-001-QA idle_min=9430 owner=qa-auditor-v1 follow_up=request progress update + ETA
+- request_id=REQ-MC-20260305-001-ENG idle_min=9430 owner=engineer-v1 follow_up=request progress update + ETA
+- request_id=REQ-MC-20260305-001-ADMIN idle_min=9430 owner=admin-v1 follow_up=request progress update + ETA
+- request_id=REQ-SOP-20260305-002-PM idle_min=9500 owner=product-manager-v1 follow_up=request progress update + ETA
+- request_id=REQ-SOP-20260305-002-OPS idle_min=9500 owner=operations-manager-v1 follow_up=request progress update + ETA
+- request_id=REQ-SOP-20260305-002-QA idle_min=9500 owner=qa-auditor-v1 follow_up=request progress update + ETA
+- request_id=REQ-SOP-20260305-002-ADMIN idle_min=9500 owner=admin-v1 follow_up=request progress update + ETA
+[2026-03-11 17:38] Idle task escalation (>4h):
+- request_id=REQ-MAIN-0008-001 idle_min=5892 owner=designer-v1 follow_up=confirm status + unblock self-improvement health repair
+- request_id=REQ-MC-20260305-001-PM idle_min=9460 owner=product-manager-v1 follow_up=request progress update + ETA
+- request_id=REQ-MC-20260305-001-OPS idle_min=9460 owner=operations-manager-v1 follow_up=request progress update + ETA
+- request_id=REQ-MC-20260305-001-QA idle_min=9460 owner=qa-auditor-v1 follow_up=request progress update + ETA
+- request_id=REQ-MC-20260305-001-ENG idle_min=9460 owner=engineer-v1 follow_up=request progress update + ETA
+- request_id=REQ-MC-20260305-001-ADMIN idle_min=9460 owner=admin-v1 follow_up=request progress update + ETA
+- request_id=REQ-SOP-20260305-002-PM idle_min=9530 owner=product-manager-v1 follow_up=request progress update + ETA
+- request_id=REQ-SOP-20260305-002-OPS idle_min=9530 owner=operations-manager-v1 follow_up=request progress update + ETA
+- request_id=REQ-SOP-20260305-002-QA idle_min=9530 owner=qa-auditor-v1 follow_up=request progress update + ETA
+- request_id=REQ-SOP-20260305-002-ADMIN idle_min=9530 owner=admin-v1 follow_up=request progress update + ETA
+[2026-03-11 18:08] Idle task escalation (>4h):
+- request_id=REQ-MAIN-0008-001 idle_min=5922 owner=designer-v1 follow_up=confirm status + unblock self-improvement health repair
+- request_id=REQ-MC-20260305-001-PM idle_min=9490 owner=product-manager-v1 follow_up=request progress update + ETA
+- request_id=REQ-MC-20260305-001-OPS idle_min=9490 owner=operations-manager-v1 follow_up=request progress update + ETA
+- request_id=REQ-MC-20260305-001-QA idle_min=9490 owner=qa-auditor-v1 follow_up=request progress update + ETA
+- request_id=REQ-MC-20260305-001-ENG idle_min=9490 owner=engineer-v1 follow_up=request progress update + ETA
+- request_id=REQ-MC-20260305-001-ADMIN idle_min=9490 owner=admin-v1 follow_up=request progress update + ETA
+- request_id=REQ-SOP-20260305-002-PM idle_min=9560 owner=product-manager-v1 follow_up=request progress update + ETA
+- request_id=REQ-SOP-20260305-002-OPS idle_min=9560 owner=operations-manager-v1 follow_up=request progress update + ETA
+- request_id=REQ-SOP-20260305-002-QA idle_min=9560 owner=qa-auditor-v1 follow_up=request progress update + ETA
+- request_id=REQ-SOP-20260305-002-ADMIN idle_min=9560 owner=admin-v1 follow_up=request progress update + ETA

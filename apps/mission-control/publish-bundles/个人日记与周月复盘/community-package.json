@@ -1,0 +1,135 @@
+{
+  "schemaVersion": "community-package-v1",
+  "packageId": "cap.openclaw.sop.content-diary-review",
+  "type": "sop-pack",
+  "name": "个人日记与周月复盘",
+  "version": "0.2.0",
+  "author": {
+    "name": "OpenClaw",
+    "id": "official/openclaw"
+  },
+  "description": "自我复盘、目标追踪、情绪与习惯记录",
+  "source": {
+    "kind": "local-export",
+    "createdAt": "2026-03-24T10:52:00Z"
+  },
+  "capabilities": [
+    {
+      "id": "cap.openclaw.sop.content-diary-review",
+      "label": "个人日记与周月复盘",
+      "summary": "自我复盘、目标追踪、情绪与习惯记录",
+      "entrypoint": "/journal daily --summary <内容>"
+    }
+  ],
+  "dependencies": [
+    {
+      "id": "cap.openclaw.foundation.files-repo",
+      "label": "文件与版本管理",
+      "kind": "foundation",
+      "required": true,
+      "installCommand": "read/write/edit/exec + git",
+      "installUrl": "",
+      "bundled": false
+    },
+    {
+      "id": "cap.openclaw.foundation.knowledge-index",
+      "label": "知识库归档与标签",
+      "kind": "foundation",
+      "required": true,
+      "installCommand": "/knowledge ingest --domain <领域> --platform <平台>",
+      "installUrl": "",
+      "bundled": false
+    }
+  ],
+  "compatibility": {
+    "openclawMinVersion": "2026.3.2",
+    "installMode": "local-console",
+    "platforms": [
+      "macos",
+      "linux",
+      "windows"
+    ]
+  },
+  "permissions": [
+    {
+      "key": "filesystem.read",
+      "required": true,
+      "reason": "Read packaged SOP, docs, and supporting local files."
+    }
+  ],
+  "checksums": {
+    "algorithm": "sha256",
+    "files": [
+      {
+        "path": "OPENCLAW.md",
+        "sha256": "e4f7721803bcc9277d0d392384fc32de04728365f957ffc4b5e2de9b6e4dd664"
+      },
+      {
+        "path": "README.md",
+        "sha256": "8f7fa191f43e8ac279751555a11e4cde39d7901f238ffcf024072d5c2d1f709d"
+      },
+      {
+        "path": "capability-manifest.json",
+        "sha256": "c9fe8e4364d03ae2ebb56c22be1150eb34c6d24797f9196b31fa26bc615c87c9"
+      },
+      {
+        "path": "dependency-hints.json",
+        "sha256": "afd6c8fe96087b9067433473b44c82476453fff6128ecba27db767ef25e1f87c"
+      },
+      {
+        "path": "healthcheck.py",
+        "sha256": "98e04a174fd4662470b6cc0bc316d9fce6f217c6a8fc4ffb432b45106f78ba25"
+      },
+      {
+        "path": "install.py",
+        "sha256": "97a71a6cf45afadbaeec054694fb4697f60e708cffad1c4f7ddf721b4018913d"
+      },
+      {
+        "path": "schemas/community-package-v1.schema.json",
+        "sha256": "fbfce78f0b3bea1bb68dc0d51ca99e2149cb1743fae6f3c4825d1e881e7ec8d8"
+      },
+      {
+        "path": "sops/个人日记与周月复盘.md",
+        "sha256": "16c3b356d0f4eab96ff9a4009d61185892acd18718b358c5b4b4bbb649816227"
+      }
+    ]
+  },
+  "docs": [
+    {
+      "title": "OPENCLAW",
+      "path": "OPENCLAW.md"
+    },
+    {
+      "title": "README",
+      "path": "README.md"
+    },
+    {
+      "title": "个人日记与周月复盘",
+      "path": "sops/个人日记与周月复盘.md"
+    }
+  ],
+  "assets": [
+    {
+      "path": "OPENCLAW.md",
+      "kind": "knowledge",
+      "label": "OPENCLAW.md"
+    },
+    {
+      "path": "README.md",
+      "kind": "knowledge",
+      "label": "README.md"
+    },
+    {
+      "path": "schemas/community-package-v1.schema.json",
+      "kind": "document",
+      "label": "community-package-v1.schema.json"
+    },
+    {
+      "path": "sops/个人日记与周月复盘.md",
+      "kind": "knowledge",
+      "label": "个人日记与周月复盘.md"
+    }
+  ],
+  "reviewStatus": "draft",
+  "visibility": "private"
+}

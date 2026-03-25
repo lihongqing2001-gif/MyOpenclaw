@@ -31,5 +31,5 @@ saveDatabase(db);
 console.log(JSON.stringify({
   email,
   secret,
-  otpauth: authenticator.keyuri(email, "OpenClaw Web Platform", secret),
+  otpauth: authenticator.keyuri(email, "Forge Hub", secret),
 }, null, 2));

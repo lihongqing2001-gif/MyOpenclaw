@@ -34,7 +34,7 @@ agents:
     risk_level: L2
     workspace: /Users/liumobei/.openclaw/workspace/agents/workspaces/executor
   - agent_id: life-assistant-v1
-    name: 生活助理
+    name: 秘书
     owner: 董事长
     role: life-assistant
     status: READY

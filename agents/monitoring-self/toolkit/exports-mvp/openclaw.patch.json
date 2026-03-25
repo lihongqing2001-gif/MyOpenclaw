@@ -1,0 +1,24 @@
+{
+  "tools": {
+    "agentToAgent": {
+      "enabled": true
+    }
+  },
+  "agents": {
+    "designer": {
+      "agentDir": "/Users/liumobei/.openclaw/workspace/agents/workspaces/designer"
+    },
+    "admin": {
+      "agentDir": "/Users/liumobei/.openclaw/workspace/agents/workspaces/admin"
+    },
+    "engineer": {
+      "agentDir": "/Users/liumobei/.openclaw/workspace/agents/workspaces/engineer"
+    },
+    "executor": {
+      "agentDir": "/Users/liumobei/.openclaw/workspace/agents/workspaces/executor"
+    },
+    "life-assistant": {
+      "agentDir": "/Users/liumobei/.openclaw/workspace/agents/workspaces/life-assistant"
+    }
+  }
+}

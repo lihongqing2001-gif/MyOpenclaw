@@ -1,0 +1,770 @@
+{
+  "schemaVersion": "community-package-v1",
+  "packageId": "cap.openclaw.sop.workflow-ff3ad013",
+  "type": "sop-pack",
+  "name": "研究资料矩阵与证据整理",
+  "version": "0.2.0",
+  "author": {
+    "name": "OpenClaw",
+    "id": "official/openclaw"
+  },
+  "description": "围绕一个研究问题或项目主题，整理来源、观点、证据、风险和下一步检索方向，形成一份可继续扩展的研究矩阵。",
+  "source": {
+    "kind": "local-export",
+    "createdAt": "2026-03-24T10:52:00Z"
+  },
+  "capabilities": [
+    {
+      "id": "cap.openclaw.sop.workflow-ff3ad013",
+      "label": "研究资料矩阵与证据整理",
+      "summary": "围绕一个研究问题或项目主题，整理来源、观点、证据、风险和下一步检索方向，形成一份可继续扩展的研究矩阵。",
+      "entrypoint": "__OPENCLAW_WORKFLOW__ sop-研究资料矩阵与证据整理"
+    },
+    {
+      "id": "cap.openclaw.skill.qmd-skill",
+      "label": "qmd-skill",
+      "summary": "Bundled supporting capability.",
+      "entrypoint": ""
+    },
+    {
+      "id": "cap.openclaw.skill.social-content",
+      "label": "social-content",
+      "summary": "Bundled supporting capability.",
+      "entrypoint": ""
+    },
+    {
+      "id": "cap.openclaw.skill.web-search-plus",
+      "label": "web-search-plus",
+      "summary": "Bundled supporting capability.",
+      "entrypoint": ""
+    }
+  ],
+  "dependencies": [
+    {
+      "id": "cap.openclaw.skill.qmd-skill",
+      "label": "qmd",
+      "kind": "skill",
+      "required": false,
+      "installCommand": "claw skill install qmd-skill",
+      "installUrl": "",
+      "bundled": true
+    },
+    {
+      "id": "cap.openclaw.skill.social-content",
+      "label": "social-content",
+      "kind": "skill",
+      "required": false,
+      "installCommand": "claw skill install social-content",
+      "installUrl": "",
+      "bundled": true
+    },
+    {
+      "id": "cap.openclaw.skill.web-search-plus",
+      "label": "web-search-plus",
+      "kind": "skill",
+      "required": false,
+      "installCommand": "claw skill install web-search-plus",
+      "installUrl": "https://serper.dev",
+      "bundled": true
+    }
+  ],
+  "compatibility": {
+    "openclawMinVersion": "2026.3.2",
+    "installMode": "local-console",
+    "platforms": [
+      "macos",
+      "linux",
+      "windows"
+    ]
+  },
+  "permissions": [
+    {
+      "key": "filesystem.read",
+      "required": true,
+      "reason": "Read packaged SOP, docs, and supporting local files."
+    }
+  ],
+  "checksums": {
+    "algorithm": "sha256",
+    "files": [
+      {
+        "path": "OPENCLAW.md",
+        "sha256": "7f2bf62732976fe2a21b8b2f7b932d7d1debd246d3309bad51047b75c0a1c9a6"
+      },
+      {
+        "path": "README.md",
+        "sha256": "a551e039aa7dc193cc68a0fc48dae2bc7ba6b53ee6dbb7c36391ea66afc2bbc1"
+      },
+      {
+        "path": "capability-manifest.json",
+        "sha256": "7a64168c2fac42fce99e8bc42cc5c842ded0fded05c9249e9f1265a4eae87fc4"
+      },
+      {
+        "path": "dependency-hints.json",
+        "sha256": "a082796815fde788b19b020f1c8293d448013e6f4a100a6ae59cc9f7bf5f1155"
+      },
+      {
+        "path": "healthcheck.py",
+        "sha256": "4cb1204f5156e73fe00db762b99f1633a2a2b201a8a5c79fb5e2d26ca73312b8"
+      },
+      {
+        "path": "install.py",
+        "sha256": "1b3a10fed78253d9d83f6737ce51b6cd4429f4777a3887b86840f317ec5bfa9c"
+      },
+      {
+        "path": "knowledge/research_source_matrix.md",
+        "sha256": "588aa1907d4670e8ddc57564342ae4eb6d388bb8addd8880a41e40c3b8ac1a2a"
+      },
+      {
+        "path": "schemas/community-package-v1.schema.json",
+        "sha256": "fbfce78f0b3bea1bb68dc0d51ca99e2149cb1743fae6f3c4825d1e881e7ec8d8"
+      },
+      {
+        "path": "skills/qmd-skill/.git/HEAD",
+        "sha256": "28d25bf82af4c0e2b72f50959b2beb859e3e60b9630a5e8c603dad4ddb2b6e80"
+      },
+      {
+        "path": "skills/qmd-skill/.git/config",
+        "sha256": "97308ff3aca32a6bd0fc3dc03a35d52fa9f23d0a43d1cbf90b97f4d3d4e54a8c"
+      },
+      {
+        "path": "skills/qmd-skill/.git/description",
+        "sha256": "85ab6c163d43a17ea9cf7788308bca1466f1b0a8d1cc92e26e9bf63da4062aee"
+      },
+      {
+        "path": "skills/qmd-skill/.git/hooks/applypatch-msg.sample",
+        "sha256": "0223497a0b8b033aa58a3a521b8629869386cf7ab0e2f101963d328aa62193f7"
+      },
+      {
+        "path": "skills/qmd-skill/.git/hooks/commit-msg.sample",
+        "sha256": "1f74d5e9292979b573ebd59741d46cb93ff391acdd083d340b94370753d92437"
+      },
+      {
+        "path": "skills/qmd-skill/.git/hooks/fsmonitor-watchman.sample",
+        "sha256": "e0549964e93897b519bd8e333c037e51fff0f88ba13e086a331592bf801fa1d0"
+      },
+      {
+        "path": "skills/qmd-skill/.git/hooks/post-update.sample",
+        "sha256": "81765af2daef323061dcbc5e61fc16481cb74b3bac9ad8a174b186523586f6c5"
+      },
+      {
+        "path": "skills/qmd-skill/.git/hooks/pre-applypatch.sample",
+        "sha256": "e15c5b469ea3e0a695bea6f2c82bcf8e62821074939ddd85b77e0007ff165475"
+      },
+      {
+        "path": "skills/qmd-skill/.git/hooks/pre-commit.sample",
+        "sha256": "57185b7b9f05239d7ab52db045f5b89eb31348d7b2177eab214f5eb872e1971b"
+      },
+      {
+        "path": "skills/qmd-skill/.git/hooks/pre-merge-commit.sample",
+        "sha256": "d3825a70337940ebbd0a5c072984e13245920cdf8898bd225c8d27a6dfc9cb53"
+      },
+      {
+        "path": "skills/qmd-skill/.git/hooks/pre-push.sample",
+        "sha256": "ecce9c7e04d3f5dd9d8ada81753dd1d549a9634b26770042b58dda00217d086a"
+      },
+      {
+        "path": "skills/qmd-skill/.git/hooks/pre-rebase.sample",
+        "sha256": "4febce867790052338076f4e66cc47efb14879d18097d1d61c8261859eaaa7b3"
+      },
+      {
+        "path": "skills/qmd-skill/.git/hooks/pre-receive.sample",
+        "sha256": "a4c3d2b9c7bb3fd8d1441c31bd4ee71a595d66b44fcf49ddb310252320169989"
+      },
+      {
+        "path": "skills/qmd-skill/.git/hooks/prepare-commit-msg.sample",
+        "sha256": "e9ddcaa4189fddd25ed97fc8c789eca7b6ca16390b2392ae3276f0c8e1aa4619"
+      },
+      {
+        "path": "skills/qmd-skill/.git/hooks/push-to-checkout.sample",
+        "sha256": "a53d0741798b287c6dd7afa64aee473f305e65d3f49463bb9d7408ec3b12bf5f"
+      },
+      {
+        "path": "skills/qmd-skill/.git/hooks/sendemail-validate.sample",
+        "sha256": "44ebfc923dc5466bc009602f0ecf067b9c65459abfe8868ddc49b78e6ced7a92"
+      },
+      {
+        "path": "skills/qmd-skill/.git/hooks/update.sample",
+        "sha256": "8d5f2fa83e103cf08b57eaa67521df9194f45cbdbcb37da52ad586097a14d106"
+      },
+      {
+        "path": "skills/qmd-skill/.git/index",
+        "sha256": "eb76a4eafccbebff97f5e34611a68bf32489d3a5c93f38c6b9cd1b60607ee46c"
+      },
+      {
+        "path": "skills/qmd-skill/.git/info/exclude",
+        "sha256": "6671fe83b7a07c8932ee89164d1f2793b2318058eb8b98dc5c06ee0a5a3b0ec1"
+      },
+      {
+        "path": "skills/qmd-skill/.git/logs/HEAD",
+        "sha256": "633f734432958b8bffce198ecad94559e6bd7ce3098867e4a0557e365f64ca85"
+      },
+      {
+        "path": "skills/qmd-skill/.git/logs/refs/heads/main",
+        "sha256": "633f734432958b8bffce198ecad94559e6bd7ce3098867e4a0557e365f64ca85"
+      },
+      {
+        "path": "skills/qmd-skill/.git/logs/refs/remotes/origin/HEAD",
+        "sha256": "633f734432958b8bffce198ecad94559e6bd7ce3098867e4a0557e365f64ca85"
+      },
+      {
+        "path": "skills/qmd-skill/.git/objects/pack/pack-d584e15e53d7705b9e38b572847ef63ca21dcb9e.idx",
+        "sha256": "dd54b723301108ea05575a596e4736a1973f5faeea7320a4de338a04c7f6a821"
+      },
+      {
+        "path": "skills/qmd-skill/.git/objects/pack/pack-d584e15e53d7705b9e38b572847ef63ca21dcb9e.pack",
+        "sha256": "dcb1c05e9c9e58ec33ed819341e0e0c51db849500d0885c8672ed65f1d93739f"
+      },
+      {
+        "path": "skills/qmd-skill/.git/objects/pack/pack-d584e15e53d7705b9e38b572847ef63ca21dcb9e.rev",
+        "sha256": "44a9c43e6127cc8b58d998cf657192019a9dd3f8595b875eef488a609732619a"
+      },
+      {
+        "path": "skills/qmd-skill/.git/packed-refs",
+        "sha256": "f7cf4dbdb272492f212b898c39f2300a3b2dc98c9170eefb739bde5e730515ff"
+      },
+      {
+        "path": "skills/qmd-skill/.git/refs/heads/main",
+        "sha256": "fa1dda30e1ffc6d817144f7307c0e15a2da00bf6355e284df5d807f9a4ef3f04"
+      },
+      {
+        "path": "skills/qmd-skill/.git/refs/remotes/origin/HEAD",
+        "sha256": "2bb6a24aa0fc6c484100f5d51a29bbad841cd2c755f5d93faa204e5dbb4eb2b4"
+      },
+      {
+        "path": "skills/qmd-skill/README.md",
+        "sha256": "1dc7ac512d3c976debc831c85231161d1dcadc66e85b3681a25e387af6e938af"
+      },
+      {
+        "path": "skills/qmd-skill/SKILL.md",
+        "sha256": "4efc9476818bd9032c6952e7bb7971cd73b03982ceb372f419792b3adaed65c2"
+      },
+      {
+        "path": "skills/social-content/SKILL.md",
+        "sha256": "72e7f6bbed00a77512bb4afc4b93b7d527948450d8b5a37e8cc3deec23cf2680"
+      },
+      {
+        "path": "skills/social-content/evals/evals.json",
+        "sha256": "9e9da40856215d4993aefeacdbf69b721316b94b02c4b474106eaad3cfa8301c"
+      },
+      {
+        "path": "skills/social-content/references/platforms.md",
+        "sha256": "3c4e1b15717a3bcd4ed0cf29dc167dac28aa88bbf01723fde53815122396090f"
+      },
+      {
+        "path": "skills/social-content/references/post-templates.md",
+        "sha256": "db6525e51a690b61faf97a0acf51a2a57526de90da01c6bb37679d056c18c7f4"
+      },
+      {
+        "path": "skills/social-content/references/reverse-engineering.md",
+        "sha256": "c27bef59d463b3b11331c1770f4a23e9e6bbce7d7c8db1e7f7f4f14ba206243f"
+      },
+      {
+        "path": "skills/web-search-plus/CHANGELOG.md",
+        "sha256": "9a33e39afc41021baa68a7f628d50e8b3cd7059ee7210aa1608d8cecbb9350fd"
+      },
+      {
+        "path": "skills/web-search-plus/FAQ.md",
+        "sha256": "b7e6bef9f68fa3084b595154c69fba19a60dcb84ba55fd5864488fcd379f9c38"
+      },
+      {
+        "path": "skills/web-search-plus/README.md",
+        "sha256": "abca5d028a5f4e338293e340373c4efead011a10fbaefe523ed3da7b08e16d76"
+      },
+      {
+        "path": "skills/web-search-plus/SKILL.md",
+        "sha256": "e5e607557ced98ed064aa07b8580f3e849839a1ec448746bcb59b2e8c0548b63"
+      },
+      {
+        "path": "skills/web-search-plus/TROUBLESHOOTING.md",
+        "sha256": "8fc5644eee8e61c6562c666cb6cbff9415f96a18ad13be7402c17f3b941bf384"
+      },
+      {
+        "path": "skills/web-search-plus/_meta.json",
+        "sha256": "d53f6e59af9dbbd97c8a9d8fcc92ed9575611e33267b230ab2eb44362f5a2ca2"
+      },
+      {
+        "path": "skills/web-search-plus/config.example.json",
+        "sha256": "e722457a64aa5ae32b30edab78ea617f1bf369a70295d3c5869cbe266d731986"
+      },
+      {
+        "path": "skills/web-search-plus/config.json",
+        "sha256": "447265ab11d9740b68e6407bf4467e1f48e5a9a5f0ca14df72bdb52df0826f0b"
+      },
+      {
+        "path": "skills/web-search-plus/package.json",
+        "sha256": "467e5a30441e76352a12407ac47500abf576dfaec688cd82a604856f990e5e46"
+      },
+      {
+        "path": "skills/web-search-plus/scripts/search.py",
+        "sha256": "4f43e9a5908b8b9fdf51262eec37f7730c40061d958d4d1460ffe28f56734680"
+      },
+      {
+        "path": "skills/web-search-plus/scripts/setup.py",
+        "sha256": "f193ba80573ce4e0e430b13d74c70a4e4707d4e12d1f6b24c02ff1957ae0c89d"
+      },
+      {
+        "path": "skills/web-search-plus/temp_web_search_plus/CHANGELOG.md",
+        "sha256": "9a33e39afc41021baa68a7f628d50e8b3cd7059ee7210aa1608d8cecbb9350fd"
+      },
+      {
+        "path": "skills/web-search-plus/temp_web_search_plus/FAQ.md",
+        "sha256": "b7e6bef9f68fa3084b595154c69fba19a60dcb84ba55fd5864488fcd379f9c38"
+      },
+      {
+        "path": "skills/web-search-plus/temp_web_search_plus/README.md",
+        "sha256": "abca5d028a5f4e338293e340373c4efead011a10fbaefe523ed3da7b08e16d76"
+      },
+      {
+        "path": "skills/web-search-plus/temp_web_search_plus/SKILL.md",
+        "sha256": "e5e607557ced98ed064aa07b8580f3e849839a1ec448746bcb59b2e8c0548b63"
+      },
+      {
+        "path": "skills/web-search-plus/temp_web_search_plus/TROUBLESHOOTING.md",
+        "sha256": "8fc5644eee8e61c6562c666cb6cbff9415f96a18ad13be7402c17f3b941bf384"
+      },
+      {
+        "path": "skills/web-search-plus/temp_web_search_plus/_meta.json",
+        "sha256": "d53f6e59af9dbbd97c8a9d8fcc92ed9575611e33267b230ab2eb44362f5a2ca2"
+      },
+      {
+        "path": "skills/web-search-plus/temp_web_search_plus/config.example.json",
+        "sha256": "e722457a64aa5ae32b30edab78ea617f1bf369a70295d3c5869cbe266d731986"
+      },
+      {
+        "path": "skills/web-search-plus/temp_web_search_plus/config.json",
+        "sha256": "cd5fd7c220153570735772cce3a902738e6d9835cdad6e0572ef9e57ba471c21"
+      },
+      {
+        "path": "skills/web-search-plus/temp_web_search_plus/package.json",
+        "sha256": "467e5a30441e76352a12407ac47500abf576dfaec688cd82a604856f990e5e46"
+      },
+      {
+        "path": "skills/web-search-plus/temp_web_search_plus/scripts/search.py",
+        "sha256": "4f43e9a5908b8b9fdf51262eec37f7730c40061d958d4d1460ffe28f56734680"
+      },
+      {
+        "path": "skills/web-search-plus/temp_web_search_plus/scripts/setup.py",
+        "sha256": "f193ba80573ce4e0e430b13d74c70a4e4707d4e12d1f6b24c02ff1957ae0c89d"
+      },
+      {
+        "path": "skills/web-search-plus/temp_web_search_plus/test-auto-routing.sh",
+        "sha256": "3df211b33710a6a3165c0a82e283da7ba2929bd145c6095442da7cc7805656be"
+      },
+      {
+        "path": "skills/web-search-plus/test-auto-routing.sh",
+        "sha256": "3df211b33710a6a3165c0a82e283da7ba2929bd145c6095442da7cc7805656be"
+      },
+      {
+        "path": "sops/研究资料矩阵与证据整理.md",
+        "sha256": "a0a8a7e5bd121401b1fbe577a37a70fdf25ed230aa914360fb0d746fcab62252"
+      }
+    ]
+  },
+  "docs": [
+    {
+      "title": "OPENCLAW",
+      "path": "OPENCLAW.md"
+    },
+    {
+      "title": "README",
+      "path": "README.md"
+    },
+    {
+      "title": "research_source_matrix",
+      "path": "knowledge/research_source_matrix.md"
+    },
+    {
+      "title": "README",
+      "path": "skills/qmd-skill/README.md"
+    },
+    {
+      "title": "SKILL",
+      "path": "skills/qmd-skill/SKILL.md"
+    },
+    {
+      "title": "SKILL",
+      "path": "skills/social-content/SKILL.md"
+    },
+    {
+      "title": "platforms",
+      "path": "skills/social-content/references/platforms.md"
+    },
+    {
+      "title": "post-templates",
+      "path": "skills/social-content/references/post-templates.md"
+    },
+    {
+      "title": "reverse-engineering",
+      "path": "skills/social-content/references/reverse-engineering.md"
+    },
+    {
+      "title": "CHANGELOG",
+      "path": "skills/web-search-plus/CHANGELOG.md"
+    },
+    {
+      "title": "FAQ",
+      "path": "skills/web-search-plus/FAQ.md"
+    },
+    {
+      "title": "README",
+      "path": "skills/web-search-plus/README.md"
+    },
+    {
+      "title": "SKILL",
+      "path": "skills/web-search-plus/SKILL.md"
+    },
+    {
+      "title": "TROUBLESHOOTING",
+      "path": "skills/web-search-plus/TROUBLESHOOTING.md"
+    },
+    {
+      "title": "CHANGELOG",
+      "path": "skills/web-search-plus/temp_web_search_plus/CHANGELOG.md"
+    },
+    {
+      "title": "FAQ",
+      "path": "skills/web-search-plus/temp_web_search_plus/FAQ.md"
+    },
+    {
+      "title": "README",
+      "path": "skills/web-search-plus/temp_web_search_plus/README.md"
+    },
+    {
+      "title": "SKILL",
+      "path": "skills/web-search-plus/temp_web_search_plus/SKILL.md"
+    },
+    {
+      "title": "TROUBLESHOOTING",
+      "path": "skills/web-search-plus/temp_web_search_plus/TROUBLESHOOTING.md"
+    },
+    {
+      "title": "研究资料矩阵与证据整理",
+      "path": "sops/研究资料矩阵与证据整理.md"
+    }
+  ],
+  "assets": [
+    {
+      "path": "OPENCLAW.md",
+      "kind": "knowledge",
+      "label": "OPENCLAW.md"
+    },
+    {
+      "path": "README.md",
+      "kind": "knowledge",
+      "label": "README.md"
+    },
+    {
+      "path": "knowledge/research_source_matrix.md",
+      "kind": "knowledge",
+      "label": "research_source_matrix.md"
+    },
+    {
+      "path": "schemas/community-package-v1.schema.json",
+      "kind": "document",
+      "label": "community-package-v1.schema.json"
+    },
+    {
+      "path": "skills/qmd-skill/.git/HEAD",
+      "kind": "document",
+      "label": "HEAD"
+    },
+    {
+      "path": "skills/qmd-skill/.git/config",
+      "kind": "document",
+      "label": "config"
+    },
+    {
+      "path": "skills/qmd-skill/.git/description",
+      "kind": "document",
+      "label": "description"
+    },
+    {
+      "path": "skills/qmd-skill/.git/hooks/applypatch-msg.sample",
+      "kind": "document",
+      "label": "applypatch-msg.sample"
+    },
+    {
+      "path": "skills/qmd-skill/.git/hooks/commit-msg.sample",
+      "kind": "document",
+      "label": "commit-msg.sample"
+    },
+    {
+      "path": "skills/qmd-skill/.git/hooks/fsmonitor-watchman.sample",
+      "kind": "document",
+      "label": "fsmonitor-watchman.sample"
+    },
+    {
+      "path": "skills/qmd-skill/.git/hooks/post-update.sample",
+      "kind": "document",
+      "label": "post-update.sample"
+    },
+    {
+      "path": "skills/qmd-skill/.git/hooks/pre-applypatch.sample",
+      "kind": "document",
+      "label": "pre-applypatch.sample"
+    },
+    {
+      "path": "skills/qmd-skill/.git/hooks/pre-commit.sample",
+      "kind": "document",
+      "label": "pre-commit.sample"
+    },
+    {
+      "path": "skills/qmd-skill/.git/hooks/pre-merge-commit.sample",
+      "kind": "document",
+      "label": "pre-merge-commit.sample"
+    },
+    {
+      "path": "skills/qmd-skill/.git/hooks/pre-push.sample",
+      "kind": "document",
+      "label": "pre-push.sample"
+    },
+    {
+      "path": "skills/qmd-skill/.git/hooks/pre-rebase.sample",
+      "kind": "document",
+      "label": "pre-rebase.sample"
+    },
+    {
+      "path": "skills/qmd-skill/.git/hooks/pre-receive.sample",
+      "kind": "document",
+      "label": "pre-receive.sample"
+    },
+    {
+      "path": "skills/qmd-skill/.git/hooks/prepare-commit-msg.sample",
+      "kind": "document",
+      "label": "prepare-commit-msg.sample"
+    },
+    {
+      "path": "skills/qmd-skill/.git/hooks/push-to-checkout.sample",
+      "kind": "document",
+      "label": "push-to-checkout.sample"
+    },
+    {
+      "path": "skills/qmd-skill/.git/hooks/sendemail-validate.sample",
+      "kind": "document",
+      "label": "sendemail-validate.sample"
+    },
+    {
+      "path": "skills/qmd-skill/.git/hooks/update.sample",
+      "kind": "document",
+      "label": "update.sample"
+    },
+    {
+      "path": "skills/qmd-skill/.git/index",
+      "kind": "document",
+      "label": "index"
+    },
+    {
+      "path": "skills/qmd-skill/.git/info/exclude",
+      "kind": "document",
+      "label": "exclude"
+    },
+    {
+      "path": "skills/qmd-skill/.git/logs/HEAD",
+      "kind": "document",
+      "label": "HEAD"
+    },
+    {
+      "path": "skills/qmd-skill/.git/logs/refs/heads/main",
+      "kind": "document",
+      "label": "main"
+    },
+    {
+      "path": "skills/qmd-skill/.git/logs/refs/remotes/origin/HEAD",
+      "kind": "document",
+      "label": "HEAD"
+    },
+    {
+      "path": "skills/qmd-skill/.git/objects/pack/pack-d584e15e53d7705b9e38b572847ef63ca21dcb9e.idx",
+      "kind": "document",
+      "label": "pack-d584e15e53d7705b9e38b572847ef63ca21dcb9e.idx"
+    },
+    {
+      "path": "skills/qmd-skill/.git/objects/pack/pack-d584e15e53d7705b9e38b572847ef63ca21dcb9e.pack",
+      "kind": "document",
+      "label": "pack-d584e15e53d7705b9e38b572847ef63ca21dcb9e.pack"
+    },
+    {
+      "path": "skills/qmd-skill/.git/objects/pack/pack-d584e15e53d7705b9e38b572847ef63ca21dcb9e.rev",
+      "kind": "document",
+      "label": "pack-d584e15e53d7705b9e38b572847ef63ca21dcb9e.rev"
+    },
+    {
+      "path": "skills/qmd-skill/.git/packed-refs",
+      "kind": "document",
+      "label": "packed-refs"
+    },
+    {
+      "path": "skills/qmd-skill/.git/refs/heads/main",
+      "kind": "document",
+      "label": "main"
+    },
+    {
+      "path": "skills/qmd-skill/.git/refs/remotes/origin/HEAD",
+      "kind": "document",
+      "label": "HEAD"
+    },
+    {
+      "path": "skills/qmd-skill/README.md",
+      "kind": "knowledge",
+      "label": "README.md"
+    },
+    {
+      "path": "skills/qmd-skill/SKILL.md",
+      "kind": "knowledge",
+      "label": "SKILL.md"
+    },
+    {
+      "path": "skills/social-content/SKILL.md",
+      "kind": "knowledge",
+      "label": "SKILL.md"
+    },
+    {
+      "path": "skills/social-content/evals/evals.json",
+      "kind": "document",
+      "label": "evals.json"
+    },
+    {
+      "path": "skills/social-content/references/platforms.md",
+      "kind": "knowledge",
+      "label": "platforms.md"
+    },
+    {
+      "path": "skills/social-content/references/post-templates.md",
+      "kind": "knowledge",
+      "label": "post-templates.md"
+    },
+    {
+      "path": "skills/social-content/references/reverse-engineering.md",
+      "kind": "knowledge",
+      "label": "reverse-engineering.md"
+    },
+    {
+      "path": "skills/web-search-plus/CHANGELOG.md",
+      "kind": "knowledge",
+      "label": "CHANGELOG.md"
+    },
+    {
+      "path": "skills/web-search-plus/FAQ.md",
+      "kind": "knowledge",
+      "label": "FAQ.md"
+    },
+    {
+      "path": "skills/web-search-plus/README.md",
+      "kind": "knowledge",
+      "label": "README.md"
+    },
+    {
+      "path": "skills/web-search-plus/SKILL.md",
+      "kind": "knowledge",
+      "label": "SKILL.md"
+    },
+    {
+      "path": "skills/web-search-plus/TROUBLESHOOTING.md",
+      "kind": "knowledge",
+      "label": "TROUBLESHOOTING.md"
+    },
+    {
+      "path": "skills/web-search-plus/_meta.json",
+      "kind": "document",
+      "label": "_meta.json"
+    },
+    {
+      "path": "skills/web-search-plus/config.example.json",
+      "kind": "document",
+      "label": "config.example.json"
+    },
+    {
+      "path": "skills/web-search-plus/config.json",
+      "kind": "document",
+      "label": "config.json"
+    },
+    {
+      "path": "skills/web-search-plus/package.json",
+      "kind": "document",
+      "label": "package.json"
+    },
+    {
+      "path": "skills/web-search-plus/scripts/search.py",
+      "kind": "script",
+      "label": "search.py"
+    },
+    {
+      "path": "skills/web-search-plus/scripts/setup.py",
+      "kind": "script",
+      "label": "setup.py"
+    },
+    {
+      "path": "skills/web-search-plus/temp_web_search_plus/CHANGELOG.md",
+      "kind": "knowledge",
+      "label": "CHANGELOG.md"
+    },
+    {
+      "path": "skills/web-search-plus/temp_web_search_plus/FAQ.md",
+      "kind": "knowledge",
+      "label": "FAQ.md"
+    },
+    {
+      "path": "skills/web-search-plus/temp_web_search_plus/README.md",
+      "kind": "knowledge",
+      "label": "README.md"
+    },
+    {
+      "path": "skills/web-search-plus/temp_web_search_plus/SKILL.md",
+      "kind": "knowledge",
+      "label": "SKILL.md"
+    },
+    {
+      "path": "skills/web-search-plus/temp_web_search_plus/TROUBLESHOOTING.md",
+      "kind": "knowledge",
+      "label": "TROUBLESHOOTING.md"
+    },
+    {
+      "path": "skills/web-search-plus/temp_web_search_plus/_meta.json",
+      "kind": "document",
+      "label": "_meta.json"
+    },
+    {
+      "path": "skills/web-search-plus/temp_web_search_plus/config.example.json",
+      "kind": "document",
+      "label": "config.example.json"
+    },
+    {
+      "path": "skills/web-search-plus/temp_web_search_plus/config.json",
+      "kind": "document",
+      "label": "config.json"
+    },
+    {
+      "path": "skills/web-search-plus/temp_web_search_plus/package.json",
+      "kind": "document",
+      "label": "package.json"
+    },
+    {
+      "path": "skills/web-search-plus/temp_web_search_plus/scripts/search.py",
+      "kind": "script",
+      "label": "search.py"
+    },
+    {
+      "path": "skills/web-search-plus/temp_web_search_plus/scripts/setup.py",
+      "kind": "script",
+      "label": "setup.py"
+    },
+    {
+      "path": "skills/web-search-plus/temp_web_search_plus/test-auto-routing.sh",
+      "kind": "script",
+      "label": "test-auto-routing.sh"
+    },
+    {
+      "path": "skills/web-search-plus/test-auto-routing.sh",
+      "kind": "script",
+      "label": "test-auto-routing.sh"
+    },
+    {
+      "path": "sops/研究资料矩阵与证据整理.md",
+      "kind": "knowledge",
+      "label": "研究资料矩阵与证据整理.md"
+    }
+  ],
+  "reviewStatus": "draft",
+  "visibility": "private"
+}

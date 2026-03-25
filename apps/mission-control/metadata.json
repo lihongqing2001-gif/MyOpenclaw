@@ -1,5 +1,5 @@
 {
-  "name": "OpenClaw Console",
-  "description": "A highly visual, geeky frontend web console for the OpenClaw backend system, featuring a dynamic Skill Tree with React Flow and Framer Motion.",
+  "name": "SoloCore Console",
+  "description": "A visual local operator console for agent workflows, package operations, asset intake, and execution orchestration.",
   "requestFramePermissions": []
 }

@@ -1,0 +1,36 @@
+{
+  "id": "cap.openclaw.sop.content-dev-testing",
+  "name": "测试与验收清单",
+  "version": "0.2.0",
+  "description": "交付验收、质量保证",
+  "domain": "项目产出与资料管理",
+  "category": "编程",
+  "tags": [
+    "项目产出与资料管理",
+    "编程",
+    "基础",
+    "main"
+  ],
+  "ownership": "openclaw",
+  "publish": "local-bundle",
+  "dependencies": [
+    "cap.openclaw.foundation.files-repo"
+  ],
+  "requires": ">=2026.3.2",
+  "skills": [],
+  "sops": [
+    "sops/测试与验收清单.md"
+  ],
+  "install": "python3 install.py",
+  "healthcheck": "python3 healthcheck.py",
+  "outputs": [
+    "outputs/cap.openclaw.sop.content-dev-testing/"
+  ],
+  "packaged_capabilities": [],
+  "entrypoints": [
+    {
+      "label": "测试与验收清单",
+      "command": "__OPENCLAW_WORKFLOW__ sop-content-dev-testing"
+    }
+  ]
+}

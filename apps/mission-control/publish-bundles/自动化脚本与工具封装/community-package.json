@@ -1,0 +1,126 @@
+{
+  "schemaVersion": "community-package-v1",
+  "packageId": "cap.openclaw.sop.content-dev-automation",
+  "type": "sop-pack",
+  "name": "自动化脚本与工具封装",
+  "version": "0.2.0",
+  "author": {
+    "name": "OpenClaw",
+    "id": "official/openclaw"
+  },
+  "description": "效率提升、重复任务自动化",
+  "source": {
+    "kind": "local-export",
+    "createdAt": "2026-03-24T10:52:07Z"
+  },
+  "capabilities": [
+    {
+      "id": "cap.openclaw.sop.content-dev-automation",
+      "label": "自动化脚本与工具封装",
+      "summary": "效率提升、重复任务自动化",
+      "entrypoint": "__OPENCLAW_WORKFLOW__ sop-content-dev-automation"
+    }
+  ],
+  "dependencies": [
+    {
+      "id": "cap.openclaw.foundation.files-repo",
+      "label": "文件与版本管理",
+      "kind": "foundation",
+      "required": true,
+      "installCommand": "read/write/edit/exec + git",
+      "installUrl": "",
+      "bundled": false
+    }
+  ],
+  "compatibility": {
+    "openclawMinVersion": "2026.3.2",
+    "installMode": "local-console",
+    "platforms": [
+      "macos",
+      "linux",
+      "windows"
+    ]
+  },
+  "permissions": [
+    {
+      "key": "filesystem.read",
+      "required": true,
+      "reason": "Read packaged SOP, docs, and supporting local files."
+    }
+  ],
+  "checksums": {
+    "algorithm": "sha256",
+    "files": [
+      {
+        "path": "OPENCLAW.md",
+        "sha256": "9c5a828a286da67fabb5bb4971389f01b5bba27eb7331c51c4f5f5bd2209e893"
+      },
+      {
+        "path": "README.md",
+        "sha256": "1bb7197e7174064b933d15a71c9a3d5accb913ea00df4a6b3998ae3fa78b2ba7"
+      },
+      {
+        "path": "capability-manifest.json",
+        "sha256": "11d82a0ad7034fc954f9f104095161df6c8764763977b27371f21ff71cf9542d"
+      },
+      {
+        "path": "dependency-hints.json",
+        "sha256": "be6d0881dbd9b9ec8cb3ff06dce7b866d7c4d7fb72fdf91c25877b9758d8c746"
+      },
+      {
+        "path": "healthcheck.py",
+        "sha256": "6c61ff76f6b289982b6188781c0a25b36368a3f42681e43525779c965128673a"
+      },
+      {
+        "path": "install.py",
+        "sha256": "8b41128b8ee758a9fda482a7367992b60ccd1f5957c9b27bf81d96140306984e"
+      },
+      {
+        "path": "schemas/community-package-v1.schema.json",
+        "sha256": "fbfce78f0b3bea1bb68dc0d51ca99e2149cb1743fae6f3c4825d1e881e7ec8d8"
+      },
+      {
+        "path": "sops/自动化脚本与工具封装.md",
+        "sha256": "93aa66ff0df0acc78e5759ec8060b2557af1e47d6df460a511fae432d98e6f8e"
+      }
+    ]
+  },
+  "docs": [
+    {
+      "title": "OPENCLAW",
+      "path": "OPENCLAW.md"
+    },
+    {
+      "title": "README",
+      "path": "README.md"
+    },
+    {
+      "title": "自动化脚本与工具封装",
+      "path": "sops/自动化脚本与工具封装.md"
+    }
+  ],
+  "assets": [
+    {
+      "path": "OPENCLAW.md",
+      "kind": "knowledge",
+      "label": "OPENCLAW.md"
+    },
+    {
+      "path": "README.md",
+      "kind": "knowledge",
+      "label": "README.md"
+    },
+    {
+      "path": "schemas/community-package-v1.schema.json",
+      "kind": "document",
+      "label": "community-package-v1.schema.json"
+    },
+    {
+      "path": "sops/自动化脚本与工具封装.md",
+      "kind": "knowledge",
+      "label": "自动化脚本与工具封装.md"
+    }
+  ],
+  "reviewStatus": "draft",
+  "visibility": "private"
+}

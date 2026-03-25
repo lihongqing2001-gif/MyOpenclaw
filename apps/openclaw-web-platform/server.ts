@@ -1,7 +1,9 @@
 import express, { Request, Response } from "express";
 import cookieParser from "cookie-parser";
 import dotenv from "dotenv";
+import { spawnSync } from "node:child_process";
 import fs from "node:fs";
+import os from "node:os";
 import path from "node:path";
 import { randomInt } from "node:crypto";
 import { authenticator } from "otplib";
@@ -18,6 +20,7 @@ import {
 } from "./src/server/store";
 import {
   clearSessionCookie,
+  checkRateLimit,
   enforceCsrf,
   generateToken,
   rateLimit,
@@ -39,18 +42,18 @@ import {
   githubOauthConfigured,
   syncPackageToGithubRelease,
 } from "./src/server/github";
+import { sendLoginCodeEmail, sendTestEmail } from "./src/server/mailer";
+import { smtpConfigured } from "./src/server/mailer";
 import {
-  renderAdminPage,
-  renderAdminTwoFactorPage,
-  renderHome,
-  renderLoginPage,
-  renderMySubmissionsPage,
-  renderPackageDetail,
-  renderPackageList,
-  renderReviewQueuePage,
-  renderSubmitPage,
-} from "./src/server/html";
-import { sendLoginCodeEmail } from "./src/server/mailer";
+  buildCloudConsoleLaunchUrl,
+  cloudConsoleAccessEnabled,
+  cloudConsolePublicBaseUrl,
+  createCloudConsoleAccessCode,
+  expireCloudConsoleRecords,
+  findActiveCloudConsoleGrant,
+  issueCloudConsoleLaunchToken,
+  redeemCloudConsoleAccessCode,
+} from "./src/server/consoleAccess";
 
 dotenv.config();
 ensureWebPlatformStorage();
@@ -58,6 +61,14 @@ ensureWebPlatformStorage();
 const app = express();
 const port = Number(process.env.PORT || 3400);
 const baseUrl = process.env.OPENCLAW_WEB_BASE_URL || `http://127.0.0.1:${port}`;
+const cloudOpenClawBaseUrl = (process.env.SOLOCORE_CLOUD_CONSOLE_URL || process.env.OPENCLAW_CLOUD_CONSOLE_URL || "http://127.0.0.1:3000").replace(/\/+$/, "");
+const cloudOpenClawPublicBaseUrl = cloudConsolePublicBaseUrl();
+const cloudOpenClawWorkdir = process.env.SOLOCORE_CLOUD_CONSOLE_WORKDIR || process.env.OPENCLAW_CLOUD_CONSOLE_WORKDIR || "/opt/solocore/workspace/apps/mission-control";
+const cloudOpenClawTopologyPath = process.env.SOLOCORE_CLOUD_TOPOLOGY_PATH || process.env.OPENCLAW_CLOUD_TOPOLOGY_PATH || "/etc/solocore/workspace-topology.json";
+const cloudOpenClawInternalToken = (process.env.SOLOCORE_CLOUD_CONSOLE_INTERNAL_TOKEN || process.env.OPENCLAW_CLOUD_CONSOLE_INTERNAL_TOKEN || "").trim();
+const forgeConsoleReleasesDir = path.resolve(
+  process.env.OPENCLAW_FORGE_CONSOLE_RELEASES_DIR || path.join(process.cwd(), "../mission-control/releases"),
+);
 const upload = multer({
   storage: multer.memoryStorage(),
   limits: {
@@ -94,83 +105,190 @@ function authContext(req: Request) {
   return sessionFromRequest(req);
 }
 
-function requirePageAuth(req: Request, res: Response): { session: any; user: any } | null {
-  const auth = authContext(req);
-  if (!auth) {
-    res.redirect("/login");
-    return null;
+function authEmailSettings() {
+  return loadDatabase().settings.authEmail;
+}
+
+async function cloudOpenClawFetch(targetPath: string, init?: RequestInit) {
+  const nextHeaders = new Headers(init?.headers || {});
+  if (cloudOpenClawInternalToken) {
+    nextHeaders.set("x-solocore-internal-token", cloudOpenClawInternalToken);
   }
-  return auth;
+  const response = await fetch(`${cloudOpenClawBaseUrl}${targetPath}`, {
+    ...init,
+    headers: nextHeaders,
+  });
+  const contentType = response.headers.get("content-type") || "";
+  const body = contentType.includes("application/json")
+    ? await response.json()
+    : await response.text();
+  if (!response.ok) {
+    throw new Error(
+      typeof body === "string"
+        ? body
+        : typeof body === "object" && body && "error" in body
+          ? String((body as { error?: unknown }).error)
+          : `Cloud OpenClaw request failed: ${response.status}`,
+    );
+  }
+  return body;
 }
 
-function verifyCsrfToken(req: Request, auth: { session: { csrfToken: string } }) {
-  const token = typeof req.body?.csrfToken === "string" ? req.body.csrfToken : "";
-  return token === auth.session.csrfToken;
+function runCloudConsoleRegistryInstall(packagePath: string) {
+  const scriptPath = path.join(cloudOpenClawWorkdir, "scripts", "local_package_registry.py");
+  const result = spawnSync(
+    "python3",
+    [scriptPath, "install", "--package-path", packagePath],
+    {
+      cwd: cloudOpenClawWorkdir,
+      env: {
+        ...process.env,
+        OPENCLAW_TOPOLOGY_PATH: cloudOpenClawTopologyPath,
+      },
+      encoding: "utf-8",
+      timeout: 120000,
+    },
+  );
+  if (result.status !== 0) {
+    throw new Error(result.stderr?.trim() || result.stdout?.trim() || "Cloud package install failed");
+  }
+  return JSON.parse(result.stdout) as Record<string, unknown>;
 }
 
-function reviewActionAndRedirect(req: Request, res: Response, action: "approve" | "request_changes" | "reject") {
-  const originalJson = res.json.bind(res);
-  res.json = ((body: unknown) => {
-    if (res.statusCode >= 400) {
-      return originalJson(body);
-    }
-    res.redirect("/review");
-    return res;
-  }) as Response["json"];
-  return reviewAction(req, res, action);
+function safeUser(user: {
+  id: string;
+  email: string;
+  role: string;
+  primaryAuthProvider?: string;
+  linkedProviders?: string[];
+  githubUserId?: string;
+  githubLogin?: string;
+  twoFactorEnabled: boolean;
+  createdAt: string;
+}) {
+  return {
+    id: user.id,
+    email: user.email,
+    role: user.role,
+    primaryAuthProvider: user.primaryAuthProvider,
+    linkedProviders: user.linkedProviders,
+    githubUserId: user.githubUserId,
+    githubLogin: user.githubLogin,
+    twoFactorEnabled: user.twoFactorEnabled,
+    createdAt: user.createdAt,
+  };
+}
+
+function buildCloudConsoleAccessResponse(userId: string) {
+  const db = loadDatabase();
+  expireCloudConsoleRecords(db);
+  saveDatabase(db);
+  const activeGrant = findActiveCloudConsoleGrant(db, userId);
+  return {
+    accessEnabled: cloudConsoleAccessEnabled(),
+    publicBaseUrl: cloudOpenClawPublicBaseUrl,
+    activeGrant: activeGrant
+      ? {
+          id: activeGrant.id,
+          codeId: activeGrant.codeId,
+          expiresAt: activeGrant.expiresAt,
+          lastLaunchedAt: activeGrant.lastLaunchedAt,
+        }
+      : null,
+  };
 }
 
 function parseCommunityManifestFromBase64(name: string, contentBase64: string): CommunityPackageManifest {
   const buffer = Buffer.from(contentBase64, "base64");
-  const tempPath = path.join(process.env.OPENCLAW_WEB_DATA_DIR || "./data", "tmp-upload.zip");
-  fs.mkdirSync(path.dirname(tempPath), { recursive: true });
-  fs.writeFileSync(tempPath, buffer);
-  const archive = new AdmZip(tempPath);
-  const entry = archive.getEntries().find((item: any) => item.entryName.endsWith("/community-package.json") || item.entryName === "community-package.json");
-  if (!entry) {
-    throw new Error("community-package.json not found");
+  const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-upload-"));
+  const tempPath = path.join(tempDir, name || "upload.zip");
+  try {
+    fs.writeFileSync(tempPath, buffer);
+    const archive = new AdmZip(tempPath);
+    const entry = archive.getEntries().find((item: any) => item.entryName.endsWith("/community-package.json") || item.entryName === "community-package.json");
+    if (!entry) {
+      throw new Error("community-package.json not found");
+    }
+    return JSON.parse(archive.readAsText(entry)) as CommunityPackageManifest;
+  } finally {
+    fs.rmSync(tempDir, { recursive: true, force: true });
   }
-  const manifest = JSON.parse(archive.readAsText(entry)) as CommunityPackageManifest;
-  fs.unlinkSync(tempPath);
-  return manifest;
 }
 
-app.get("/", (req, res) => {
-  const db = loadDatabase();
-  res.type("html").send(renderHome(db.packages.filter((item) => item.reviewStatus === "published").length, db.submissions.length, authContext(req)));
-});
-
-app.get("/downloads", (req, res) => {
-  const db = loadDatabase();
-  res.type("html").send(renderPackageList("Downloads", db.packages.filter((item) => item.reviewStatus === "published"), authContext(req)));
-});
-
-app.get("/community", (req, res) => {
-  const db = loadDatabase();
-  res.type("html").send(renderPackageList("Community", db.packages.filter((item) => item.visibility === "community" && item.reviewStatus === "published"), authContext(req)));
-});
-
-app.get("/package/:id", (req, res) => {
-  const db = loadDatabase();
-  const record = db.packages.find((item) => item.packageId === req.params.id);
-  if (!record) {
-    return res.status(404).send("Package not found");
+function latestForgeConsoleBundle() {
+  if (!fs.existsSync(forgeConsoleReleasesDir)) {
+    return null;
   }
-  res.type("html").send(renderPackageDetail(record, authContext(req)));
-});
+  const releaseDirs = fs
+    .readdirSync(forgeConsoleReleasesDir)
+    .map((entry) => path.join(forgeConsoleReleasesDir, entry))
+    .filter((entryPath) => fs.existsSync(path.join(entryPath, "release-manifest.json")));
 
-app.get("/packages/:id/view", (req, res) => {
-  const db = loadDatabase();
-  const record = db.packages.find((item) => item.packageId === req.params.id);
-  if (!record) {
-    return res.status(404).send("Package not found");
+  const manifestCandidates = releaseDirs
+    .map((releasePath) => {
+      const manifestPath = path.join(releasePath, "release-manifest.json");
+      try {
+        const manifest = JSON.parse(fs.readFileSync(manifestPath, "utf-8")) as {
+          version?: string;
+          builtAt?: string;
+          artifactType?: string;
+          launchers?: Record<string, string>;
+          archiveFile?: string;
+        };
+        const archiveName = manifest.archiveFile || `${path.basename(releasePath)}.zip`;
+        const archivePath = path.join(forgeConsoleReleasesDir, archiveName);
+        if (!fs.existsSync(archivePath)) {
+          return null;
+        }
+        return {
+          fileName: archiveName,
+          fullPath: archivePath,
+          updatedAt: manifest.builtAt || fs.statSync(archivePath).mtime.toISOString(),
+          version: manifest.version || "0.0.0",
+          artifactType: manifest.artifactType || "local-runtime-bundle",
+          launchers: manifest.launchers || {},
+        };
+      } catch {
+        return null;
+      }
+    })
+    .filter((item): item is NonNullable<typeof item> => Boolean(item))
+    .sort((a, b) => {
+      const versionOrder = b.version.localeCompare(a.version, undefined, { numeric: true, sensitivity: "base" });
+      if (versionOrder !== 0) {
+        return versionOrder;
+      }
+      return b.updatedAt.localeCompare(a.updatedAt);
+    });
+
+  if (manifestCandidates[0]) {
+    return manifestCandidates[0];
   }
-  res.type("html").send(renderPackageDetail(record, authContext(req)));
-});
+
+  const zipCandidates = fs
+    .readdirSync(forgeConsoleReleasesDir)
+    .filter((entry) => entry.endsWith(".zip"))
+    .map((entry) => {
+      const fullPath = path.join(forgeConsoleReleasesDir, entry);
+      const stat = fs.statSync(fullPath);
+      return {
+        fileName: entry,
+        fullPath,
+        updatedAt: stat.mtime.toISOString(),
+        version: "0.0.0",
+        artifactType: "legacy-dist-archive",
+        launchers: {},
+      };
+    })
+    .sort((a, b) => b.updatedAt.localeCompare(a.updatedAt));
+
+  return zipCandidates[0] || null;
+}
 
 app.get("/package/:id/download", (req, res) => {
-  const auth = requirePageAuth(req, res);
+  const auth = authContext(req);
   if (!auth) {
+    res.redirect("/login");
     return;
   }
   const db = loadDatabase();
@@ -183,10 +301,6 @@ app.get("/package/:id/download", (req, res) => {
   const signature = signDownloadToken({ packageId: record.packageId, version, expires });
   const url = `${baseUrl}/downloads/file?packageId=${encodeURIComponent(record.packageId)}&version=${encodeURIComponent(version)}&expires=${expires}&sig=${signature}`;
   res.redirect(url);
-});
-
-app.get("/login", (req, res) => {
-  res.type("html").send(renderLoginPage(null, authContext(req)));
 });
 
 app.get("/auth/github/start", (req, res) => {
@@ -277,263 +391,230 @@ app.post("/auth/provider/link/github", requireAuth, enforceCsrf, (req, res) => {
   });
 });
 
-app.post("/login/request", rateLimit("auth-email-request-form", 8, 15 * 60 * 1000), (req, res) => {
-  const email = typeof req.body?.email === "string" ? req.body.email.trim().toLowerCase() : "";
-  if (!email) {
-    return res.redirect("/login");
-  }
-  const db = loadDatabase();
-  const code = `${randomInt(100000, 999999)}`;
-  db.authChallenges = db.authChallenges.filter((item) => item.email !== email);
-  db.authChallenges.push({
-    id: createId("challenge"),
-    email,
-    code,
-    createdAt: new Date().toISOString(),
-    expiresAt: new Date(Date.now() + 10 * 60 * 1000).toISOString(),
-  });
-  saveDatabase(db);
-  audit("auth_email_request_form", "user", email, null);
-  sendLoginCodeEmail(email, code)
-    .then((delivery) => {
-      res
-        .type("html")
-        .send(
-          renderLoginPage(
-            process.env.NODE_ENV !== "production" || !delivery.delivered
-              ? code
-              : null,
-            authContext(req),
-          ),
-        );
-    })
-    .catch((error) => {
-      res
-        .type("html")
-        .send(renderLoginPage(`Email send failed: ${error instanceof Error ? error.message : "unknown error"}`, authContext(req)));
+app.get("/auth/session", (req, res) => {
+  const auth = authContext(req);
+  if (!auth) {
+    return res.json({
+      authenticated: false,
+      user: null,
+      csrfToken: null,
+      twoFactorPassed: false,
+      requiresAdminTwoFactor: false,
+      githubOauthConfigured: githubOauthConfigured(),
     });
-});
-
-app.post("/login/verify", rateLimit("auth-email-verify-form", 10, 15 * 60 * 1000), (req, res) => {
-  const email = typeof req.body?.email === "string" ? req.body.email.trim().toLowerCase() : "";
-  const code = typeof req.body?.code === "string" ? req.body.code.trim() : "";
-  if (!email || !code) {
-    return res.redirect("/login");
   }
-  const db = loadDatabase();
-  const challenge = db.authChallenges.find((item) => item.email === email && item.code === code);
-  if (!challenge || Date.parse(challenge.expiresAt) < Date.now()) {
-    return res.type("html").send(renderLoginPage("Invalid or expired code", authContext(req)));
-  }
-  let user = db.users.find((item) => item.email === email);
-  if (!user) {
-    user = {
-      id: createId("user"),
-      email,
-      role: "user",
-      twoFactorEnabled: false,
-      createdAt: new Date().toISOString(),
-    };
-    db.users.push(user);
-  }
-  const session = {
-    id: generateToken(24),
-    userId: user.id,
-    csrfToken: generateToken(16),
-    twoFactorPassed: user.role !== "super_admin",
-    createdAt: new Date().toISOString(),
-    expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
-  };
-  db.sessions = db.sessions.filter((item) => item.userId !== user.id);
-  db.sessions.push(session);
-  db.authChallenges = db.authChallenges.filter((item) => item.id !== challenge.id);
-  saveDatabase(db);
-  setSessionCookie(res, session.id);
-  res.redirect(user.role === "super_admin" ? "/admin/2fa" : "/me");
-});
-
-app.get("/admin/2fa", (req, res) => {
-  const auth = requirePageAuth(req, res);
-  if (!auth) {
-    return;
-  }
-  if (auth.user.role !== "super_admin") {
-    return res.redirect("/me");
-  }
-  if (auth.session.twoFactorPassed) {
-    return res.redirect("/admin");
-  }
-  res.type("html").send(renderAdminTwoFactorPage(auth));
-});
-
-app.post("/admin/2fa", (req, res) => {
-  const auth = requirePageAuth(req, res);
-  if (!auth) {
-    return;
-  }
-  if (!verifyCsrfToken(req, auth)) {
-    return res.status(403).send("Invalid CSRF token");
-  }
-  const code = typeof req.body?.code === "string" ? req.body.code.trim() : "";
-  if (!auth.user.twoFactorSecret || !code || !authenticator.check(code, auth.user.twoFactorSecret)) {
-    return res.type("html").send(renderAdminTwoFactorPage(auth, "Invalid 2FA code"));
-  }
-  const db = loadDatabase();
-  const session = db.sessions.find((item) => item.id === auth.session.id);
-  if (!session) {
-    return res.redirect("/login");
-  }
-  session.twoFactorPassed = true;
-  saveDatabase(db);
-  audit("admin_2fa_verify_form", "session", session.id, auth.user.id);
-  res.redirect("/admin");
-});
-
-app.get("/submit", (req, res) => {
-  const auth = requirePageAuth(req, res);
-  if (!auth) {
-    return;
-  }
-  res.type("html").send(renderSubmitPage(auth));
-});
-
-app.post("/submit", upload.single("package"), (req, res) => {
-  const auth = requirePageAuth(req, res);
-  if (!auth) {
-    return;
-  }
-  if (!verifyCsrfToken(req, auth)) {
-    return res.status(403).send("Invalid CSRF token");
-  }
-  if (!req.file) {
-    return res.status(400).send("Package file is required");
-  }
-  let manifest: CommunityPackageManifest;
-  try {
-    manifest = parseCommunityManifestFromBase64(req.file.originalname, req.file.buffer.toString("base64"));
-  } catch (error) {
-    return res.status(400).send(error instanceof Error ? error.message : "Failed to parse package");
-  }
-  const db = loadDatabase();
-  const submissionId = createId("submission");
-  const written = writeSubmissionPackage(submissionId, req.file.buffer, manifest);
-  db.submissions.push({
-    id: submissionId,
-    packageId: manifest.packageId,
-    authorUserId: auth.user.id,
-    status: "submitted",
-    packageVersion: manifest.version,
-    archivePath: written.archivePath,
-    manifestPath: written.manifestPath,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
+  return res.json({
+    authenticated: true,
+    user: safeUser(auth.user),
+    csrfToken: auth.session.csrfToken,
+    twoFactorPassed: auth.session.twoFactorPassed,
+    requiresAdminTwoFactor: auth.user.role === "super_admin" && !auth.session.twoFactorPassed,
+    githubOauthConfigured: githubOauthConfigured(),
   });
+});
+
+app.get("/cloud-console/access", requireAuth, (req, res) => {
+  const auth = (req as Request & { auth?: ReturnType<typeof authContext> }).auth!;
+  return res.json(buildCloudConsoleAccessResponse(auth.user.id));
+});
+
+app.post("/cloud-console/access/redeem", requireAuth, enforceCsrf, rateLimit("cloud-console-redeem", 12, 15 * 60 * 1000), (req, res) => {
+  const auth = (req as Request & { auth?: ReturnType<typeof authContext> }).auth!;
+  const code = typeof req.body?.code === "string" ? req.body.code.trim() : "";
+  if (!cloudConsoleAccessEnabled()) {
+    return res.status(503).json({ error: "Cloud console access is not configured" });
+  }
+  if (!code) {
+    return res.status(400).json({ error: "Authorization code is required" });
+  }
+
+  try {
+    const db = loadDatabase();
+    const { grant, code: accessCode } = redeemCloudConsoleAccessCode(db, auth.user, code);
+    const launchToken = issueCloudConsoleLaunchToken(grant, auth.user);
+    grant.lastLaunchedAt = new Date().toISOString();
+    saveDatabase(db);
+    audit("cloud_console_access_redeem", "cloud_console_code", accessCode.id, auth.user.id, {
+      grantId: grant.id,
+    });
+    return res.json({
+      success: true,
+      access: buildCloudConsoleAccessResponse(auth.user.id),
+      launchUrl: buildCloudConsoleLaunchUrl(launchToken),
+    });
+  } catch (error) {
+    return res.status(400).json({
+      error: error instanceof Error ? error.message : "Failed to redeem authorization code",
+    });
+  }
+});
+
+app.post("/cloud-console/access/launch", requireAuth, enforceCsrf, rateLimit("cloud-console-launch", 60, 15 * 60 * 1000), (req, res) => {
+  const auth = (req as Request & { auth?: ReturnType<typeof authContext> }).auth!;
+  if (!cloudConsoleAccessEnabled()) {
+    return res.status(503).json({ error: "Cloud console access is not configured" });
+  }
+
+  const db = loadDatabase();
+  expireCloudConsoleRecords(db);
+  const grant = findActiveCloudConsoleGrant(db, auth.user.id);
+  if (!grant) {
+    saveDatabase(db);
+    return res.status(403).json({ error: "No active cloud console grant" });
+  }
+  const launchToken = issueCloudConsoleLaunchToken(grant, auth.user);
+  grant.lastLaunchedAt = new Date().toISOString();
   saveDatabase(db);
-  audit("submission_created_form", "submission", submissionId, auth.user.id);
-  res.redirect("/me");
+  audit("cloud_console_launch", "cloud_console_grant", grant.id, auth.user.id);
+  return res.json({
+    success: true,
+    access: buildCloudConsoleAccessResponse(auth.user.id),
+    launchUrl: buildCloudConsoleLaunchUrl(launchToken),
+  });
 });
 
-app.get("/me", (req, res) => {
-  const auth = requirePageAuth(req, res);
-  if (!auth) {
-    return;
+app.get("/downloads/forge-console/meta", (_req, res) => {
+  const bundle = latestForgeConsoleBundle();
+  if (!bundle) {
+    return res.json({
+      available: false,
+      fileName: "",
+      updatedAt: "",
+      downloadUrl: "",
+    });
   }
-  const db = loadDatabase();
-  const submissions = db.submissions.filter((item) => item.authorUserId === auth.user.id);
-  res.type("html").send(renderMySubmissionsPage(auth, submissions));
+
+  return res.json({
+    available: true,
+    fileName: bundle.fileName,
+    updatedAt: bundle.updatedAt,
+    version: bundle.version,
+    artifactType: bundle.artifactType,
+    launchers: bundle.launchers,
+    downloadUrl: "/downloads/forge-console/latest",
+  });
 });
 
-app.get("/review", (req, res) => {
-  const auth = requirePageAuth(req, res);
-  if (!auth) {
-    return;
+app.post("/submissions/validate", requireAuth, enforceCsrf, rateLimit("submissions-validate", 30, 60 * 60 * 1000), (req, res) => {
+  const fileName = typeof req.body?.fileName === "string" ? req.body.fileName.trim() : "";
+  const packageBase64 = typeof req.body?.packageBase64 === "string" ? req.body.packageBase64 : "";
+  if (!fileName || !packageBase64) {
+    return res.status(400).json({ error: "fileName and packageBase64 are required" });
   }
-  if (!["reviewer", "super_admin"].includes(auth.user.role)) {
-    return res.status(403).send("Forbidden");
+  try {
+    const manifest = parseCommunityManifestFromBase64(fileName, packageBase64);
+    return res.json({
+      success: true,
+      manifest: {
+        packageId: manifest.packageId,
+        name: manifest.name,
+        version: manifest.version,
+        type: manifest.type,
+        description: manifest.description,
+        capabilities: manifest.capabilities.length,
+        dependencies: manifest.dependencies.length,
+        permissions: manifest.permissions.length,
+        docs: manifest.docs.length,
+      },
+    });
+  } catch (error) {
+    return res.status(400).json({
+      error: error instanceof Error ? error.message : "Failed to validate package",
+    });
   }
-  if (auth.user.role === "super_admin" && !auth.session.twoFactorPassed) {
-    return res.status(403).send("Admin 2FA required");
-  }
-  const db = loadDatabase();
-  const submissions = db.submissions.filter((item) => ["submitted", "under_review"].includes(item.status));
-  res.type("html").send(renderReviewQueuePage(auth, submissions));
 });
 
-app.post("/review/:submissionId/approve-form", (req, res) => {
-  const auth = requirePageAuth(req, res);
-  if (!auth) {
-    return;
+app.get("/downloads/forge-console/latest", (_req, res) => {
+  const bundle = latestForgeConsoleBundle();
+  if (!bundle) {
+    return res.status(404).json({
+      error: "SoloCore Console release bundle is not available yet",
+    });
   }
-  if (!verifyCsrfToken(req, auth)) {
-    return res.status(403).send("Invalid CSRF token");
-  }
-  return reviewActionAndRedirect(req, res, "approve");
+  return res.download(bundle.fullPath, bundle.fileName);
 });
 
-app.post("/review/:submissionId/request-changes-form", (req, res) => {
-  const auth = requirePageAuth(req, res);
-  if (!auth) {
-    return;
-  }
-  if (!verifyCsrfToken(req, auth)) {
-    return res.status(403).send("Invalid CSRF token");
-  }
-  return reviewActionAndRedirect(req, res, "request_changes");
-});
-
-app.post("/review/:submissionId/reject-form", (req, res) => {
-  const auth = requirePageAuth(req, res);
-  if (!auth) {
-    return;
-  }
-  if (!verifyCsrfToken(req, auth)) {
-    return res.status(403).send("Invalid CSRF token");
-  }
-  return reviewActionAndRedirect(req, res, "reject");
-});
-
-app.get("/admin", (req, res) => {
-  const auth = requirePageAuth(req, res);
-  if (!auth) {
-    return;
-  }
-  if (auth.user.role !== "super_admin") {
-    return res.status(403).send("Forbidden");
-  }
-  res.type("html").send(renderAdminPage(auth));
-});
-
-app.post("/auth/email/request", rateLimit("auth-email-request", 8, 15 * 60 * 1000), (req, res) => {
+app.post("/auth/email/request", async (req, res) => {
   const email = typeof req.body?.email === "string" ? req.body.email.trim().toLowerCase() : "";
   if (!email) {
     return res.status(400).json({ error: "email is required" });
   }
   const db = loadDatabase();
-  const code = `${randomInt(100000, 999999)}`;
-  db.authChallenges = db.authChallenges.filter((item) => item.email !== email);
-  db.authChallenges.push({
-    id: createId("challenge"),
-    email,
-    code,
-    createdAt: new Date().toISOString(),
-    expiresAt: new Date(Date.now() + 10 * 60 * 1000).toISOString(),
-  });
+  const settings = db.settings.authEmail;
+  const nowMs = Date.now();
+  db.authChallenges = db.authChallenges.filter((item) => Date.parse(item.expiresAt) > nowMs);
+
+  const cooldownMs = settings.resendCooldownSeconds * 1000;
+  const lastChallenge = db.authChallenges
+    .filter((item) => item.email === email)
+    .sort((left, right) => Date.parse(right.createdAt) - Date.parse(left.createdAt))[0];
+  if (lastChallenge && Date.parse(lastChallenge.createdAt) + cooldownMs > nowMs) {
+    const retryAfterSeconds = Math.max(1, Math.ceil((Date.parse(lastChallenge.createdAt) + cooldownMs - nowMs) / 1000));
+    return res.status(429).json({
+      error: `Please wait ${retryAfterSeconds}s before requesting another code for this email`,
+      retryAfterSeconds,
+    });
+  }
+
+  const requestLimitDecision = checkRateLimit(
+    `auth-email-request:${email}`,
+    settings.requestLimitPerWindow,
+    settings.requestWindowMinutes * 60 * 1000,
+  );
+  if (!requestLimitDecision.allowed) {
+    return res.status(429).json({
+      error: "Too many code requests for this email",
+      retryAfterSeconds: requestLimitDecision.retryAfterSeconds,
+    });
+  }
+
+  const reusableChallenge =
+    lastChallenge && Date.parse(lastChallenge.expiresAt) > nowMs
+      ? lastChallenge
+      : null;
+  const code = reusableChallenge?.code || `${randomInt(100000, 999999)}`;
+  if (!reusableChallenge) {
+    db.authChallenges = db.authChallenges.filter((item) => item.email !== email);
+    db.authChallenges.push({
+      id: createId("challenge"),
+      email,
+      code,
+      createdAt: new Date().toISOString(),
+      expiresAt: new Date(Date.now() + settings.codeTtlMinutes * 60 * 1000).toISOString(),
+    });
+  }
   saveDatabase(db);
-  const payload: Record<string, unknown> = { success: true, delivery: "console" };
-  if (process.env.NODE_ENV !== "production") {
+  const delivery = await sendLoginCodeEmail(email, code);
+  const payload: Record<string, unknown> = {
+    success: true,
+    delivery: delivery.mode,
+  };
+  if (process.env.NODE_ENV !== "production" || !delivery.delivered) {
     payload.debugCode = code;
   }
   audit("auth_email_request", "user", email, null);
   return res.json(payload);
 });
 
-app.post("/auth/email/verify", rateLimit("auth-email-verify", 10, 15 * 60 * 1000), (req, res) => {
+app.post("/auth/email/verify", (req, res) => {
   const email = typeof req.body?.email === "string" ? req.body.email.trim().toLowerCase() : "";
   const code = typeof req.body?.code === "string" ? req.body.code.trim() : "";
   if (!email || !code) {
     return res.status(400).json({ error: "email and code are required" });
   }
   const db = loadDatabase();
+  const settings = db.settings.authEmail;
+  const verifyLimitDecision = checkRateLimit(
+    `auth-email-verify:${email}:${req.ip ?? "unknown"}`,
+    settings.verifyLimitPerWindow,
+    settings.verifyWindowMinutes * 60 * 1000,
+  );
+  if (!verifyLimitDecision.allowed) {
+    return res.status(429).json({
+      error: "Too many verification attempts",
+      retryAfterSeconds: verifyLimitDecision.retryAfterSeconds,
+    });
+  }
   const challenge = db.authChallenges.find((item) => item.email === email && item.code === code);
   if (!challenge || Date.parse(challenge.expiresAt) < Date.now()) {
     return res.status(401).json({ error: "Invalid or expired code" });
@@ -565,7 +646,7 @@ app.post("/auth/email/verify", rateLimit("auth-email-verify", 10, 15 * 60 * 1000
   audit("auth_email_verify", "user", user.id, user.id);
   return res.json({
     success: true,
-    user,
+    user: safeUser(user),
     csrfToken: session.csrfToken,
     requiresAdminTwoFactor: user.role === "super_admin",
   });
@@ -589,6 +670,19 @@ app.post("/auth/admin/2fa/verify", requireAuth, enforceCsrf, rateLimit("auth-adm
   saveDatabase(db);
   audit("admin_2fa_verify", "session", session.id, auth.user.id);
   return res.json({ success: true });
+});
+
+app.get("/auth/admin/2fa/setup", requireAuth, requireRole(["super_admin"]), (req, res) => {
+  const auth = (req as Request & { auth?: ReturnType<typeof authContext> }).auth!;
+  if (!auth.user.twoFactorSecret) {
+    return res.status(404).json({ error: "Admin 2FA is not configured yet" });
+  }
+  return res.json({
+    secret: auth.user.twoFactorSecret,
+    otpauth: authenticator.keyuri(auth.user.email, "SoloCore Hub", auth.user.twoFactorSecret),
+    issuer: "SoloCore Hub",
+    email: auth.user.email,
+  });
 });
 
 app.get("/packages", (_req, res) => {
@@ -690,21 +784,20 @@ function reviewAction(req: Request, res: Response, action: "approve" | "request_
   submission.updatedAt = new Date().toISOString();
   const manifest = JSON.parse(fs.readFileSync(submission.manifestPath, "utf-8")) as CommunityPackageManifest;
   if (action === "approve") {
-    const stored = publishPackageArchive(manifest.packageId, manifest.version, submission.archivePath, {
+    const publishedManifest: CommunityPackageManifest = {
       ...manifest,
       reviewStatus: "published",
       visibility: manifest.visibility === "private" ? "community" : manifest.visibility,
+    };
+    const stored = publishPackageArchive(manifest.packageId, manifest.version, submission.archivePath, {
+      ...publishedManifest,
     });
     const existing = db.packages.find((item) => item.packageId === manifest.packageId);
     const versionRecord = {
       version: manifest.version,
       archivePath: stored.archivePath,
       manifestPath: stored.manifestPath,
-      manifest: {
-        ...manifest,
-        reviewStatus: "published",
-        visibility: manifest.visibility === "private" ? "community" : manifest.visibility,
-      },
+      manifest: publishedManifest,
       publishedAt: new Date().toISOString(),
     };
     if (existing) {
@@ -790,19 +883,6 @@ app.post("/publish/:submissionId/github-release", requireAuth, enforceCsrf, requ
   }
 });
 
-app.get("/downloads/:packageId", requireAuth, (req, res) => {
-  const db = loadDatabase();
-  const record = db.packages.find((item) => item.packageId === req.params.packageId && item.reviewStatus === "published");
-  if (!record) {
-    return res.status(404).json({ error: "Package not found" });
-  }
-  const version = record.latestVersion;
-  const expires = String(Date.now() + 10 * 60 * 1000);
-  const signature = signDownloadToken({ packageId: record.packageId, version, expires });
-  const url = `${baseUrl}/downloads/file?packageId=${encodeURIComponent(record.packageId)}&version=${encodeURIComponent(version)}&expires=${expires}&sig=${signature}`;
-  return res.json({ success: true, signedUrl: url, expiresAt: new Date(Number(expires)).toISOString() });
-});
-
 app.get("/downloads/file", (req, res) => {
   const packageId = typeof req.query.packageId === "string" ? req.query.packageId : "";
   const version = typeof req.query.version === "string" ? req.query.version : "";
@@ -827,6 +907,19 @@ app.get("/downloads/file", (req, res) => {
   return res.download(versionRecord.archivePath, `${packageId.replaceAll("/", "__")}-${version}.zip`);
 });
 
+app.get("/downloads/:packageId", requireAuth, (req, res) => {
+  const db = loadDatabase();
+  const record = db.packages.find((item) => item.packageId === req.params.packageId && item.reviewStatus === "published");
+  if (!record) {
+    return res.status(404).json({ error: "Package not found" });
+  }
+  const version = record.latestVersion;
+  const expires = String(Date.now() + 10 * 60 * 1000);
+  const signature = signDownloadToken({ packageId: record.packageId, version, expires });
+  const url = `${baseUrl}/downloads/file?packageId=${encodeURIComponent(record.packageId)}&version=${encodeURIComponent(version)}&expires=${expires}&sig=${signature}`;
+  return res.json({ success: true, signedUrl: url, expiresAt: new Date(Number(expires)).toISOString() });
+});
+
 app.get("/admin/audit-logs", requireAuth, requireRole(["super_admin"]), requireAdminTwoFactor, (_req, res) => {
   const db = loadDatabase();
   res.json({ auditLogs: db.auditLogs });
@@ -835,6 +928,283 @@ app.get("/admin/audit-logs", requireAuth, requireRole(["super_admin"]), requireA
 app.get("/admin/security-events", requireAuth, requireRole(["super_admin"]), requireAdminTwoFactor, (_req, res) => {
   const db = loadDatabase();
   res.json({ securityEvents: db.securityEvents });
+});
+
+app.get("/admin/platform-summary", requireAuth, requireRole(["super_admin"]), requireAdminTwoFactor, (_req, res) => {
+  const db = loadDatabase();
+  const bundle = latestForgeConsoleBundle();
+  res.json({
+    baseUrl,
+    githubOauthConfigured: githubOauthConfigured(),
+    smtpConfigured: smtpConfigured(),
+    storage: {
+      dataDir: process.env.OPENCLAW_WEB_DATA_DIR || "",
+      releaseBundle: bundle?.fullPath || "",
+      releaseBundleUpdatedAt: bundle?.updatedAt || "",
+    },
+    counts: {
+      users: db.users.length,
+      sessions: db.sessions.length,
+      submissions: db.submissions.length,
+      packages: db.packages.length,
+      auditLogs: db.auditLogs.length,
+      securityEvents: db.securityEvents.length,
+    },
+  });
+});
+
+app.get("/admin/cloud-console/access-codes", requireAuth, requireRole(["super_admin"]), requireAdminTwoFactor, (_req, res) => {
+  const db = loadDatabase();
+  expireCloudConsoleRecords(db);
+  saveDatabase(db);
+  return res.json({
+    accessEnabled: cloudConsoleAccessEnabled(),
+    publicBaseUrl: cloudOpenClawPublicBaseUrl,
+    codes: [...db.cloudConsoleAccessCodes].sort((a, b) => Date.parse(b.createdAt) - Date.parse(a.createdAt)),
+    grants: [...db.cloudConsoleGrants].sort((a, b) => Date.parse(b.createdAt) - Date.parse(a.createdAt)),
+  });
+});
+
+app.post("/admin/cloud-console/access-codes", requireAuth, requireRole(["super_admin"]), requireAdminTwoFactor, enforceCsrf, (req, res) => {
+  const auth = (req as Request & { auth?: ReturnType<typeof authContext> }).auth!;
+  const label = typeof req.body?.label === "string" ? req.body.label.trim() : "";
+  const note = typeof req.body?.note === "string" ? req.body.note.trim() : "";
+  const expiresInHours = Number(req.body?.expiresInHours || 72);
+  const maxUses = Number(req.body?.maxUses || 1);
+
+  if (!label) {
+    return res.status(400).json({ error: "label is required" });
+  }
+
+  const db = loadDatabase();
+  const { record, plainCode } = createCloudConsoleAccessCode(db, auth.user.id, {
+    label,
+    note,
+    expiresInHours,
+    maxUses,
+  });
+  saveDatabase(db);
+  audit("cloud_console_code_create", "cloud_console_code", record.id, auth.user.id, {
+    label: record.label,
+    maxUses: record.maxUses,
+    expiresAt: record.expiresAt,
+  });
+  return res.json({
+    success: true,
+    code: record,
+    plainCode,
+  });
+});
+
+app.post("/admin/cloud-console/access-codes/:codeId/revoke", requireAuth, requireRole(["super_admin"]), requireAdminTwoFactor, enforceCsrf, (req, res) => {
+  const auth = (req as Request & { auth?: ReturnType<typeof authContext> }).auth!;
+  const db = loadDatabase();
+  const code = db.cloudConsoleAccessCodes.find((item) => item.id === req.params.codeId);
+  if (!code) {
+    return res.status(404).json({ error: "Authorization code not found" });
+  }
+  code.revokedAt = code.revokedAt || new Date().toISOString();
+  db.cloudConsoleGrants = db.cloudConsoleGrants.map((item) =>
+    item.codeId === code.id && item.status === "active"
+      ? { ...item, status: "revoked", revokedAt: new Date().toISOString() }
+      : item,
+  );
+  saveDatabase(db);
+  audit("cloud_console_code_revoke", "cloud_console_code", code.id, auth.user.id);
+  return res.json({ success: true });
+});
+
+app.get("/admin/cloud-openclaw/summary", requireAuth, requireRole(["super_admin"]), requireAdminTwoFactor, async (_req, res) => {
+  const summary: Record<string, unknown> = {
+    consoleBaseUrl: cloudOpenClawBaseUrl,
+    reachable: false,
+    errors: [] as string[],
+  };
+
+  const errors: string[] = [];
+  try {
+    summary.health = await cloudOpenClawFetch("/api/health");
+    summary.reachable = true;
+  } catch (error) {
+    errors.push(error instanceof Error ? error.message : "Failed to reach cloud OpenClaw health");
+  }
+
+  try {
+    summary.controlPlane = await cloudOpenClawFetch("/api/v1/control-plane/state");
+  } catch (error) {
+    errors.push(error instanceof Error ? error.message : "Failed to read cloud control-plane state");
+  }
+
+  try {
+    const localPackages = await cloudOpenClawFetch("/api/v1/local-packages") as { packages?: unknown[] };
+    summary.localPackages = Array.isArray(localPackages.packages) ? localPackages.packages : [];
+  } catch (error) {
+    errors.push(error instanceof Error ? error.message : "Failed to read cloud package registry");
+  }
+
+  summary.errors = errors;
+  return res.json(summary);
+});
+
+app.get("/admin/cloud-openclaw/skill-tree", requireAuth, requireRole(["super_admin"]), requireAdminTwoFactor, async (_req, res) => {
+  try {
+    const payload = await cloudOpenClawFetch("/api/v1/skill-tree");
+    return res.json(payload);
+  } catch (error) {
+    return res.status(502).json({
+      error: error instanceof Error ? error.message : "Failed to load cloud OpenClaw skill tree",
+    });
+  }
+});
+
+app.post("/admin/cloud-openclaw/execute", requireAuth, requireRole(["super_admin"]), requireAdminTwoFactor, enforceCsrf, async (req, res) => {
+  const nodeId = typeof req.body?.nodeId === "string" ? req.body.nodeId.trim() : "";
+  const command = typeof req.body?.command === "string" ? req.body.command.trim() : "";
+  const inputValues = req.body?.inputValues && typeof req.body.inputValues === "object"
+    ? req.body.inputValues as Record<string, string>
+    : {};
+
+  if (!nodeId || !command) {
+    return res.status(400).json({ error: "nodeId and command are required" });
+  }
+
+  try {
+    const payload = await cloudOpenClawFetch("/api/v1/node-execute", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        nodeId,
+        command,
+        inputValues,
+      }),
+    });
+    return res.json(payload);
+  } catch (error) {
+    return res.status(502).json({
+      error: error instanceof Error ? error.message : "Failed to queue cloud OpenClaw execution",
+    });
+  }
+});
+
+app.post("/admin/cloud-openclaw/packages/install-official", requireAuth, requireRole(["super_admin"]), requireAdminTwoFactor, enforceCsrf, async (req, res) => {
+  const packageId = typeof req.body?.packageId === "string" ? req.body.packageId.trim() : "";
+  const version = typeof req.body?.version === "string" ? req.body.version.trim() : "";
+  if (!packageId) {
+    return res.status(400).json({ error: "packageId is required" });
+  }
+
+  const db = loadDatabase();
+  const record = db.packages.find((item) => item.packageId === packageId);
+  if (!record) {
+    return res.status(404).json({ error: "Package not found" });
+  }
+  const selectedVersion = version || record.latestVersion;
+  const versionRecord = record.versions.find((item) => item.version === selectedVersion);
+  if (!versionRecord) {
+    return res.status(404).json({ error: "Package version not found" });
+  }
+  if (!fs.existsSync(versionRecord.archivePath)) {
+    return res.status(404).json({ error: "Package archive is missing on server" });
+  }
+
+  try {
+    const payload = runCloudConsoleRegistryInstall(versionRecord.archivePath);
+    audit("install_cloud_package", "package", packageId, (req as Request & { auth?: ReturnType<typeof authContext> }).auth?.user.id || null, {
+      version: selectedVersion,
+      installPath: payload.installPath || "",
+    });
+    return res.json(payload);
+  } catch (error) {
+    return res.status(502).json({
+      error: error instanceof Error ? error.message : "Failed to install package into cloud OpenClaw",
+    });
+  }
+});
+
+app.get("/admin/settings/github", requireAuth, requireRole(["super_admin"]), requireAdminTwoFactor, (_req, res) => {
+  const db = loadDatabase();
+  return res.json(db.settings.github);
+});
+
+app.post("/admin/settings/github", requireAuth, requireRole(["super_admin"]), requireAdminTwoFactor, enforceCsrf, (req, res) => {
+  const db = loadDatabase();
+  db.settings.github = {
+    clientId: typeof req.body?.clientId === "string" ? req.body.clientId.trim() : "",
+    clientSecret: typeof req.body?.clientSecret === "string" ? req.body.clientSecret.trim() : "",
+    callbackUrl: typeof req.body?.callbackUrl === "string" ? req.body.callbackUrl.trim() : "",
+    releaseRepo: typeof req.body?.releaseRepo === "string" ? req.body.releaseRepo.trim() : "",
+    token: typeof req.body?.token === "string" ? req.body.token.trim() : "",
+  };
+  saveDatabase(db);
+  return res.json({
+    success: true,
+    githubOauthConfigured: githubOauthConfigured(),
+  });
+});
+
+app.get("/admin/settings/smtp", requireAuth, requireRole(["super_admin"]), requireAdminTwoFactor, (_req, res) => {
+  const db = loadDatabase();
+  return res.json(db.settings.smtp);
+});
+
+app.post("/admin/settings/smtp", requireAuth, requireRole(["super_admin"]), requireAdminTwoFactor, enforceCsrf, (req, res) => {
+  const db = loadDatabase();
+  const provider = typeof req.body?.provider === "string" && req.body.provider === "custom" ? "custom" : "qq";
+  db.settings.smtp = {
+    provider,
+    host: typeof req.body?.host === "string" ? req.body.host.trim() : "",
+    port: typeof req.body?.port === "string" ? req.body.port.trim() : provider === "qq" ? "465" : "587",
+    user: typeof req.body?.user === "string" ? req.body.user.trim() : "",
+    pass: typeof req.body?.pass === "string" ? req.body.pass.trim() : "",
+    from: typeof req.body?.from === "string" ? req.body.from.trim() : "",
+  };
+  saveDatabase(db);
+  return res.json({
+    success: true,
+    smtpConfigured: smtpConfigured(),
+  });
+});
+
+app.post("/admin/settings/smtp/test", requireAuth, requireRole(["super_admin"]), requireAdminTwoFactor, enforceCsrf, async (req, res) => {
+  const to = typeof req.body?.to === "string" ? req.body.to.trim() : "";
+  if (!to) {
+    return res.status(400).json({ error: "Recipient email is required" });
+  }
+  try {
+    const delivery = await sendTestEmail(to);
+    return res.json({
+      success: true,
+      delivered: delivery.delivered,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      error: error instanceof Error ? error.message : "Failed to send SMTP test email",
+    });
+  }
+});
+
+app.get("/admin/settings/auth-email", requireAuth, requireRole(["super_admin"]), requireAdminTwoFactor, (_req, res) => {
+  const db = loadDatabase();
+  return res.json(db.settings.authEmail);
+});
+
+app.post("/admin/settings/auth-email", requireAuth, requireRole(["super_admin"]), requireAdminTwoFactor, enforceCsrf, (req, res) => {
+  const db = loadDatabase();
+  db.settings.authEmail = {
+    codeTtlMinutes: Math.max(1, Number(req.body?.codeTtlMinutes || 10)),
+    resendCooldownSeconds: Math.max(0, Number(req.body?.resendCooldownSeconds || 30)),
+    requestLimitPerWindow: Math.max(1, Number(req.body?.requestLimitPerWindow || 8)),
+    requestWindowMinutes: Math.max(1, Number(req.body?.requestWindowMinutes || 15)),
+    verifyLimitPerWindow: Math.max(1, Number(req.body?.verifyLimitPerWindow || 10)),
+    verifyWindowMinutes: Math.max(1, Number(req.body?.verifyWindowMinutes || 15)),
+  };
+  saveDatabase(db);
+  return res.json({
+    success: true,
+    settings: db.settings.authEmail,
+  });
 });
 
 app.post("/auth/logout", requireAuth, enforceCsrf, (req, res) => {
@@ -849,10 +1219,56 @@ app.post("/auth/logout", requireAuth, enforceCsrf, (req, res) => {
 app.get("/health", (_req, res) => {
   res.json({
     status: "ok",
-    service: "openclaw-web-platform",
+    service: "forge-hub",
   });
 });
 
-app.listen(port, () => {
-  console.log(`OpenClaw Web Platform running on ${baseUrl}`);
+async function attachFrontend() {
+  const isProd = process.env.NODE_ENV === "production";
+  const appRoot = process.cwd();
+
+  if (isProd) {
+    const distPath = path.resolve(appRoot, "dist");
+    app.use(express.static(distPath, { index: false }));
+    app.use((req, res, next) => {
+      if (req.method !== "GET" && req.method !== "HEAD") {
+        next();
+        return;
+      }
+      res.sendFile(path.join(distPath, "index.html"));
+    });
+    return;
+  }
+
+  const { createServer: createViteServer } = await import("vite");
+  const vite = await createViteServer({
+    root: appRoot,
+    server: {
+      middlewareMode: true,
+    },
+    appType: "spa",
+  });
+
+  app.use(vite.middlewares);
+  app.use(async (req, res, next) => {
+    if (req.method !== "GET") {
+      next();
+      return;
+    }
+    try {
+      const templatePath = path.resolve(appRoot, "index.html");
+      const template = fs.readFileSync(templatePath, "utf-8");
+      const html = await vite.transformIndexHtml(req.originalUrl, template);
+      res.status(200).set({ "Content-Type": "text/html" }).end(html);
+    } catch (error) {
+      vite.ssrFixStacktrace(error as Error);
+      next(error);
+    }
+  });
+}
+
+void attachFrontend().then(() => {
+  app.listen(port, () => {
+    console.log(`SoloCore Hub running on ${baseUrl}`);
+  });
 });

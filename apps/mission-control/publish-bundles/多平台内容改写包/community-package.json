@@ -1,0 +1,206 @@
+{
+  "schemaVersion": "community-package-v1",
+  "packageId": "cap.openclaw.sop.workflow-4fd5a428",
+  "type": "sop-pack",
+  "name": "多平台内容改写包",
+  "version": "0.2.0",
+  "author": {
+    "name": "OpenClaw",
+    "id": "official/openclaw"
+  },
+  "description": "把一份已有素材或一篇已有成品，改写成多平台可直接发布的内容包。",
+  "source": {
+    "kind": "local-export",
+    "createdAt": "2026-03-24T10:52:07Z"
+  },
+  "capabilities": [
+    {
+      "id": "cap.openclaw.sop.workflow-4fd5a428",
+      "label": "多平台内容改写包",
+      "summary": "把一份已有素材或一篇已有成品，改写成多平台可直接发布的内容包。",
+      "entrypoint": "__OPENCLAW_WORKFLOW__ sop-小红书内容多平台改写包"
+    },
+    {
+      "id": "cap.openclaw.skill.social-content",
+      "label": "social-content",
+      "summary": "Bundled supporting capability.",
+      "entrypoint": ""
+    }
+  ],
+  "dependencies": [
+    {
+      "id": "cap.openclaw.skill.social-content",
+      "label": "social-content",
+      "kind": "skill",
+      "required": false,
+      "installCommand": "claw skill install social-content",
+      "installUrl": "",
+      "bundled": true
+    }
+  ],
+  "compatibility": {
+    "openclawMinVersion": "2026.3.2",
+    "installMode": "local-console",
+    "platforms": [
+      "macos",
+      "linux",
+      "windows"
+    ]
+  },
+  "permissions": [
+    {
+      "key": "filesystem.read",
+      "required": true,
+      "reason": "Read packaged SOP, docs, and supporting local files."
+    }
+  ],
+  "checksums": {
+    "algorithm": "sha256",
+    "files": [
+      {
+        "path": "OPENCLAW.md",
+        "sha256": "a3e29d8c83f5cce0b118af9685bace7fc13a47297439fd8be8ce9d12df9ccca3"
+      },
+      {
+        "path": "README.md",
+        "sha256": "84321f35ab00f78b5ab544c1c196f0540ad3225606ce2ec95e1e20b0424b1a32"
+      },
+      {
+        "path": "capability-manifest.json",
+        "sha256": "b798a183dea59de541038e383014cfd2746ae4bd44d0c1ed59eb9323da944149"
+      },
+      {
+        "path": "dependency-hints.json",
+        "sha256": "c8388ed80f8182daf43adc97e322f165d6677f5114c7d81b36466af77c7e41b5"
+      },
+      {
+        "path": "healthcheck.py",
+        "sha256": "653a572726f8cdd660b9224b674267894ef914713f685342d989816af77ef7b7"
+      },
+      {
+        "path": "install.py",
+        "sha256": "19f2b73afdc51219a3afcf2272eb72e2eff1f85acaeef98d23ecc5fec051719b"
+      },
+      {
+        "path": "knowledge/xhs_content_repurpose_pack.md",
+        "sha256": "cd36387aef54e0153865b736052539c17e8b235c26d866f51801da57d2ac0ac3"
+      },
+      {
+        "path": "schemas/community-package-v1.schema.json",
+        "sha256": "fbfce78f0b3bea1bb68dc0d51ca99e2149cb1743fae6f3c4825d1e881e7ec8d8"
+      },
+      {
+        "path": "skills/social-content/SKILL.md",
+        "sha256": "72e7f6bbed00a77512bb4afc4b93b7d527948450d8b5a37e8cc3deec23cf2680"
+      },
+      {
+        "path": "skills/social-content/evals/evals.json",
+        "sha256": "9e9da40856215d4993aefeacdbf69b721316b94b02c4b474106eaad3cfa8301c"
+      },
+      {
+        "path": "skills/social-content/references/platforms.md",
+        "sha256": "3c4e1b15717a3bcd4ed0cf29dc167dac28aa88bbf01723fde53815122396090f"
+      },
+      {
+        "path": "skills/social-content/references/post-templates.md",
+        "sha256": "db6525e51a690b61faf97a0acf51a2a57526de90da01c6bb37679d056c18c7f4"
+      },
+      {
+        "path": "skills/social-content/references/reverse-engineering.md",
+        "sha256": "c27bef59d463b3b11331c1770f4a23e9e6bbce7d7c8db1e7f7f4f14ba206243f"
+      },
+      {
+        "path": "sops/多平台内容改写包.md",
+        "sha256": "e7e8e8ef4bc59d5265b0dd9ed80a16cd18475cd929fc405bd2323afbae4e8f1d"
+      }
+    ]
+  },
+  "docs": [
+    {
+      "title": "OPENCLAW",
+      "path": "OPENCLAW.md"
+    },
+    {
+      "title": "README",
+      "path": "README.md"
+    },
+    {
+      "title": "xhs_content_repurpose_pack",
+      "path": "knowledge/xhs_content_repurpose_pack.md"
+    },
+    {
+      "title": "SKILL",
+      "path": "skills/social-content/SKILL.md"
+    },
+    {
+      "title": "platforms",
+      "path": "skills/social-content/references/platforms.md"
+    },
+    {
+      "title": "post-templates",
+      "path": "skills/social-content/references/post-templates.md"
+    },
+    {
+      "title": "reverse-engineering",
+      "path": "skills/social-content/references/reverse-engineering.md"
+    },
+    {
+      "title": "多平台内容改写包",
+      "path": "sops/多平台内容改写包.md"
+    }
+  ],
+  "assets": [
+    {
+      "path": "OPENCLAW.md",
+      "kind": "knowledge",
+      "label": "OPENCLAW.md"
+    },
+    {
+      "path": "README.md",
+      "kind": "knowledge",
+      "label": "README.md"
+    },
+    {
+      "path": "knowledge/xhs_content_repurpose_pack.md",
+      "kind": "knowledge",
+      "label": "xhs_content_repurpose_pack.md"
+    },
+    {
+      "path": "schemas/community-package-v1.schema.json",
+      "kind": "document",
+      "label": "community-package-v1.schema.json"
+    },
+    {
+      "path": "skills/social-content/SKILL.md",
+      "kind": "knowledge",
+      "label": "SKILL.md"
+    },
+    {
+      "path": "skills/social-content/evals/evals.json",
+      "kind": "document",
+      "label": "evals.json"
+    },
+    {
+      "path": "skills/social-content/references/platforms.md",
+      "kind": "knowledge",
+      "label": "platforms.md"
+    },
+    {
+      "path": "skills/social-content/references/post-templates.md",
+      "kind": "knowledge",
+      "label": "post-templates.md"
+    },
+    {
+      "path": "skills/social-content/references/reverse-engineering.md",
+      "kind": "knowledge",
+      "label": "reverse-engineering.md"
+    },
+    {
+      "path": "sops/多平台内容改写包.md",
+      "kind": "knowledge",
+      "label": "多平台内容改写包.md"
+    }
+  ],
+  "reviewStatus": "draft",
+  "visibility": "private"
+}

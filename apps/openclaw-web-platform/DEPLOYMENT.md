@@ -1,4 +1,12 @@
-# OpenClaw Web Platform Deployment
+# SoloCore Hub Deployment
+
+## Deployment Rule
+
+- Build and validate locally first.
+- Keep version history in git and GitHub.
+- Deploy the server from a versioned git ref or release artifact.
+- Avoid editing application source directly on the server outside emergency triage.
+- If SoloCore Console is deployed on the same server, keep it bound to `127.0.0.1` and reach it only through admin-authenticated Hub routes.
 
 ## What This Deploys
 
@@ -66,6 +74,7 @@ Default port:
 ## Run In Production
 
 ```bash
+npm run build
 NODE_ENV=production npm run start
 ```
 
@@ -74,6 +83,14 @@ Put the service behind:
 - Cloudflare or another CDN/WAF
 - HTTPS termination
 - a reverse proxy that forwards to the Node process
+
+Preferred production approach:
+
+- build locally so `dist/` and `dist-server/` are generated first
+- deploy those prebuilt artifacts to the server
+- on the server only run dependency install and service restart
+- run the server with `node dist-server/server.js`, not `tsx server.ts`
+- keep a memory ceiling on the service via `NODE_OPTIONS=--max-old-space-size=256` and `MemoryMax`
 
 ## Docker Compose
 

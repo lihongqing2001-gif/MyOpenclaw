@@ -1,0 +1,144 @@
+{
+  "schemaVersion": "community-package-v1",
+  "packageId": "cap.openclaw.sop.content-research-literature",
+  "type": "sop-pack",
+  "name": "文献检索与引用整理",
+  "version": "0.2.0",
+  "author": {
+    "name": "OpenClaw",
+    "id": "official/openclaw"
+  },
+  "description": "综述写作、资料支撑",
+  "source": {
+    "kind": "local-export",
+    "createdAt": "2026-03-24T10:52:07Z"
+  },
+  "capabilities": [
+    {
+      "id": "cap.openclaw.sop.content-research-literature",
+      "label": "文献检索与引用整理",
+      "summary": "综述写作、资料支撑",
+      "entrypoint": "__OPENCLAW_WORKFLOW__ sop-content-research-literature"
+    }
+  ],
+  "dependencies": [
+    {
+      "id": "cap.openclaw.foundation.web-search",
+      "label": "搜索与网页抓取",
+      "kind": "foundation",
+      "required": true,
+      "installCommand": "web_search / web_fetch",
+      "installUrl": "",
+      "bundled": false
+    },
+    {
+      "id": "cap.openclaw.foundation.knowledge-index",
+      "label": "知识库归档与标签",
+      "kind": "foundation",
+      "required": true,
+      "installCommand": "/knowledge ingest --domain <领域> --platform <平台>",
+      "installUrl": "",
+      "bundled": false
+    },
+    {
+      "id": "cap.openclaw.foundation.browser-ops",
+      "label": "网页浏览与采集",
+      "kind": "foundation",
+      "required": true,
+      "installCommand": "浏览器快照/点击/抓取",
+      "installUrl": "",
+      "bundled": false
+    }
+  ],
+  "compatibility": {
+    "openclawMinVersion": "2026.3.2",
+    "installMode": "local-console",
+    "platforms": [
+      "macos",
+      "linux",
+      "windows"
+    ]
+  },
+  "permissions": [
+    {
+      "key": "filesystem.read",
+      "required": true,
+      "reason": "Read packaged SOP, docs, and supporting local files."
+    }
+  ],
+  "checksums": {
+    "algorithm": "sha256",
+    "files": [
+      {
+        "path": "OPENCLAW.md",
+        "sha256": "dc3644aaedd42bae0ad4c105158e27e7190a9839fe3757bbf584bc41c6690fcd"
+      },
+      {
+        "path": "README.md",
+        "sha256": "169d226ae8ec980966d8cebfd1f5b2bdc48b77b5b448c7a0e43c74a199b01fdc"
+      },
+      {
+        "path": "capability-manifest.json",
+        "sha256": "c4f81697092c49dd10470912e41580e2779c1ce9700dabece1e23a5cec75bee4"
+      },
+      {
+        "path": "dependency-hints.json",
+        "sha256": "fc8723dc59aa7ce77dcf1e1b4be5164b51db3f53f4ede4fe7a9a5f1776810f69"
+      },
+      {
+        "path": "healthcheck.py",
+        "sha256": "1f548b904fed1e32bff1418e8edc062a2dcded633624a9969bd1afe397936b3d"
+      },
+      {
+        "path": "install.py",
+        "sha256": "4f3f6a28e7f63aa65f14bac6fd6f7c7f811616e7cf3130a594ed258d14b8907c"
+      },
+      {
+        "path": "schemas/community-package-v1.schema.json",
+        "sha256": "fbfce78f0b3bea1bb68dc0d51ca99e2149cb1743fae6f3c4825d1e881e7ec8d8"
+      },
+      {
+        "path": "sops/文献检索与引用整理.md",
+        "sha256": "09a6f92b8a02ab9c708f8ed5d0c3e2dc497b3f1e5487604ddbaca32797129d6c"
+      }
+    ]
+  },
+  "docs": [
+    {
+      "title": "OPENCLAW",
+      "path": "OPENCLAW.md"
+    },
+    {
+      "title": "README",
+      "path": "README.md"
+    },
+    {
+      "title": "文献检索与引用整理",
+      "path": "sops/文献检索与引用整理.md"
+    }
+  ],
+  "assets": [
+    {
+      "path": "OPENCLAW.md",
+      "kind": "knowledge",
+      "label": "OPENCLAW.md"
+    },
+    {
+      "path": "README.md",
+      "kind": "knowledge",
+      "label": "README.md"
+    },
+    {
+      "path": "schemas/community-package-v1.schema.json",
+      "kind": "document",
+      "label": "community-package-v1.schema.json"
+    },
+    {
+      "path": "sops/文献检索与引用整理.md",
+      "kind": "knowledge",
+      "label": "文献检索与引用整理.md"
+    }
+  ],
+  "reviewStatus": "draft",
+  "visibility": "private"
+}

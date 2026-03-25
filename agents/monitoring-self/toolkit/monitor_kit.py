@@ -9,7 +9,9 @@ import signal
 import socket
 import subprocess
 import sys
+from datetime import datetime
 from pathlib import Path
+import sqlite3
 
 ROOT = Path(__file__).resolve().parents[1]
 BACKEND = ROOT / "backend"
@@ -101,6 +103,43 @@ def _init_backend_db() -> tuple[bool, str]:
     return True, proc.stdout.strip()
 
 
+def _db_integrity_ok(db_path: Path) -> tuple[bool, str]:
+    try:
+        with sqlite3.connect(str(db_path)) as conn:
+            row = conn.execute("PRAGMA integrity_check").fetchone()
+        result = (row[0] if row else "error").lower()
+        if result == "ok":
+            return True, "ok"
+        return False, result
+    except Exception as exc:
+        return False, str(exc)
+
+
+def _backup_db(db_path: Path, backup_dir: Path, max_backups: int = 10) -> Path:
+    backup_dir.mkdir(parents=True, exist_ok=True)
+    stamp = datetime.now().strftime("%Y%m%d-%H%M%S")
+    target = backup_dir / f"monitor-{stamp}.db"
+    shutil.copy2(db_path, target)
+    backups = sorted(backup_dir.glob("monitor-*.db"), key=lambda p: p.stat().st_mtime)
+    if max_backups > 0 and len(backups) > max_backups:
+        for p in backups[: len(backups) - max_backups]:
+            p.unlink(missing_ok=True)
+    return target
+
+
+def _latest_backup(backup_dir: Path) -> Path | None:
+    backups = sorted(backup_dir.glob("monitor-*.db"), key=lambda p: p.stat().st_mtime, reverse=True)
+    return backups[0] if backups else None
+
+
+def _recover_db(db_path: Path, backup_dir: Path) -> tuple[bool, str]:
+    latest = _latest_backup(backup_dir)
+    if latest is None:
+        return False, "no backups available"
+    shutil.copy2(latest, db_path)
+    return True, str(latest)
+
+
 def cmd_doctor(args: argparse.Namespace) -> int:
     cfg = _load_config()
     host = cfg.get("host", "127.0.0.1")
@@ -170,8 +209,43 @@ def cmd_doctor(args: argparse.Namespace) -> int:
 
     _ensure_patch_file()
     print("\n[openclaw.json patch]")
-    print(json.dumps(_build_openclaw_patch(), ensure_ascii=False, indent=2))
+    patch_payload = json.dumps(_build_openclaw_patch(), ensure_ascii=False, indent=2)
+    print(patch_payload)
     print(f"[patch file] {PATCH_FILE}")
+
+    if args.markdown:
+        md_path = Path(args.markdown).expanduser().resolve()
+        md_path.parent.mkdir(parents=True, exist_ok=True)
+        md_lines = [
+            "# monitor-kit doctor report",
+            "",
+            f"Generated at: {datetime.now().isoformat(timespec='seconds')}",
+            "",
+            "## Checks",
+        ]
+        for name, ok, detail in checks:
+            mark = "PASS" if ok else "FAIL"
+            if not ok and name == "port_occupied":
+                mark = "WARN"
+            md_lines.append(f"- **{mark}** {name}: `{detail}`")
+        md_lines.append("")
+        md_lines.append("## Fix Suggestions")
+        if not _venv_python().exists():
+            md_lines.append(f"- run: `{ROOT}/install.sh`")
+        if not CONFIG.exists():
+            md_lines.append(f"- run: `{ROOT}/monitor-kit doctor --fix`")
+        if not DATA.exists() or not DB.exists():
+            md_lines.append(f"- run: `{ROOT}/monitor-kit doctor --fix`")
+        if not comm.exists():
+            md_lines.append("- create `agents/runs/COMM_LOG.md` or enable your handoff pipeline")
+        md_lines.append("")
+        md_lines.append("## OpenClaw Patch")
+        md_lines.append("```json")
+        md_lines.append(patch_payload)
+        md_lines.append("```")
+        md_path.write_text("\n".join(md_lines) + "\n", encoding="utf-8")
+        print(f"[markdown report] {md_path}")
+
     return 0 if all_ok else 2
 
 

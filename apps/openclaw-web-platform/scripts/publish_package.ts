@@ -41,6 +41,11 @@ const versionRecord = {
   manifestPath: stored.manifestPath,
   manifest,
   publishedAt: new Date().toISOString(),
+  githubReleaseTag: undefined as string | undefined,
+  githubReleaseUrl: undefined as string | undefined,
+  githubAssetUrl: undefined as string | undefined,
+  githubSyncStatus: undefined as "pending" | "synced" | "failed" | undefined,
+  githubSyncAt: undefined as string | undefined,
 };
 let githubSync: {
   githubReleaseTag: string;

@@ -1,0 +1,97 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://openclaw.local/schemas/swarm-task.schema.json",
+  "title": "Swarm Task",
+  "type": "object",
+  "required": [
+    "request_id",
+    "title",
+    "repo",
+    "agent",
+    "owner_agent",
+    "status",
+    "status_changed_at",
+    "priority",
+    "risk_level",
+    "acceptance",
+    "expected_output",
+    "rollback_note",
+    "checks",
+    "stale",
+    "retry_count",
+    "notify_on_complete",
+    "review_evidence",
+    "created_at",
+    "updated_at",
+    "notes"
+  ],
+  "properties": {
+    "request_id": {"type": "string", "minLength": 1},
+    "title": {"type": "string", "minLength": 1},
+    "repo": {"type": "string", "minLength": 1},
+    "agent": {"type": "string", "minLength": 1},
+    "owner_agent": {"type": "string", "minLength": 1},
+    "agent_model": {"type": ["string", "null"]},
+    "session_key": {"type": ["string", "null"]},
+    "session_pid": {"type": ["integer", "null"], "minimum": 1},
+    "session_log": {"type": ["string", "null"]},
+    "session_backend": {"type": ["string", "null"], "enum": ["tmux", "popen", "none", null]},
+    "worktree_path": {"type": ["string", "null"]},
+    "branch": {"type": ["string", "null"]},
+    "status": {
+      "type": "string",
+      "enum": ["NEW", "SCOPED", "DISPATCHED", "RUNNING", "REVIEW", "BLOCKED", "FAILED", "DONE", "VERIFIED", "ARCHIVED"]
+    },
+    "status_changed_at": {"type": "string"},
+    "priority": {"type": "string", "enum": ["low", "medium", "high"]},
+    "risk_level": {"type": "string", "enum": ["L1", "L2", "L3"]},
+    "acceptance": {"type": "array", "items": {"type": "string"}},
+    "expected_output": {"type": "string"},
+    "rollback_note": {"type": "string"},
+    "notify_on_complete": {"type": "boolean"},
+    "summary": {"type": ["string", "null"]},
+    "blocked_reason": {"type": ["string", "null"]},
+    "review_evidence": {
+      "type": "object",
+      "required": ["pr_url", "screenshot_urls", "review_notes"],
+      "properties": {
+        "pr_url": {"type": ["string", "null"]},
+        "screenshot_urls": {"type": "array", "items": {"type": "string"}},
+        "review_notes": {"type": "array", "items": {"type": "string"}}
+      },
+      "additionalProperties": false
+    },
+    "checks": {
+      "type": "object",
+      "required": ["session_alive", "worktree_exists", "branch_exists", "branch_pushed", "pr_created", "ci_passed", "verified"],
+      "properties": {
+        "session_alive": {"type": "boolean"},
+        "worktree_exists": {"type": "boolean"},
+        "branch_exists": {"type": "boolean"},
+        "branch_pushed": {"type": "boolean"},
+        "pr_created": {"type": "boolean"},
+        "ci_passed": {"type": "boolean"},
+        "verified": {"type": "boolean"}
+      },
+      "additionalProperties": false
+    },
+    "stale": {
+      "type": "object",
+      "required": ["is_stale", "reason", "age_seconds", "threshold_seconds", "basis", "since"],
+      "properties": {
+        "is_stale": {"type": "boolean"},
+        "reason": {"type": ["string", "null"]},
+        "age_seconds": {"type": "integer", "minimum": 0},
+        "threshold_seconds": {"type": ["integer", "null"], "minimum": 0},
+        "basis": {"type": "string", "const": "status_changed_at"},
+        "since": {"type": ["string", "null"]}
+      },
+      "additionalProperties": false
+    },
+    "retry_count": {"type": "integer", "minimum": 0},
+    "created_at": {"type": "string"},
+    "updated_at": {"type": "string"},
+    "notes": {"type": "array", "items": {"type": "string"}}
+  },
+  "additionalProperties": false
+}

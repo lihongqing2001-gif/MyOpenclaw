@@ -1,0 +1,567 @@
+{
+  "schemaVersion": "community-package-v1",
+  "packageId": "cap.openclaw.sop.workflow-c9523b0a",
+  "type": "sop-pack",
+  "name": "邮件收件箱摘要与优先级整理",
+  "version": "0.2.0",
+  "author": {
+    "name": "OpenClaw",
+    "id": "official/openclaw"
+  },
+  "description": "自动整理邮箱中的新增邮件，输出一份可执行的收件箱摘要。",
+  "source": {
+    "kind": "local-export",
+    "createdAt": "2026-03-24T10:52:00Z"
+  },
+  "capabilities": [
+    {
+      "id": "cap.openclaw.sop.workflow-c9523b0a",
+      "label": "邮件收件箱摘要与优先级整理",
+      "summary": "自动整理邮箱中的新增邮件，输出一份可执行的收件箱摘要。",
+      "entrypoint": "python3 /Users/liumobei/.openclaw/workspace/apps/mission-control/scripts/run_email_inbox_digest.py --email-address <邮箱地址> --imap-host <IMAP 主机> --imap-port <IMAP 端口> --username <用户名> --app-password <应用专用密码或授权令牌> --mailbox-scope <邮箱范围> --time-window <时间窗口> --unread-only <是否需要只看未读>"
+    },
+    {
+      "id": "cap.openclaw.skill.assistant-orchestrator",
+      "label": "assistant-orchestrator",
+      "summary": "Bundled supporting capability.",
+      "entrypoint": ""
+    },
+    {
+      "id": "cap.openclaw.skill.email-sequence",
+      "label": "email-sequence",
+      "summary": "Bundled supporting capability.",
+      "entrypoint": ""
+    },
+    {
+      "id": "cap.openclaw.skill.web-search-plus",
+      "label": "web-search-plus",
+      "summary": "Bundled supporting capability.",
+      "entrypoint": ""
+    }
+  ],
+  "dependencies": [
+    {
+      "id": "cap.openclaw.skill.assistant-orchestrator",
+      "label": "assistant-orchestrator",
+      "kind": "skill",
+      "required": false,
+      "installCommand": "claw skill install assistant-orchestrator",
+      "installUrl": "",
+      "bundled": true
+    },
+    {
+      "id": "cap.openclaw.skill.email-sequence",
+      "label": "email-sequence",
+      "kind": "skill",
+      "required": false,
+      "installCommand": "claw skill install email-sequence",
+      "installUrl": "",
+      "bundled": true
+    },
+    {
+      "id": "cap.openclaw.skill.web-search-plus",
+      "label": "web-search-plus",
+      "kind": "skill",
+      "required": false,
+      "installCommand": "claw skill install web-search-plus",
+      "installUrl": "https://serper.dev",
+      "bundled": true
+    }
+  ],
+  "compatibility": {
+    "openclawMinVersion": "2026.3.2",
+    "installMode": "local-console",
+    "platforms": [
+      "macos",
+      "linux",
+      "windows"
+    ]
+  },
+  "permissions": [
+    {
+      "key": "filesystem.read",
+      "required": true,
+      "reason": "Read packaged SOP, docs, and supporting local files."
+    },
+    {
+      "key": "process.exec",
+      "required": true,
+      "reason": "Run packaged scripts or workflow commands after local user confirmation."
+    }
+  ],
+  "checksums": {
+    "algorithm": "sha256",
+    "files": [
+      {
+        "path": "OPENCLAW.md",
+        "sha256": "6a9d2de9e59b0a3e93bdf0978b57b32ecf01a3ca1a16a16f795cad6982c70b34"
+      },
+      {
+        "path": "README.md",
+        "sha256": "d40be2a280a2b83d3c5c3278d3e98b85f292d579edbcc063ca6167fe1e6cf1f1"
+      },
+      {
+        "path": "capability-manifest.json",
+        "sha256": "926658df8472f31eaa037ef9cf8a2799c9fdc98119c6b865353327010f45e283"
+      },
+      {
+        "path": "dependency-hints.json",
+        "sha256": "78fee42d7ae88e10bb53b8872ec608d36c3c2422a9bf209e88feadcb7c6b99ee"
+      },
+      {
+        "path": "healthcheck.py",
+        "sha256": "c45d774cf37bb263a359c174c2d0984bc327d6f01949f02fffc64dc6a79540f5"
+      },
+      {
+        "path": "install.py",
+        "sha256": "903314c4c80df4106d8283448d3ab63fc8d7d561fe2d649d31c4270e254781a2"
+      },
+      {
+        "path": "knowledge/email_inbox_digest.md",
+        "sha256": "6a285369024b9f43fafc67834cf4231006f26066829271ee4c40b4ddfe3b7011"
+      },
+      {
+        "path": "schemas/community-package-v1.schema.json",
+        "sha256": "fbfce78f0b3bea1bb68dc0d51ca99e2149cb1743fae6f3c4825d1e881e7ec8d8"
+      },
+      {
+        "path": "scripts/run_email_inbox_digest.py",
+        "sha256": "d1f60a6459d56825b4146ae577aa704d9f5648fd3d5df7b1b4d95e8aa96a6f36"
+      },
+      {
+        "path": "skills/assistant-orchestrator/SKILL.md",
+        "sha256": "24848fef15090e4cbba1299aff02c4af665206f6c633c6aec6b0857ce2ce79f9"
+      },
+      {
+        "path": "skills/assistant-orchestrator/outputs/email-daily-triage/leehongking-qq-com/2026-03-24__triage.json",
+        "sha256": "ea89c6047ce3f6784d3ade6a6357e4975a3250fb8cd33cf5223ac4c511a682aa"
+      },
+      {
+        "path": "skills/assistant-orchestrator/outputs/email-daily-triage/leehongking-qq-com/2026-03-24__triage.md",
+        "sha256": "50b2247dfa506fe6736448a2166da180e06cdb73bfa93dc5880fbe19062e8b24"
+      },
+      {
+        "path": "skills/assistant-orchestrator/outputs/邮件摘要_2026-03-24.md",
+        "sha256": "ac8553890334caf164dda3e21d9396d65b198d51eb52c4360674343fc8a99b8b"
+      },
+      {
+        "path": "skills/assistant-orchestrator/references/swarm-blueprint.md",
+        "sha256": "132c5c07a7949d915d81dc846bfed21a48c4afd18ae0f750e477606b0da98644"
+      },
+      {
+        "path": "skills/email-sequence/SKILL.md",
+        "sha256": "c82b9b655fc24729e7d08e7ac2aa09f421babe8925104c91d492ea59832f51a3"
+      },
+      {
+        "path": "skills/email-sequence/evals/evals.json",
+        "sha256": "3ec2a39a2eaeaa03553a648ee5a4018351286a64313aaba06e0c5bc82d343bbf"
+      },
+      {
+        "path": "skills/email-sequence/references/copy-guidelines.md",
+        "sha256": "02f08897e4aa99ecc4ec1893d61d0c26d0c5e62e09af26f175087455e9b68e01"
+      },
+      {
+        "path": "skills/email-sequence/references/email-types.md",
+        "sha256": "a5dd4f0555a7b21d2ff426948d15657825b9d16265652563f5e272d2e1879bfd"
+      },
+      {
+        "path": "skills/email-sequence/references/sequence-templates.md",
+        "sha256": "d47b12e263ad52b72ab741c490bbc98d8bf8034d61faccc50b7dbb2650a9fba0"
+      },
+      {
+        "path": "skills/web-search-plus/CHANGELOG.md",
+        "sha256": "9a33e39afc41021baa68a7f628d50e8b3cd7059ee7210aa1608d8cecbb9350fd"
+      },
+      {
+        "path": "skills/web-search-plus/FAQ.md",
+        "sha256": "b7e6bef9f68fa3084b595154c69fba19a60dcb84ba55fd5864488fcd379f9c38"
+      },
+      {
+        "path": "skills/web-search-plus/README.md",
+        "sha256": "abca5d028a5f4e338293e340373c4efead011a10fbaefe523ed3da7b08e16d76"
+      },
+      {
+        "path": "skills/web-search-plus/SKILL.md",
+        "sha256": "e5e607557ced98ed064aa07b8580f3e849839a1ec448746bcb59b2e8c0548b63"
+      },
+      {
+        "path": "skills/web-search-plus/TROUBLESHOOTING.md",
+        "sha256": "8fc5644eee8e61c6562c666cb6cbff9415f96a18ad13be7402c17f3b941bf384"
+      },
+      {
+        "path": "skills/web-search-plus/_meta.json",
+        "sha256": "d53f6e59af9dbbd97c8a9d8fcc92ed9575611e33267b230ab2eb44362f5a2ca2"
+      },
+      {
+        "path": "skills/web-search-plus/config.example.json",
+        "sha256": "e722457a64aa5ae32b30edab78ea617f1bf369a70295d3c5869cbe266d731986"
+      },
+      {
+        "path": "skills/web-search-plus/config.json",
+        "sha256": "447265ab11d9740b68e6407bf4467e1f48e5a9a5f0ca14df72bdb52df0826f0b"
+      },
+      {
+        "path": "skills/web-search-plus/package.json",
+        "sha256": "467e5a30441e76352a12407ac47500abf576dfaec688cd82a604856f990e5e46"
+      },
+      {
+        "path": "skills/web-search-plus/scripts/search.py",
+        "sha256": "4f43e9a5908b8b9fdf51262eec37f7730c40061d958d4d1460ffe28f56734680"
+      },
+      {
+        "path": "skills/web-search-plus/scripts/setup.py",
+        "sha256": "f193ba80573ce4e0e430b13d74c70a4e4707d4e12d1f6b24c02ff1957ae0c89d"
+      },
+      {
+        "path": "skills/web-search-plus/temp_web_search_plus/CHANGELOG.md",
+        "sha256": "9a33e39afc41021baa68a7f628d50e8b3cd7059ee7210aa1608d8cecbb9350fd"
+      },
+      {
+        "path": "skills/web-search-plus/temp_web_search_plus/FAQ.md",
+        "sha256": "b7e6bef9f68fa3084b595154c69fba19a60dcb84ba55fd5864488fcd379f9c38"
+      },
+      {
+        "path": "skills/web-search-plus/temp_web_search_plus/README.md",
+        "sha256": "abca5d028a5f4e338293e340373c4efead011a10fbaefe523ed3da7b08e16d76"
+      },
+      {
+        "path": "skills/web-search-plus/temp_web_search_plus/SKILL.md",
+        "sha256": "e5e607557ced98ed064aa07b8580f3e849839a1ec448746bcb59b2e8c0548b63"
+      },
+      {
+        "path": "skills/web-search-plus/temp_web_search_plus/TROUBLESHOOTING.md",
+        "sha256": "8fc5644eee8e61c6562c666cb6cbff9415f96a18ad13be7402c17f3b941bf384"
+      },
+      {
+        "path": "skills/web-search-plus/temp_web_search_plus/_meta.json",
+        "sha256": "d53f6e59af9dbbd97c8a9d8fcc92ed9575611e33267b230ab2eb44362f5a2ca2"
+      },
+      {
+        "path": "skills/web-search-plus/temp_web_search_plus/config.example.json",
+        "sha256": "e722457a64aa5ae32b30edab78ea617f1bf369a70295d3c5869cbe266d731986"
+      },
+      {
+        "path": "skills/web-search-plus/temp_web_search_plus/config.json",
+        "sha256": "cd5fd7c220153570735772cce3a902738e6d9835cdad6e0572ef9e57ba471c21"
+      },
+      {
+        "path": "skills/web-search-plus/temp_web_search_plus/package.json",
+        "sha256": "467e5a30441e76352a12407ac47500abf576dfaec688cd82a604856f990e5e46"
+      },
+      {
+        "path": "skills/web-search-plus/temp_web_search_plus/scripts/search.py",
+        "sha256": "4f43e9a5908b8b9fdf51262eec37f7730c40061d958d4d1460ffe28f56734680"
+      },
+      {
+        "path": "skills/web-search-plus/temp_web_search_plus/scripts/setup.py",
+        "sha256": "f193ba80573ce4e0e430b13d74c70a4e4707d4e12d1f6b24c02ff1957ae0c89d"
+      },
+      {
+        "path": "skills/web-search-plus/temp_web_search_plus/test-auto-routing.sh",
+        "sha256": "3df211b33710a6a3165c0a82e283da7ba2929bd145c6095442da7cc7805656be"
+      },
+      {
+        "path": "skills/web-search-plus/test-auto-routing.sh",
+        "sha256": "3df211b33710a6a3165c0a82e283da7ba2929bd145c6095442da7cc7805656be"
+      },
+      {
+        "path": "sops/邮件收件箱摘要与优先级整理.md",
+        "sha256": "fcdc001052201604e63adf359ff86f334abb14c92ba3598c821c23c69cdd7c26"
+      }
+    ]
+  },
+  "docs": [
+    {
+      "title": "OPENCLAW",
+      "path": "OPENCLAW.md"
+    },
+    {
+      "title": "README",
+      "path": "README.md"
+    },
+    {
+      "title": "email_inbox_digest",
+      "path": "knowledge/email_inbox_digest.md"
+    },
+    {
+      "title": "SKILL",
+      "path": "skills/assistant-orchestrator/SKILL.md"
+    },
+    {
+      "title": "2026-03-24__triage",
+      "path": "skills/assistant-orchestrator/outputs/email-daily-triage/leehongking-qq-com/2026-03-24__triage.md"
+    },
+    {
+      "title": "邮件摘要_2026-03-24",
+      "path": "skills/assistant-orchestrator/outputs/邮件摘要_2026-03-24.md"
+    },
+    {
+      "title": "swarm-blueprint",
+      "path": "skills/assistant-orchestrator/references/swarm-blueprint.md"
+    },
+    {
+      "title": "SKILL",
+      "path": "skills/email-sequence/SKILL.md"
+    },
+    {
+      "title": "copy-guidelines",
+      "path": "skills/email-sequence/references/copy-guidelines.md"
+    },
+    {
+      "title": "email-types",
+      "path": "skills/email-sequence/references/email-types.md"
+    },
+    {
+      "title": "sequence-templates",
+      "path": "skills/email-sequence/references/sequence-templates.md"
+    },
+    {
+      "title": "CHANGELOG",
+      "path": "skills/web-search-plus/CHANGELOG.md"
+    },
+    {
+      "title": "FAQ",
+      "path": "skills/web-search-plus/FAQ.md"
+    },
+    {
+      "title": "README",
+      "path": "skills/web-search-plus/README.md"
+    },
+    {
+      "title": "SKILL",
+      "path": "skills/web-search-plus/SKILL.md"
+    },
+    {
+      "title": "TROUBLESHOOTING",
+      "path": "skills/web-search-plus/TROUBLESHOOTING.md"
+    },
+    {
+      "title": "CHANGELOG",
+      "path": "skills/web-search-plus/temp_web_search_plus/CHANGELOG.md"
+    },
+    {
+      "title": "FAQ",
+      "path": "skills/web-search-plus/temp_web_search_plus/FAQ.md"
+    },
+    {
+      "title": "README",
+      "path": "skills/web-search-plus/temp_web_search_plus/README.md"
+    },
+    {
+      "title": "SKILL",
+      "path": "skills/web-search-plus/temp_web_search_plus/SKILL.md"
+    },
+    {
+      "title": "TROUBLESHOOTING",
+      "path": "skills/web-search-plus/temp_web_search_plus/TROUBLESHOOTING.md"
+    },
+    {
+      "title": "邮件收件箱摘要与优先级整理",
+      "path": "sops/邮件收件箱摘要与优先级整理.md"
+    }
+  ],
+  "assets": [
+    {
+      "path": "OPENCLAW.md",
+      "kind": "knowledge",
+      "label": "OPENCLAW.md"
+    },
+    {
+      "path": "README.md",
+      "kind": "knowledge",
+      "label": "README.md"
+    },
+    {
+      "path": "knowledge/email_inbox_digest.md",
+      "kind": "knowledge",
+      "label": "email_inbox_digest.md"
+    },
+    {
+      "path": "schemas/community-package-v1.schema.json",
+      "kind": "document",
+      "label": "community-package-v1.schema.json"
+    },
+    {
+      "path": "scripts/run_email_inbox_digest.py",
+      "kind": "script",
+      "label": "run_email_inbox_digest.py"
+    },
+    {
+      "path": "skills/assistant-orchestrator/SKILL.md",
+      "kind": "knowledge",
+      "label": "SKILL.md"
+    },
+    {
+      "path": "skills/assistant-orchestrator/outputs/email-daily-triage/leehongking-qq-com/2026-03-24__triage.json",
+      "kind": "document",
+      "label": "2026-03-24__triage.json"
+    },
+    {
+      "path": "skills/assistant-orchestrator/outputs/email-daily-triage/leehongking-qq-com/2026-03-24__triage.md",
+      "kind": "knowledge",
+      "label": "2026-03-24__triage.md"
+    },
+    {
+      "path": "skills/assistant-orchestrator/outputs/邮件摘要_2026-03-24.md",
+      "kind": "knowledge",
+      "label": "邮件摘要_2026-03-24.md"
+    },
+    {
+      "path": "skills/assistant-orchestrator/references/swarm-blueprint.md",
+      "kind": "knowledge",
+      "label": "swarm-blueprint.md"
+    },
+    {
+      "path": "skills/email-sequence/SKILL.md",
+      "kind": "knowledge",
+      "label": "SKILL.md"
+    },
+    {
+      "path": "skills/email-sequence/evals/evals.json",
+      "kind": "document",
+      "label": "evals.json"
+    },
+    {
+      "path": "skills/email-sequence/references/copy-guidelines.md",
+      "kind": "knowledge",
+      "label": "copy-guidelines.md"
+    },
+    {
+      "path": "skills/email-sequence/references/email-types.md",
+      "kind": "knowledge",
+      "label": "email-types.md"
+    },
+    {
+      "path": "skills/email-sequence/references/sequence-templates.md",
+      "kind": "knowledge",
+      "label": "sequence-templates.md"
+    },
+    {
+      "path": "skills/web-search-plus/CHANGELOG.md",
+      "kind": "knowledge",
+      "label": "CHANGELOG.md"
+    },
+    {
+      "path": "skills/web-search-plus/FAQ.md",
+      "kind": "knowledge",
+      "label": "FAQ.md"
+    },
+    {
+      "path": "skills/web-search-plus/README.md",
+      "kind": "knowledge",
+      "label": "README.md"
+    },
+    {
+      "path": "skills/web-search-plus/SKILL.md",
+      "kind": "knowledge",
+      "label": "SKILL.md"
+    },
+    {
+      "path": "skills/web-search-plus/TROUBLESHOOTING.md",
+      "kind": "knowledge",
+      "label": "TROUBLESHOOTING.md"
+    },
+    {
+      "path": "skills/web-search-plus/_meta.json",
+      "kind": "document",
+      "label": "_meta.json"
+    },
+    {
+      "path": "skills/web-search-plus/config.example.json",
+      "kind": "document",
+      "label": "config.example.json"
+    },
+    {
+      "path": "skills/web-search-plus/config.json",
+      "kind": "document",
+      "label": "config.json"
+    },
+    {
+      "path": "skills/web-search-plus/package.json",
+      "kind": "document",
+      "label": "package.json"
+    },
+    {
+      "path": "skills/web-search-plus/scripts/search.py",
+      "kind": "script",
+      "label": "search.py"
+    },
+    {
+      "path": "skills/web-search-plus/scripts/setup.py",
+      "kind": "script",
+      "label": "setup.py"
+    },
+    {
+      "path": "skills/web-search-plus/temp_web_search_plus/CHANGELOG.md",
+      "kind": "knowledge",
+      "label": "CHANGELOG.md"
+    },
+    {
+      "path": "skills/web-search-plus/temp_web_search_plus/FAQ.md",
+      "kind": "knowledge",
+      "label": "FAQ.md"
+    },
+    {
+      "path": "skills/web-search-plus/temp_web_search_plus/README.md",
+      "kind": "knowledge",
+      "label": "README.md"
+    },
+    {
+      "path": "skills/web-search-plus/temp_web_search_plus/SKILL.md",
+      "kind": "knowledge",
+      "label": "SKILL.md"
+    },
+    {
+      "path": "skills/web-search-plus/temp_web_search_plus/TROUBLESHOOTING.md",
+      "kind": "knowledge",
+      "label": "TROUBLESHOOTING.md"
+    },
+    {
+      "path": "skills/web-search-plus/temp_web_search_plus/_meta.json",
+      "kind": "document",
+      "label": "_meta.json"
+    },
+    {
+      "path": "skills/web-search-plus/temp_web_search_plus/config.example.json",
+      "kind": "document",
+      "label": "config.example.json"
+    },
+    {
+      "path": "skills/web-search-plus/temp_web_search_plus/config.json",
+      "kind": "document",
+      "label": "config.json"
+    },
+    {
+      "path": "skills/web-search-plus/temp_web_search_plus/package.json",
+      "kind": "document",
+      "label": "package.json"
+    },
+    {
+      "path": "skills/web-search-plus/temp_web_search_plus/scripts/search.py",
+      "kind": "script",
+      "label": "search.py"
+    },
+    {
+      "path": "skills/web-search-plus/temp_web_search_plus/scripts/setup.py",
+      "kind": "script",
+      "label": "setup.py"
+    },
+    {
+      "path": "skills/web-search-plus/temp_web_search_plus/test-auto-routing.sh",
+      "kind": "script",
+      "label": "test-auto-routing.sh"
+    },
+    {
+      "path": "skills/web-search-plus/test-auto-routing.sh",
+      "kind": "script",
+      "label": "test-auto-routing.sh"
+    },
+    {
+      "path": "sops/邮件收件箱摘要与优先级整理.md",
+      "kind": "knowledge",
+      "label": "邮件收件箱摘要与优先级整理.md"
+    }
+  ],
+  "reviewStatus": "draft",
+  "visibility": "private"
+}

@@ -1,6 +1,6 @@
-# OpenClaw Web Platform
+# SoloCore Hub
 
-This app is the future cloud-facing product line for OpenClaw.
+SoloCore Hub is the cloud-facing registry, delivery, moderation, and admin surface for SoloCore resources. It can also operate as the authenticated control surface for a server-side OpenClaw runtime.
 
 ## V1 Scope
 
@@ -14,7 +14,7 @@ This app is the future cloud-facing product line for OpenClaw.
 
 ## Explicit Non-Goals For V1
 
-- direct execution of local OpenClaw broker APIs
+- direct execution of a user's personal local OpenClaw broker APIs
 - syncing private local workspaces to the cloud
 - remote control of a user's local file system
 
@@ -24,4 +24,4 @@ This platform distributes `Community Package V1` artifacts from:
 
 - `/Users/liumobei/.openclaw/workspace/apps/packages/community-package-v1/manifest.schema.json`
 
-The local console remains the installer/runtime. The web platform is the registry, moderation, and delivery surface.
+SoloCore Console remains the installer/runtime. SoloCore Hub is the registry, moderation, delivery surface, and the admin entrypoint for a server-hosted cloud OpenClaw runtime.

@@ -1,0 +1,126 @@
+{
+  "schemaVersion": "community-package-v1",
+  "packageId": "cap.openclaw.sop.content-dev-testing",
+  "type": "sop-pack",
+  "name": "测试与验收清单",
+  "version": "0.2.0",
+  "author": {
+    "name": "OpenClaw",
+    "id": "official/openclaw"
+  },
+  "description": "交付验收、质量保证",
+  "source": {
+    "kind": "local-export",
+    "createdAt": "2026-03-24T10:52:07Z"
+  },
+  "capabilities": [
+    {
+      "id": "cap.openclaw.sop.content-dev-testing",
+      "label": "测试与验收清单",
+      "summary": "交付验收、质量保证",
+      "entrypoint": "__OPENCLAW_WORKFLOW__ sop-content-dev-testing"
+    }
+  ],
+  "dependencies": [
+    {
+      "id": "cap.openclaw.foundation.files-repo",
+      "label": "文件与版本管理",
+      "kind": "foundation",
+      "required": true,
+      "installCommand": "read/write/edit/exec + git",
+      "installUrl": "",
+      "bundled": false
+    }
+  ],
+  "compatibility": {
+    "openclawMinVersion": "2026.3.2",
+    "installMode": "local-console",
+    "platforms": [
+      "macos",
+      "linux",
+      "windows"
+    ]
+  },
+  "permissions": [
+    {
+      "key": "filesystem.read",
+      "required": true,
+      "reason": "Read packaged SOP, docs, and supporting local files."
+    }
+  ],
+  "checksums": {
+    "algorithm": "sha256",
+    "files": [
+      {
+        "path": "OPENCLAW.md",
+        "sha256": "699de60c7365981b0c450cc1eb0528d5016b889b7bac9e5ff1bcbce95a229e4f"
+      },
+      {
+        "path": "README.md",
+        "sha256": "83126f9e63a3089b4ebc198d5c224e1b24ab66f75e3f25c25f610ebd66933448"
+      },
+      {
+        "path": "capability-manifest.json",
+        "sha256": "acf8db79ca7ae05a61a022e8df8400ce547a100609d1cca476ac3c9d34040c2b"
+      },
+      {
+        "path": "dependency-hints.json",
+        "sha256": "be6d0881dbd9b9ec8cb3ff06dce7b866d7c4d7fb72fdf91c25877b9758d8c746"
+      },
+      {
+        "path": "healthcheck.py",
+        "sha256": "9d3e8858175658f3731cb8979ef2e77859f9df0ff8831e296b9c61757d316074"
+      },
+      {
+        "path": "install.py",
+        "sha256": "ca27ee8235429b0577e1f11fcf06260dcce959c1914c7f2a7a310691c58eb8b1"
+      },
+      {
+        "path": "schemas/community-package-v1.schema.json",
+        "sha256": "fbfce78f0b3bea1bb68dc0d51ca99e2149cb1743fae6f3c4825d1e881e7ec8d8"
+      },
+      {
+        "path": "sops/测试与验收清单.md",
+        "sha256": "e24e99688bfe86753041ef3a926b82a4daea626bfe275f17c9d692be094bfec1"
+      }
+    ]
+  },
+  "docs": [
+    {
+      "title": "OPENCLAW",
+      "path": "OPENCLAW.md"
+    },
+    {
+      "title": "README",
+      "path": "README.md"
+    },
+    {
+      "title": "测试与验收清单",
+      "path": "sops/测试与验收清单.md"
+    }
+  ],
+  "assets": [
+    {
+      "path": "OPENCLAW.md",
+      "kind": "knowledge",
+      "label": "OPENCLAW.md"
+    },
+    {
+      "path": "README.md",
+      "kind": "knowledge",
+      "label": "README.md"
+    },
+    {
+      "path": "schemas/community-package-v1.schema.json",
+      "kind": "document",
+      "label": "community-package-v1.schema.json"
+    },
+    {
+      "path": "sops/测试与验收清单.md",
+      "kind": "knowledge",
+      "label": "测试与验收清单.md"
+    }
+  ],
+  "reviewStatus": "draft",
+  "visibility": "private"
+}

@@ -1,0 +1,35 @@
+{
+  "generated_at": "2026-03-19T20:34:00.784158+08:00",
+  "target_dir": "/Users/liumobei/.openclaw/workspace/content_system/skilltree",
+  "primary_artifact": "/Users/liumobei/.openclaw/workspace/content_system/skilltree/INDEX.md",
+  "execution_summary": "已生成资料索引，共 5 个文件；默认查看 INDEX.md。",
+  "files": [
+    {
+      "path": "ARCHIVE_RULES.md",
+      "type": "文档",
+      "size": 1553
+    },
+    {
+      "path": "INDEX.json",
+      "type": "数据",
+      "size": 807
+    },
+    {
+      "path": "INDEX.md",
+      "type": "文档",
+      "size": 539
+    },
+    {
+      "path": "data.json",
+      "type": "数据",
+      "size": 14209
+    },
+    {
+      "path": "index.html",
+      "type": "页面",
+      "size": 5910
+    }
+  ],
+  "node_count": 27,
+  "category_count": 10
+}

@@ -1,0 +1,129 @@
+{
+  "schemaVersion": "community-package-v1",
+  "packageId": "cap.openclaw.sop.workflow-d522a60e",
+  "type": "sop-pack",
+  "name": "项目资料交接包",
+  "version": "0.2.0",
+  "author": {
+    "name": "OpenClaw",
+    "id": "official/openclaw"
+  },
+  "description": "把一个目录、项目或仓库整理成可以直接交给别人继续接手的交接包。",
+  "source": {
+    "kind": "local-export",
+    "createdAt": "2026-03-24T10:52:07Z"
+  },
+  "capabilities": [
+    {
+      "id": "cap.openclaw.sop.workflow-d522a60e",
+      "label": "项目资料交接包",
+      "summary": "把一个目录、项目或仓库整理成可以直接交给别人继续接手的交接包。",
+      "entrypoint": "__OPENCLAW_WORKFLOW__ sop-项目资料交接包"
+    }
+  ],
+  "dependencies": [],
+  "compatibility": {
+    "openclawMinVersion": "2026.3.2",
+    "installMode": "local-console",
+    "platforms": [
+      "macos",
+      "linux",
+      "windows"
+    ]
+  },
+  "permissions": [
+    {
+      "key": "filesystem.read",
+      "required": true,
+      "reason": "Read packaged SOP, docs, and supporting local files."
+    }
+  ],
+  "checksums": {
+    "algorithm": "sha256",
+    "files": [
+      {
+        "path": "OPENCLAW.md",
+        "sha256": "82ebfe54d47e584b275165682fcf6118c869b4a6d4d3b9e56d2ad240d35f95e5"
+      },
+      {
+        "path": "README.md",
+        "sha256": "6044b11311558a45bd9a25825272648503460efb94a01c35430b2f7b45db1a28"
+      },
+      {
+        "path": "capability-manifest.json",
+        "sha256": "31e58eb17724a77950ff58beb4a2cca7452266a90f429037c32d4ce38403032d"
+      },
+      {
+        "path": "dependency-hints.json",
+        "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      },
+      {
+        "path": "healthcheck.py",
+        "sha256": "c180501c088b5b84e21fae73cd4e4333439a42829cd8ae2a59e76118ce433f74"
+      },
+      {
+        "path": "install.py",
+        "sha256": "99dff80fa3d023e9a36beeb29e6359e58f315f0adce1382999dd9c3981b95427"
+      },
+      {
+        "path": "knowledge/project_handover_package.md",
+        "sha256": "3acca05d52d245782a4312b0b283ce9dc80914d7683dc51ddeb6165625c48d66"
+      },
+      {
+        "path": "schemas/community-package-v1.schema.json",
+        "sha256": "fbfce78f0b3bea1bb68dc0d51ca99e2149cb1743fae6f3c4825d1e881e7ec8d8"
+      },
+      {
+        "path": "sops/项目资料交接包.md",
+        "sha256": "c129d126fe224f95f1ebad3fb9a7d03e05c2e1ee90d83acbe3bbd6764da9cc96"
+      }
+    ]
+  },
+  "docs": [
+    {
+      "title": "OPENCLAW",
+      "path": "OPENCLAW.md"
+    },
+    {
+      "title": "README",
+      "path": "README.md"
+    },
+    {
+      "title": "project_handover_package",
+      "path": "knowledge/project_handover_package.md"
+    },
+    {
+      "title": "项目资料交接包",
+      "path": "sops/项目资料交接包.md"
+    }
+  ],
+  "assets": [
+    {
+      "path": "OPENCLAW.md",
+      "kind": "knowledge",
+      "label": "OPENCLAW.md"
+    },
+    {
+      "path": "README.md",
+      "kind": "knowledge",
+      "label": "README.md"
+    },
+    {
+      "path": "knowledge/project_handover_package.md",
+      "kind": "knowledge",
+      "label": "project_handover_package.md"
+    },
+    {
+      "path": "schemas/community-package-v1.schema.json",
+      "kind": "document",
+      "label": "community-package-v1.schema.json"
+    },
+    {
+      "path": "sops/项目资料交接包.md",
+      "kind": "knowledge",
+      "label": "项目资料交接包.md"
+    }
+  ],
+  "reviewStatus": "draft",
+  "visibility": "private"
+}

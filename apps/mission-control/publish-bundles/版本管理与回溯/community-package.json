@@ -1,0 +1,126 @@
+{
+  "schemaVersion": "community-package-v1",
+  "packageId": "cap.openclaw.sop.content-project-version-trace",
+  "type": "sop-pack",
+  "name": "版本管理与回溯",
+  "version": "0.2.0",
+  "author": {
+    "name": "OpenClaw",
+    "id": "official/openclaw"
+  },
+  "description": "交付追踪、历史回查",
+  "source": {
+    "kind": "local-export",
+    "createdAt": "2026-03-24T10:52:07Z"
+  },
+  "capabilities": [
+    {
+      "id": "cap.openclaw.sop.content-project-version-trace",
+      "label": "版本管理与回溯",
+      "summary": "交付追踪、历史回查",
+      "entrypoint": "__OPENCLAW_WORKFLOW__ sop-content-project-version-trace"
+    }
+  ],
+  "dependencies": [
+    {
+      "id": "cap.openclaw.foundation.files-repo",
+      "label": "文件与版本管理",
+      "kind": "foundation",
+      "required": true,
+      "installCommand": "read/write/edit/exec + git",
+      "installUrl": "",
+      "bundled": false
+    }
+  ],
+  "compatibility": {
+    "openclawMinVersion": "2026.3.2",
+    "installMode": "local-console",
+    "platforms": [
+      "macos",
+      "linux",
+      "windows"
+    ]
+  },
+  "permissions": [
+    {
+      "key": "filesystem.read",
+      "required": true,
+      "reason": "Read packaged SOP, docs, and supporting local files."
+    }
+  ],
+  "checksums": {
+    "algorithm": "sha256",
+    "files": [
+      {
+        "path": "OPENCLAW.md",
+        "sha256": "6d90b895dd4c7119bc4f625dae8d008048e22eedfca7c5e4fe39af973ccca9ee"
+      },
+      {
+        "path": "README.md",
+        "sha256": "67731bb2d541b77900b87d56f38d453c04c8ef59e8de2b219a95c473595a2a5d"
+      },
+      {
+        "path": "capability-manifest.json",
+        "sha256": "e7e6bae5db3dceb863627e7b56d42199288b0a298ac7711cb28872fe7edabcad"
+      },
+      {
+        "path": "dependency-hints.json",
+        "sha256": "be6d0881dbd9b9ec8cb3ff06dce7b866d7c4d7fb72fdf91c25877b9758d8c746"
+      },
+      {
+        "path": "healthcheck.py",
+        "sha256": "cff0fe7d84d77e0a0f6620270478442c5b673cf1471d5137e4609e9d7367329c"
+      },
+      {
+        "path": "install.py",
+        "sha256": "a7d1b96b5af3ed1f8c14b9877ca666de879e06525d1978caf5ebeaaa6903fbb5"
+      },
+      {
+        "path": "schemas/community-package-v1.schema.json",
+        "sha256": "fbfce78f0b3bea1bb68dc0d51ca99e2149cb1743fae6f3c4825d1e881e7ec8d8"
+      },
+      {
+        "path": "sops/版本管理与回溯.md",
+        "sha256": "2dd1756be41c45997d15889d3e40cab02eba45019551ef82141a10607a7706fe"
+      }
+    ]
+  },
+  "docs": [
+    {
+      "title": "OPENCLAW",
+      "path": "OPENCLAW.md"
+    },
+    {
+      "title": "README",
+      "path": "README.md"
+    },
+    {
+      "title": "版本管理与回溯",
+      "path": "sops/版本管理与回溯.md"
+    }
+  ],
+  "assets": [
+    {
+      "path": "OPENCLAW.md",
+      "kind": "knowledge",
+      "label": "OPENCLAW.md"
+    },
+    {
+      "path": "README.md",
+      "kind": "knowledge",
+      "label": "README.md"
+    },
+    {
+      "path": "schemas/community-package-v1.schema.json",
+      "kind": "document",
+      "label": "community-package-v1.schema.json"
+    },
+    {
+      "path": "sops/版本管理与回溯.md",
+      "kind": "knowledge",
+      "label": "版本管理与回溯.md"
+    }
+  ],
+  "reviewStatus": "draft",
+  "visibility": "private"
+}

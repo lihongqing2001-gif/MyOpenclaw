@@ -1,0 +1,22 @@
+import json
+from pathlib import Path
+
+
+MANIFEST = json.loads(r'''{"id": "cap.openclaw.sop.workflow-ff3ad013", "name": "研究资料矩阵与证据整理", "version": "0.2.0", "description": "围绕一个研究问题或项目主题，整理来源、观点、证据、风险和下一步检索方向，形成一份可继续扩展的研究矩阵。", "domain": "科研与研究", "category": "研究工作流", "tags": ["科研与研究", "研究工作流", "sop"], "ownership": "openclaw", "publish": "local-bundle", "dependencies": [], "requires": ">=2026.3.2", "skills": ["skills/qmd-skill/SKILL.md", "skills/social-content/SKILL.md", "skills/web-search-plus/SKILL.md"], "sops": ["sops/研究资料矩阵与证据整理.md"], "install": "python3 install.py", "healthcheck": "python3 healthcheck.py", "outputs": ["outputs/cap.openclaw.sop.workflow-ff3ad013/"], "packaged_capabilities": ["cap.openclaw.skill.qmd-skill", "cap.openclaw.skill.social-content", "cap.openclaw.skill.web-search-plus"], "entrypoints": [{"label": "研究资料矩阵与证据整理", "command": "__OPENCLAW_WORKFLOW__ sop-研究资料矩阵与证据整理"}]}''')
+
+
+def main():
+    workspace = Path.home() / ".openclaw" / "workspace"
+    required = [
+        workspace / "sops/研究资料矩阵与证据整理.md",
+        workspace / "agents" / "knowledge" / "portable" / MANIFEST["id"],
+        workspace / "portable-bundles" / MANIFEST["id"] / "bundle" / "capability-manifest.json",
+    ]
+    missing = [str(path) for path in required if not path.exists()]
+    if missing:
+        raise SystemExit("Missing required paths: " + ", ".join(missing))
+    print(f"Healthcheck OK for {MANIFEST['id']}")
+
+
+if __name__ == "__main__":
+    main()

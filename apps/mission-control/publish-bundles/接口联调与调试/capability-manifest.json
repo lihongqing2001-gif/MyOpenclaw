@@ -1,0 +1,36 @@
+{
+  "id": "cap.openclaw.sop.content-dev-integration",
+  "name": "接口联调与调试",
+  "version": "0.2.0",
+  "description": "服务对接、联调测试",
+  "domain": "项目产出与资料管理",
+  "category": "编程",
+  "tags": [
+    "项目产出与资料管理",
+    "编程",
+    "核心",
+    "main"
+  ],
+  "ownership": "openclaw",
+  "publish": "local-bundle",
+  "dependencies": [
+    "cap.openclaw.foundation.files-repo"
+  ],
+  "requires": ">=2026.3.2",
+  "skills": [],
+  "sops": [
+    "sops/接口联调与调试.md"
+  ],
+  "install": "python3 install.py",
+  "healthcheck": "python3 healthcheck.py",
+  "outputs": [
+    "outputs/cap.openclaw.sop.content-dev-integration/"
+  ],
+  "packaged_capabilities": [],
+  "entrypoints": [
+    {
+      "label": "接口联调与调试",
+      "command": "__OPENCLAW_WORKFLOW__ sop-content-dev-integration"
+    }
+  ]
+}

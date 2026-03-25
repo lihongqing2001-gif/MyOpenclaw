@@ -1,0 +1,37 @@
+{
+  "id": "cap.openclaw.sop.workflow-9fe1238c",
+  "name": "技能缺口检查与安装计划",
+  "version": "0.2.0",
+  "description": "针对一个目标 SOP 或目标任务，检查当前缺少哪些技能、能力包或集成，并输出安装与验证计划。",
+  "domain": "OpenClaw Workflow",
+  "category": "综合工作流",
+  "tags": [
+    "OpenClaw Workflow",
+    "综合工作流",
+    "sop"
+  ],
+  "ownership": "openclaw",
+  "publish": "local-bundle",
+  "dependencies": [],
+  "requires": ">=2026.3.2",
+  "skills": [
+    "skills/find-skills/SKILL.md"
+  ],
+  "sops": [
+    "sops/技能缺口检查与安装计划.md"
+  ],
+  "install": "python3 install.py",
+  "healthcheck": "python3 healthcheck.py",
+  "outputs": [
+    "outputs/cap.openclaw.sop.workflow-9fe1238c/"
+  ],
+  "packaged_capabilities": [
+    "cap.openclaw.skill.find-skills"
+  ],
+  "entrypoints": [
+    {
+      "label": "技能缺口检查与安装计划",
+      "command": "__OPENCLAW_WORKFLOW__ sop-技能缺口检查与安装计划"
+    }
+  ]
+}

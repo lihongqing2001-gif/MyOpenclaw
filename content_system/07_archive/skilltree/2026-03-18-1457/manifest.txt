@@ -1,0 +1,10 @@
+snapshot: 2026-03-18-1457
+source: /Users/liumobei/.openclaw/workspace/content_system/skilltree
+
+files:
+-rw-------  1 liumobei  staff  14209 Mar  6 21:20 data.json
+-rw-------  1 liumobei  staff   5910 Mar  6 15:43 index.html
+
+checksums:
+8c7269dc811f609717452bb55f6c4f8532fc8994cf9cbe45e44155ed68f66f8a  data.json
+c3c27ae410ec2709ac6276ba645871c12efd91094bc1da89e63bfc6ed3ebf816  index.html

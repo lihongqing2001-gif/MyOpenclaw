@@ -1,0 +1,36 @@
+{
+  "id": "cap.openclaw.sop.content-project-version-trace",
+  "name": "版本管理与回溯",
+  "version": "0.2.0",
+  "description": "交付追踪、历史回查",
+  "domain": "项目产出与资料管理",
+  "category": "文件与资料管理",
+  "tags": [
+    "项目产出与资料管理",
+    "文件与资料管理",
+    "基础",
+    "main"
+  ],
+  "ownership": "openclaw",
+  "publish": "local-bundle",
+  "dependencies": [
+    "cap.openclaw.foundation.files-repo"
+  ],
+  "requires": ">=2026.3.2",
+  "skills": [],
+  "sops": [
+    "sops/版本管理与回溯.md"
+  ],
+  "install": "python3 install.py",
+  "healthcheck": "python3 healthcheck.py",
+  "outputs": [
+    "outputs/cap.openclaw.sop.content-project-version-trace/"
+  ],
+  "packaged_capabilities": [],
+  "entrypoints": [
+    {
+      "label": "版本管理与回溯",
+      "command": "__OPENCLAW_WORKFLOW__ sop-content-project-version-trace"
+    }
+  ]
+}

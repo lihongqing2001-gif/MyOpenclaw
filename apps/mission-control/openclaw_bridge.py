@@ -5,7 +5,7 @@ from typing import Optional, Dict, Any
 
 class OpenClawUIBridge:
     """
-    Bridge to communicate with the OpenClaw Web Console.
+    Bridge to communicate with SoloCore Console.
     Allows the OpenClaw agent to dynamically update the UI state.
     """
     

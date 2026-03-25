@@ -1,0 +1,282 @@
+{
+  "schemaVersion": "community-package-v1",
+  "packageId": "cap.openclaw.sop.workflow-8c040ba6",
+  "type": "sop-pack",
+  "name": "邮件回复草稿与发送建议",
+  "version": "0.2.0",
+  "author": {
+    "name": "OpenClaw",
+    "id": "official/openclaw"
+  },
+  "description": "针对一封或一组邮件生成可直接使用的回复草稿，并给出发送建议。",
+  "source": {
+    "kind": "local-export",
+    "createdAt": "2026-03-24T10:52:00Z"
+  },
+  "capabilities": [
+    {
+      "id": "cap.openclaw.sop.workflow-8c040ba6",
+      "label": "邮件回复草稿与发送建议",
+      "summary": "针对一封或一组邮件生成可直接使用的回复草稿，并给出发送建议。",
+      "entrypoint": "__OPENCLAW_WORKFLOW__ sop-邮件回复草稿与发送建议"
+    },
+    {
+      "id": "cap.openclaw.skill.assistant-orchestrator",
+      "label": "assistant-orchestrator",
+      "summary": "Bundled supporting capability.",
+      "entrypoint": ""
+    },
+    {
+      "id": "cap.openclaw.skill.email-sequence",
+      "label": "email-sequence",
+      "summary": "Bundled supporting capability.",
+      "entrypoint": ""
+    }
+  ],
+  "dependencies": [
+    {
+      "id": "cap.openclaw.skill.assistant-orchestrator",
+      "label": "assistant-orchestrator",
+      "kind": "skill",
+      "required": false,
+      "installCommand": "claw skill install assistant-orchestrator",
+      "installUrl": "",
+      "bundled": true
+    },
+    {
+      "id": "cap.openclaw.skill.email-sequence",
+      "label": "email-sequence",
+      "kind": "skill",
+      "required": false,
+      "installCommand": "claw skill install email-sequence",
+      "installUrl": "",
+      "bundled": true
+    }
+  ],
+  "compatibility": {
+    "openclawMinVersion": "2026.3.2",
+    "installMode": "local-console",
+    "platforms": [
+      "macos",
+      "linux",
+      "windows"
+    ]
+  },
+  "permissions": [
+    {
+      "key": "filesystem.read",
+      "required": true,
+      "reason": "Read packaged SOP, docs, and supporting local files."
+    }
+  ],
+  "checksums": {
+    "algorithm": "sha256",
+    "files": [
+      {
+        "path": "OPENCLAW.md",
+        "sha256": "7245e330b2e3b40723e1177886eddaa27658db114e3933e56ddad9bb3239872e"
+      },
+      {
+        "path": "README.md",
+        "sha256": "45f6b558f8495e920d2b06abd13cd25e9fe2e9de865c26f22c6f57f79af95070"
+      },
+      {
+        "path": "capability-manifest.json",
+        "sha256": "863b8059176e40500558cf4fca0f9cd71cf1e7d1e26a3874def90cd575a6d7e0"
+      },
+      {
+        "path": "dependency-hints.json",
+        "sha256": "c78a6f5f6e9f942ce6acf2100eb62916e2126d1cc892d97dbdbc8b265bb39328"
+      },
+      {
+        "path": "healthcheck.py",
+        "sha256": "f7f3bae67523c27c74ad7c5f3bba6a1cc653e7a259a3d74018f731835d631370"
+      },
+      {
+        "path": "install.py",
+        "sha256": "9878d80a6b6e3f9f60cbcaa9d2bcacaffa1c69579da8ef25e61a30d268f8846c"
+      },
+      {
+        "path": "knowledge/email_reply_drafter.md",
+        "sha256": "6d562709e34b559c54ae71a9b8d6cdb76d9cc26c97d916903e88ff93825e3bb4"
+      },
+      {
+        "path": "schemas/community-package-v1.schema.json",
+        "sha256": "fbfce78f0b3bea1bb68dc0d51ca99e2149cb1743fae6f3c4825d1e881e7ec8d8"
+      },
+      {
+        "path": "skills/assistant-orchestrator/SKILL.md",
+        "sha256": "24848fef15090e4cbba1299aff02c4af665206f6c633c6aec6b0857ce2ce79f9"
+      },
+      {
+        "path": "skills/assistant-orchestrator/outputs/email-daily-triage/leehongking-qq-com/2026-03-24__triage.json",
+        "sha256": "ea89c6047ce3f6784d3ade6a6357e4975a3250fb8cd33cf5223ac4c511a682aa"
+      },
+      {
+        "path": "skills/assistant-orchestrator/outputs/email-daily-triage/leehongking-qq-com/2026-03-24__triage.md",
+        "sha256": "50b2247dfa506fe6736448a2166da180e06cdb73bfa93dc5880fbe19062e8b24"
+      },
+      {
+        "path": "skills/assistant-orchestrator/outputs/邮件摘要_2026-03-24.md",
+        "sha256": "ac8553890334caf164dda3e21d9396d65b198d51eb52c4360674343fc8a99b8b"
+      },
+      {
+        "path": "skills/assistant-orchestrator/references/swarm-blueprint.md",
+        "sha256": "132c5c07a7949d915d81dc846bfed21a48c4afd18ae0f750e477606b0da98644"
+      },
+      {
+        "path": "skills/email-sequence/SKILL.md",
+        "sha256": "c82b9b655fc24729e7d08e7ac2aa09f421babe8925104c91d492ea59832f51a3"
+      },
+      {
+        "path": "skills/email-sequence/evals/evals.json",
+        "sha256": "3ec2a39a2eaeaa03553a648ee5a4018351286a64313aaba06e0c5bc82d343bbf"
+      },
+      {
+        "path": "skills/email-sequence/references/copy-guidelines.md",
+        "sha256": "02f08897e4aa99ecc4ec1893d61d0c26d0c5e62e09af26f175087455e9b68e01"
+      },
+      {
+        "path": "skills/email-sequence/references/email-types.md",
+        "sha256": "a5dd4f0555a7b21d2ff426948d15657825b9d16265652563f5e272d2e1879bfd"
+      },
+      {
+        "path": "skills/email-sequence/references/sequence-templates.md",
+        "sha256": "d47b12e263ad52b72ab741c490bbc98d8bf8034d61faccc50b7dbb2650a9fba0"
+      },
+      {
+        "path": "sops/邮件回复草稿与发送建议.md",
+        "sha256": "300f0b3b1ade9af74f4859783499b7c164fefa83b17b07214d53c8f09c295f0e"
+      }
+    ]
+  },
+  "docs": [
+    {
+      "title": "OPENCLAW",
+      "path": "OPENCLAW.md"
+    },
+    {
+      "title": "README",
+      "path": "README.md"
+    },
+    {
+      "title": "email_reply_drafter",
+      "path": "knowledge/email_reply_drafter.md"
+    },
+    {
+      "title": "SKILL",
+      "path": "skills/assistant-orchestrator/SKILL.md"
+    },
+    {
+      "title": "2026-03-24__triage",
+      "path": "skills/assistant-orchestrator/outputs/email-daily-triage/leehongking-qq-com/2026-03-24__triage.md"
+    },
+    {
+      "title": "邮件摘要_2026-03-24",
+      "path": "skills/assistant-orchestrator/outputs/邮件摘要_2026-03-24.md"
+    },
+    {
+      "title": "swarm-blueprint",
+      "path": "skills/assistant-orchestrator/references/swarm-blueprint.md"
+    },
+    {
+      "title": "SKILL",
+      "path": "skills/email-sequence/SKILL.md"
+    },
+    {
+      "title": "copy-guidelines",
+      "path": "skills/email-sequence/references/copy-guidelines.md"
+    },
+    {
+      "title": "email-types",
+      "path": "skills/email-sequence/references/email-types.md"
+    },
+    {
+      "title": "sequence-templates",
+      "path": "skills/email-sequence/references/sequence-templates.md"
+    },
+    {
+      "title": "邮件回复草稿与发送建议",
+      "path": "sops/邮件回复草稿与发送建议.md"
+    }
+  ],
+  "assets": [
+    {
+      "path": "OPENCLAW.md",
+      "kind": "knowledge",
+      "label": "OPENCLAW.md"
+    },
+    {
+      "path": "README.md",
+      "kind": "knowledge",
+      "label": "README.md"
+    },
+    {
+      "path": "knowledge/email_reply_drafter.md",
+      "kind": "knowledge",
+      "label": "email_reply_drafter.md"
+    },
+    {
+      "path": "schemas/community-package-v1.schema.json",
+      "kind": "document",
+      "label": "community-package-v1.schema.json"
+    },
+    {
+      "path": "skills/assistant-orchestrator/SKILL.md",
+      "kind": "knowledge",
+      "label": "SKILL.md"
+    },
+    {
+      "path": "skills/assistant-orchestrator/outputs/email-daily-triage/leehongking-qq-com/2026-03-24__triage.json",
+      "kind": "document",
+      "label": "2026-03-24__triage.json"
+    },
+    {
+      "path": "skills/assistant-orchestrator/outputs/email-daily-triage/leehongking-qq-com/2026-03-24__triage.md",
+      "kind": "knowledge",
+      "label": "2026-03-24__triage.md"
+    },
+    {
+      "path": "skills/assistant-orchestrator/outputs/邮件摘要_2026-03-24.md",
+      "kind": "knowledge",
+      "label": "邮件摘要_2026-03-24.md"
+    },
+    {
+      "path": "skills/assistant-orchestrator/references/swarm-blueprint.md",
+      "kind": "knowledge",
+      "label": "swarm-blueprint.md"
+    },
+    {
+      "path": "skills/email-sequence/SKILL.md",
+      "kind": "knowledge",
+      "label": "SKILL.md"
+    },
+    {
+      "path": "skills/email-sequence/evals/evals.json",
+      "kind": "document",
+      "label": "evals.json"
+    },
+    {
+      "path": "skills/email-sequence/references/copy-guidelines.md",
+      "kind": "knowledge",
+      "label": "copy-guidelines.md"
+    },
+    {
+      "path": "skills/email-sequence/references/email-types.md",
+      "kind": "knowledge",
+      "label": "email-types.md"
+    },
+    {
+      "path": "skills/email-sequence/references/sequence-templates.md",
+      "kind": "knowledge",
+      "label": "sequence-templates.md"
+    },
+    {
+      "path": "sops/邮件回复草稿与发送建议.md",
+      "kind": "knowledge",
+      "label": "邮件回复草稿与发送建议.md"
+    }
+  ],
+  "reviewStatus": "draft",
+  "visibility": "private"
+}

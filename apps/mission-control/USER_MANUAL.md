@@ -1,8 +1,8 @@
-# OpenClaw Web Console 用户手册
+# SoloCore Console 用户手册
 
 ## 1. 这是什么
 
-OpenClaw Web Console 是一个给 OpenClaw 使用者看的控制台。
+SoloCore Console 是一个面向本地操作者的控制台，也可以作为 OpenClaw agent 的通用本地工作台。
 
 它由三部分组成：
 

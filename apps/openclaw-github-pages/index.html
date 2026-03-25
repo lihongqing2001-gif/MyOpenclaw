@@ -3,43 +3,389 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>OpenClaw</title>
+    <title>SoloCore Hub</title>
     <style>
-      body { margin: 0; background: #f4f7fb; color: #111827; font: 16px/1.6 -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif; }
-      .page { max-width: 1080px; margin: 0 auto; padding: 56px 20px 72px; }
-      .hero { background: white; border: 1px solid #dbe2ea; border-radius: 28px; padding: 32px; box-shadow: 0 18px 48px rgba(15,23,42,.08); }
-      .grid { display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); margin-top: 24px; }
-      .card { background: white; border: 1px solid #dbe2ea; border-radius: 20px; padding: 18px; }
-      .actions { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 20px; }
-      a.button { display: inline-flex; align-items: center; justify-content: center; border-radius: 999px; padding: 12px 18px; text-decoration: none; font-weight: 700; }
-      a.primary { background: #2563eb; color: white; }
-      a.secondary { background: #eef2ff; color: #3730a3; }
-      code { background: #eef2ff; border-radius: 6px; padding: 2px 6px; }
+      :root {
+        color-scheme: dark;
+        --bg: #040814;
+        --panel: rgba(10, 15, 28, 0.84);
+        --panel-soft: rgba(255, 255, 255, 0.04);
+        --border: rgba(148, 163, 184, 0.16);
+        --text: #e6eefc;
+        --text-soft: #a4b5d6;
+        --text-faint: #6e7f9d;
+        --blue: #5ea8ff;
+        --cyan: #66e0ff;
+        --violet: #8b7dff;
+        --radius-xl: 30px;
+        --radius-lg: 22px;
+        --radius-md: 16px;
+        --shadow: 0 32px 90px rgba(2, 8, 23, 0.48);
+        --font-sans: "IBM Plex Sans", "Avenir Next", "Segoe UI", sans-serif;
+        --font-mono: "IBM Plex Mono", "SFMono-Regular", "Consolas", monospace;
+      }
+
+      * { box-sizing: border-box; }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        color: var(--text);
+        background:
+          radial-gradient(circle at 20% 0%, rgba(37, 99, 235, 0.26), transparent 34%),
+          radial-gradient(circle at 82% 12%, rgba(102, 224, 255, 0.18), transparent 28%),
+          radial-gradient(circle at 50% 100%, rgba(99, 102, 241, 0.16), transparent 42%),
+          var(--bg);
+        font: 16px/1.65 var(--font-sans);
+      }
+
+      body::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        background:
+          linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+        background-size: 72px 72px;
+        mask-image: radial-gradient(circle at center, black 30%, transparent 90%);
+        opacity: 0.35;
+      }
+
+      .page {
+        position: relative;
+        z-index: 1;
+        max-width: 1220px;
+        margin: 0 auto;
+        padding: 56px 20px 84px;
+      }
+
+      .hero {
+        position: relative;
+        overflow: hidden;
+        padding: 38px;
+        border-radius: var(--radius-xl);
+        background:
+          linear-gradient(160deg, rgba(94, 168, 255, 0.12), transparent 32%),
+          linear-gradient(205deg, rgba(99, 102, 241, 0.12), transparent 30%),
+          var(--panel);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        box-shadow: var(--shadow);
+      }
+
+      .hero::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        background: linear-gradient(180deg, rgba(255,255,255,0.05), transparent 20%, transparent 80%, rgba(255,255,255,0.03));
+      }
+
+      .hero-grid {
+        display: grid;
+        grid-template-columns: minmax(0, 1.3fr) minmax(320px, 0.9fr);
+        gap: 28px;
+        align-items: stretch;
+      }
+
+      .eyebrow {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        padding: 8px 12px;
+        border-radius: 999px;
+        border: 1px solid rgba(94, 168, 255, 0.22);
+        background: rgba(94, 168, 255, 0.08);
+        color: var(--blue);
+        font: 600 0.78rem/1 var(--font-mono);
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      .eyebrow::before {
+        content: "";
+        width: 9px;
+        height: 9px;
+        border-radius: 999px;
+        background: var(--cyan);
+        box-shadow: 0 0 18px rgba(102, 224, 255, 0.8);
+      }
+
+      h1 {
+        margin: 18px 0 12px;
+        max-width: 11ch;
+        font-size: clamp(2.8rem, 8vw, 5.2rem);
+        line-height: 0.98;
+        letter-spacing: -0.05em;
+      }
+
+      h1 span {
+        display: block;
+        color: transparent;
+        background: linear-gradient(90deg, #e6eefc, #76d6ff, #7f86ff);
+        background-clip: text;
+        -webkit-background-clip: text;
+      }
+
+      p.lede {
+        margin: 0;
+        max-width: 60ch;
+        color: var(--text-soft);
+        font-size: 1.06rem;
+      }
+
+      .actions {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+        margin-top: 26px;
+      }
+
+      a.button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        min-height: 46px;
+        padding: 0 18px;
+        border-radius: 999px;
+        border: 1px solid transparent;
+        text-decoration: none;
+        font-weight: 700;
+        transition: transform 140ms ease, border-color 140ms ease, background 140ms ease, color 140ms ease;
+      }
+
+      a.button:hover {
+        transform: translateY(-1px);
+      }
+
+      a.primary {
+        color: white;
+        background: linear-gradient(135deg, rgba(37, 99, 235, 0.95), rgba(94, 168, 255, 0.95));
+        box-shadow: 0 16px 36px rgba(37, 99, 235, 0.24);
+      }
+
+      a.secondary {
+        color: white;
+        background: rgba(255, 255, 255, 0.08);
+        border-color: rgba(148, 163, 184, 0.18);
+      }
+
+      .stack {
+        display: grid;
+        gap: 16px;
+      }
+
+      .signal-card,
+      .card {
+        padding: 22px;
+        border-radius: var(--radius-lg);
+        background: rgba(7, 13, 26, 0.82);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        display: grid;
+        gap: 12px;
+      }
+
+      .card-kicker {
+        color: var(--text-faint);
+        font: 0.76rem/1.3 var(--font-mono);
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+      }
+
+      .signal-list {
+        display: grid;
+        gap: 10px;
+      }
+
+      .signal-row {
+        padding: 13px 14px;
+        border-radius: var(--radius-md);
+        background: rgba(255, 255, 255, 0.04);
+        border: 1px solid rgba(255, 255, 255, 0.06);
+      }
+
+      .signal-row strong,
+      .card strong {
+        display: block;
+        margin-bottom: 4px;
+      }
+
+      .signal-row span,
+      .card p,
+      .subtle {
+        color: var(--text-soft);
+      }
+
+      .grid {
+        display: grid;
+        gap: 16px;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        margin-top: 24px;
+      }
+
+      .pill-row {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+
+      .pill {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 6px 10px;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        color: var(--text-soft);
+        font-size: 0.76rem;
+        font-weight: 700;
+      }
+
+      code {
+        display: inline-block;
+        padding: 2px 6px;
+        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        color: var(--cyan);
+        font: 0.84rem/1.4 var(--font-mono);
+      }
+
+      .footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 16px;
+        margin-top: 26px;
+        padding-top: 18px;
+        border-top: 1px solid rgba(255, 255, 255, 0.06);
+        color: var(--text-faint);
+      }
+
+      .footer-links {
+        display: flex;
+        gap: 14px;
+        flex-wrap: wrap;
+      }
+
+      .footer-links a {
+        color: inherit;
+      }
+
+      .footer-links a:hover {
+        color: white;
+      }
+
+      @media (max-width: 980px) {
+        .hero-grid,
+        .grid {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      @media (max-width: 720px) {
+        .page {
+          padding-left: 16px;
+          padding-right: 16px;
+        }
+
+        .hero,
+        .signal-card,
+        .card {
+          padding: 18px;
+        }
+
+        .footer {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+      }
     </style>
   </head>
   <body>
     <div class="page">
       <section class="hero">
-        <h1>OpenClaw</h1>
-        <p>Local-first console, official package distribution, and a moderated community platform for reusable SOPs, skills, demos, and tutorials.</p>
-        <div class="actions">
-          <a class="button primary" href="https://github.com/YOUR_ORG/YOUR_REPO/releases">Download Packages</a>
-          <a class="button secondary" href="https://app.your-domain.example">Open Platform</a>
-          <a class="button secondary" href="https://github.com/YOUR_ORG/YOUR_REPO/discussions">Community Discussions</a>
+        <div class="hero-grid">
+          <div>
+            <div class="eyebrow">Public entry for local-first package distribution</div>
+            <h1>Open the package ecosystem through <span>SoloCore Hub.</span></h1>
+            <p class="lede">Static public landing page for the Forge product line. Use GitHub Pages for discovery, GitHub Releases for public artifacts, and SoloCore Hub for moderated submissions, review, and signed download flows.</p>
+            <div class="actions">
+              <a class="button primary" href="http://127.0.0.1:3400/downloads">Download SoloCore Console</a>
+              <a class="button secondary" href="http://127.0.0.1:3400/">Open SoloCore Hub</a>
+              <a class="button secondary" href="http://127.0.0.1:3400/community">Community Packages</a>
+            </div>
+          </div>
+          <div class="stack">
+            <div class="signal-card">
+              <span class="card-kicker">Product split</span>
+              <strong>Public web outside, local runtime inside</strong>
+              <div class="signal-list">
+                <div class="signal-row">
+                  <strong>SoloCore Hub</strong>
+                  <span>Registry, submission, moderation, admin controls, and signed package delivery.</span>
+                </div>
+                <div class="signal-row">
+                  <strong>SoloCore Console</strong>
+                  <span>Private local operator console for import, execution, asset intake, and resident-agent workflows.</span>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
       <div class="grid">
         <div class="card">
-          <h3>Local Console</h3>
-          <p>Private local control plane for assets, SOP execution, package import/install, and agent workflows.</p>
+          <div class="pill-row"><span class="pill">Local runtime</span></div>
+          <strong>SoloCore Console</strong>
+          <p>Private local control plane for assets, SOP execution, package import, install, and agent workflows.</p>
         </div>
         <div class="card">
-          <h3>Web Platform</h3>
+          <div class="pill-row"><span class="pill">Cloud surface</span></div>
+          <strong>SoloCore Hub</strong>
           <p>Website, package registry, submissions, reviews, admin controls, and signed distribution flows.</p>
         </div>
         <div class="card">
-          <h3>GitHub Distribution</h3>
-          <p>GitHub Pages for the public site and GitHub Releases for public package distribution.</p>
+          <div class="pill-row"><span class="pill">Public distribution</span></div>
+          <strong>GitHub Distribution</strong>
+          <p>GitHub Pages for the public site and GitHub Releases for public package distribution and handoff.</p>
+        </div>
+      </div>
+      <div class="grid" style="margin-top: 18px;">
+        <div class="card">
+          <div class="pill-row"><span class="pill">Official resources</span></div>
+          <strong>Skills</strong>
+          <p>Public skill resources with install guides and release metadata.</p>
+          <a class="button secondary" href="https://github.com/lihongqing2001-gif/openclaw-skills" style="margin-top: 12px;">Open openclaw-skills</a>
+        </div>
+        <div class="card">
+          <div class="pill-row"><span class="pill">Official resources</span></div>
+          <strong>SOPs</strong>
+          <p>Public SOP resources with install guides and release metadata.</p>
+          <a class="button secondary" href="https://github.com/lihongqing2001-gif/openclaw-sops" style="margin-top: 12px;">Open openclaw-sops</a>
+        </div>
+        <div class="card">
+          <div class="pill-row"><span class="pill">Resource hubs</span></div>
+          <strong>Demos / Tutorials / Cases</strong>
+          <p>Reserved public repositories for additional resource types and future releases.</p>
+          <div class="subtle" style="margin-top: 12px;">
+            <a href="https://github.com/lihongqing2001-gif/openclaw-demos">demos</a> ·
+            <a href="https://github.com/lihongqing2001-gif/openclaw-tutorials">tutorials</a> ·
+            <a href="https://github.com/lihongqing2001-gif/openclaw-cases">cases</a>
+          </div>
+        </div>
+      </div>
+      <div class="footer">
+        <div>
+          <strong>SoloCore Hub public surface</strong>
+          <div class="subtle">Keep this page static and lightweight. Product logic lives in SoloCore Hub.</div>
+        </div>
+        <div class="footer-links">
+          <a href="http://127.0.0.1:3400/">App</a>
+          <a href="http://127.0.0.1:3400/downloads">Download Console</a>
+          <a href="http://127.0.0.1:3400/community">Community</a>
         </div>
       </div>
     </div>

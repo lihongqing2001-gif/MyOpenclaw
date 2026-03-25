@@ -1,0 +1,157 @@
+{
+  "schemaVersion": "community-package-v1",
+  "packageId": "cap.openclaw.sop.content-content-writer",
+  "type": "sop-pack",
+  "name": "长文内容生成",
+  "version": "0.2.0",
+  "author": {
+    "name": "OpenClaw",
+    "id": "official/openclaw"
+  },
+  "description": "AI/创业/教育/生活方式等多领域内容产出",
+  "source": {
+    "kind": "local-export",
+    "createdAt": "2026-03-24T10:52:07Z"
+  },
+  "capabilities": [
+    {
+      "id": "cap.openclaw.sop.content-content-writer",
+      "label": "长文内容生成",
+      "summary": "AI/创业/教育/生活方式等多领域内容产出",
+      "entrypoint": "/content run --style xiaogai --count 1"
+    }
+  ],
+  "dependencies": [
+    {
+      "id": "cap.openclaw.foundation.web-search",
+      "label": "搜索与网页抓取",
+      "kind": "foundation",
+      "required": true,
+      "installCommand": "web_search / web_fetch",
+      "installUrl": "",
+      "bundled": false
+    },
+    {
+      "id": "cap.openclaw.foundation.knowledge-index",
+      "label": "知识库归档与标签",
+      "kind": "foundation",
+      "required": true,
+      "installCommand": "/knowledge ingest --domain <领域> --platform <平台>",
+      "installUrl": "",
+      "bundled": false
+    },
+    {
+      "id": "cap.openclaw.foundation.browser-ops",
+      "label": "网页浏览与采集",
+      "kind": "foundation",
+      "required": true,
+      "installCommand": "浏览器快照/点击/抓取",
+      "installUrl": "",
+      "bundled": false
+    }
+  ],
+  "compatibility": {
+    "openclawMinVersion": "2026.3.2",
+    "installMode": "local-console",
+    "platforms": [
+      "macos",
+      "linux",
+      "windows"
+    ]
+  },
+  "permissions": [
+    {
+      "key": "filesystem.read",
+      "required": true,
+      "reason": "Read packaged SOP, docs, and supporting local files."
+    }
+  ],
+  "checksums": {
+    "algorithm": "sha256",
+    "files": [
+      {
+        "path": "OPENCLAW.md",
+        "sha256": "7015583e7b18b51b11524583827bced335e74cce358b825da5f2b18d86e242ce"
+      },
+      {
+        "path": "README.md",
+        "sha256": "5c4d8c795da939f5c390b71c90755f3ccbc908d0c6249a522860ed99b1ae4f3c"
+      },
+      {
+        "path": "capability-manifest.json",
+        "sha256": "1df5a4f5664a554613652be4111ade0f256072f6309339622a0cfdd34bb4588a"
+      },
+      {
+        "path": "dependency-hints.json",
+        "sha256": "fc8723dc59aa7ce77dcf1e1b4be5164b51db3f53f4ede4fe7a9a5f1776810f69"
+      },
+      {
+        "path": "healthcheck.py",
+        "sha256": "145185cb7e100ab53cd288696a613febe9197e2afeece9ea2abefba662c7d10f"
+      },
+      {
+        "path": "install.py",
+        "sha256": "2e5662d53defc3b86c5acddcf7c7484d5514aa3ecddcd031c3a0d5786d25f976"
+      },
+      {
+        "path": "knowledge/小盖风格_AI效率与审美_厚版.md",
+        "sha256": "f24a5abc4c015234373c29554e7f19864684f0ad3537fc6f446e856cfc1144b8"
+      },
+      {
+        "path": "schemas/community-package-v1.schema.json",
+        "sha256": "fbfce78f0b3bea1bb68dc0d51ca99e2149cb1743fae6f3c4825d1e881e7ec8d8"
+      },
+      {
+        "path": "sops/长文内容生成.md",
+        "sha256": "04d31e1d33c4a9f127135e3ee0ba26bff8501f5d6d9a4c4c9fb171e8e697fb52"
+      }
+    ]
+  },
+  "docs": [
+    {
+      "title": "OPENCLAW",
+      "path": "OPENCLAW.md"
+    },
+    {
+      "title": "README",
+      "path": "README.md"
+    },
+    {
+      "title": "小盖风格_AI效率与审美_厚版",
+      "path": "knowledge/小盖风格_AI效率与审美_厚版.md"
+    },
+    {
+      "title": "长文内容生成",
+      "path": "sops/长文内容生成.md"
+    }
+  ],
+  "assets": [
+    {
+      "path": "OPENCLAW.md",
+      "kind": "knowledge",
+      "label": "OPENCLAW.md"
+    },
+    {
+      "path": "README.md",
+      "kind": "knowledge",
+      "label": "README.md"
+    },
+    {
+      "path": "knowledge/小盖风格_AI效率与审美_厚版.md",
+      "kind": "knowledge",
+      "label": "小盖风格_AI效率与审美_厚版.md"
+    },
+    {
+      "path": "schemas/community-package-v1.schema.json",
+      "kind": "document",
+      "label": "community-package-v1.schema.json"
+    },
+    {
+      "path": "sops/长文内容生成.md",
+      "kind": "knowledge",
+      "label": "长文内容生成.md"
+    }
+  ],
+  "reviewStatus": "draft",
+  "visibility": "private"
+}

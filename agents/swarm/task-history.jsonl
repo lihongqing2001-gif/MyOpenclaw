@@ -1,0 +1,16 @@
+{"ts": "2026-03-17T12:13:16.068145+00:00", "event": "TASK_REGISTERED", "request_id": "swarm-20260317-001", "status": "NEW", "agent": "codex", "title": "Bootstrap swarm v1 registry"}
+{"ts": "2026-03-17T12:13:22.072872+00:00", "event": "TASK_REFRESHED", "request_id": "swarm-20260317-001", "status": "NEW", "notes": []}
+{"ts": "2026-03-17T12:17:01.715627+00:00", "event": "TASK_REFRESHED", "request_id": "swarm-20260317-001", "status": "NEW", "notes": []}
+{"ts": "2026-03-17T12:22:22.084168+00:00", "event": "TASK_DISPATCHED", "request_id": "swarm-20260317-002", "status": "DISPATCHED", "agent": "codex", "owner_agent": "main", "title": "Dispatch smoke test", "worktree_path": "/Users/liumobei/.openclaw/workspace/agents/swarm/worktrees/swarm-20260317-002", "branch": "feat/swarm-smoke-test"}
+{"ts": "2026-03-17T12:23:29.721298+00:00", "event": "TASK_REFRESHED", "request_id": "swarm-20260317-001", "status": "NEW", "notes": []}
+{"ts": "2026-03-17T12:23:34.107001+00:00", "event": "TASK_REFRESHED", "request_id": "swarm-20260317-002", "status": "DISPATCHED", "notes": []}
+{"ts": "2026-03-17T12:26:07.659438+00:00", "event": "TASK_DISPATCHED", "request_id": "swarm-20260317-003", "status": "DISPATCHED", "agent": "codex", "owner_agent": "main", "title": "Collect smoke test", "worktree_path": "/Users/liumobei/.openclaw/workspace/agents/swarm/worktrees/swarm-20260317-003", "branch": "feat/swarm-collect-test", "session_pid": null}
+{"ts": "2026-03-17T12:26:07.697013+00:00", "event": "TASK_COLLECTED", "request_id": "swarm-20260317-002", "status": "VERIFIED", "summary": "Smoke dispatch task created worktree and branch successfully; monitor kept task in DISPATCHED until real process evidence exists."}
+{"ts": "2026-03-17T12:49:51.332508+00:00", "event": "TASK_REFRESHED", "request_id": "swarm-20260317-001", "status": "NEW", "notes": []}
+{"ts": "2026-03-17T12:49:53.145892+00:00", "event": "TASK_REFRESHED", "request_id": "swarm-20260317-002", "status": "VERIFIED", "notes": []}
+{"ts": "2026-03-17T12:49:55.484062+00:00", "event": "TASK_REFRESHED", "request_id": "swarm-20260317-003", "status": "DISPATCHED", "notes": []}
+{"ts": "2026-03-17T13:17:19.605234+00:00", "event": "TASK_RETRIED", "request_id": "swarm-20260317-003", "status": "DISPATCHED", "retry_count": 1, "reason": "re-steer smoke test"}
+{"ts": "2026-03-17T13:17:19.643841+00:00", "event": "TASK_VERIFIED", "request_id": "swarm-20260317-002", "status": "VERIFIED", "summary": "Verified smoke task with explicit evidence path.", "evidence_count": 1}
+{"ts": "2026-03-17T13:17:19.691884+00:00", "event": "TASK_REFRESHED", "request_id": "swarm-20260317-001", "status": "NEW", "notes": []}
+{"ts": "2026-03-17T13:17:22.066751+00:00", "event": "TASK_REFRESHED", "request_id": "swarm-20260317-002", "status": "VERIFIED", "notes": []}
+{"ts": "2026-03-17T13:17:24.467873+00:00", "event": "TASK_REFRESHED", "request_id": "swarm-20260317-003", "status": "DISPATCHED", "notes": []}

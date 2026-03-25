@@ -1,0 +1,98 @@
+[
+  {
+    "capability_id": "cap.openclaw.skill.baoyu-danger-gemini-web",
+    "label": "baoyu-danger-gemini-web",
+    "summary": "Generates images and text via reverse-engineered Gemini Web API. Supports text generation, image generation from prompts, reference images for vision input, and multi-turn conversations. Use when other skills need image generation backend, or when user requests \"generate image with Gemini\", \"Gemini text generation\", or needs vision-capable AI generation.",
+    "source_type": "skill",
+    "source_path": "/Users/liumobei/.agents/skills/baoyu-danger-gemini-web/SKILL.md",
+    "install_command": "claw skill install baoyu-danger-gemini-web",
+    "install_url": null,
+    "installed": true,
+    "evidence": "explicit-text",
+    "packaged": true
+  },
+  {
+    "capability_id": "cap.openclaw.skill.douyin-video",
+    "label": "douyin-video",
+    "summary": "抖音无水印视频下载和文案提取工具. 从抖音分享链接获取无水印视频下载链接, 下载视频, 提取视频中的语音文案并自动保存到文件. 适用场景包括获取抖音视频信息, 下载无水印视频, 批量提取视频文案. 当用户需要处理抖音视频链接或提取视频内容时触发.",
+    "source_type": "skill",
+    "source_path": "/Users/liumobei/.agents/skills/douyin-video/SKILL.md",
+    "install_command": "claw skill install douyin-video",
+    "install_url": null,
+    "installed": true,
+    "evidence": "explicit-text",
+    "packaged": true
+  },
+  {
+    "capability_id": "cap.openclaw.skill.qmd-skill",
+    "label": "qmd",
+    "summary": "Local hybrid search for markdown notes and docs. Use when searching notes, finding related content, or retrieving documents from indexed collections.",
+    "source_type": "skill",
+    "source_path": "/Users/liumobei/.openclaw/workspace/skills/qmd-skill/SKILL.md",
+    "install_command": "claw skill install qmd-skill",
+    "install_url": null,
+    "installed": true,
+    "evidence": "explicit-text",
+    "packaged": true
+  },
+  {
+    "capability_id": "cap.openclaw.skill.remotion-video-production",
+    "label": "remotion-video-production",
+    "summary": "Produce programmable videos with Remotion using scene planning, asset orchestration, and validation gates for automated, brand-consistent video content.",
+    "source_type": "skill",
+    "source_path": "/Users/liumobei/.agents/skills/remotion-video-production/SKILL.md",
+    "install_command": "claw skill install remotion-video-production",
+    "install_url": null,
+    "installed": true,
+    "evidence": "explicit-text",
+    "packaged": true
+  },
+  {
+    "capability_id": "cap.openclaw.skill.video-production",
+    "label": "video-production",
+    "summary": "Produce programmable videos with Remotion using scene planning, asset orchestration, and validation gates for automated, brand-consistent video content.",
+    "source_type": "skill",
+    "source_path": "/Users/liumobei/.agents/skills/video-production/SKILL.md",
+    "install_command": "claw skill install video-production",
+    "install_url": null,
+    "installed": true,
+    "evidence": "explicit-text",
+    "packaged": true
+  },
+  {
+    "capability_id": "cap.openclaw.skill.video-prompting-guide",
+    "label": "video-prompting-guide",
+    "summary": "Best practices and techniques for writing effective AI video generation prompts. Covers: Veo, Seedance, Wan, Grok, Kling, Runway, Pika, Sora prompting strategies. Learn: shot types, camera movements, lighting, pacing, style keywords, negative prompts. Use for: improving video quality, getting consistent results, professional video prompts. Triggers: video prompt, how to prompt video, veo prompts, video generation tips, better ai video, video prompt engineering, video prompt guide, video prompt template, ai video tips, video prompt best practices, video prompt examples, cinematography prompts",
+    "source_type": "skill",
+    "source_path": "/Users/liumobei/.agents/skills/video-prompting-guide/SKILL.md",
+    "install_command": "claw skill install video-prompting-guide",
+    "install_url": "https://inference.sh",
+    "installed": true,
+    "evidence": "explicit-text",
+    "packaged": true
+  },
+  {
+    "capability_id": "cap.openclaw.skill.videoagent-video-studio",
+    "label": "videoagent-video-studio",
+    "summary": ">",
+    "source_type": "skill",
+    "source_path": "/Users/liumobei/.agents/skills/videoagent-video-studio/SKILL.md",
+    "install_command": "claw skill install videoagent-video-studio",
+    "install_url": null,
+    "installed": true,
+    "evidence": "explicit-text",
+    "packaged": true
+  },
+  {
+    "capability_id": "cap.openclaw.skill.xiaohongshu-skills",
+    "label": "xiaohongshu-skills",
+    "summary": "|",
+    "source_type": "skill",
+    "source_path": "/Users/liumobei/.openclaw/workspace/skills/xiaohongshu-skills/SKILL.md",
+    "install_command": "claw skill install xiaohongshu-skills",
+    "install_url": "https://github.com/anthropics/openclaw",
+    "installed": true,
+    "evidence": "explicit-text",
+    "packaged": true
+  }
+]

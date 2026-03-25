@@ -6,6 +6,7 @@ export type CommunityPackageType =
   | "case-pack";
 
 export type CommunityPackageVisibility = "private" | "official" | "community";
+export type CommunityResourceMirrorStatus = "official" | "mirrored" | "upstream-only";
 
 export type CommunityPackageReviewStatus =
   | "draft"
@@ -32,7 +33,18 @@ export interface CommunityPackageManifest {
   source?: {
     kind?: "official" | "community" | "local-export";
     repository?: string;
+    homepage?: string;
+    license?: string;
+    mirrorStatus?: CommunityResourceMirrorStatus;
+    upstreamRepository?: string;
+    upstreamVersion?: string;
     createdAt?: string;
+  };
+  install?: {
+    via?: "forge-console" | "github" | "upstream";
+    command?: string;
+    url?: string;
+    notes?: string[];
   };
   capabilities: Array<{
     id: string;

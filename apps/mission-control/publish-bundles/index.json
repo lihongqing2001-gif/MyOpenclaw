@@ -1,0 +1,547 @@
+{
+  "generatedAt": "2026-03-24T10:52:07Z",
+  "count": 36,
+  "bundles": [
+    {
+      "nodeId": "sop-邮件每日分诊与-telegram-推送",
+      "nodeLabel": "邮件每日分诊与 Telegram 推送",
+      "capabilityId": "cap.openclaw.sop.telegram-4567deb0",
+      "bundleDir": "/Users/liumobei/.openclaw/workspace/apps/mission-control/publish-bundles/邮件每日分诊与-telegram-推送",
+      "zipPath": "/Users/liumobei/.openclaw/workspace/apps/mission-control/publish-bundles/邮件每日分诊与-telegram-推送.zip",
+      "relativeZipPath": "publish-bundles/邮件每日分诊与-telegram-推送.zip",
+      "downloadUrl": "/publish-bundles/邮件每日分诊与-telegram-推送.zip",
+      "dependencies": [
+        "cap.openclaw.integration.openclaw-notifier"
+      ],
+      "packagedCapabilities": [
+        "cap.openclaw.skill.assistant-orchestrator",
+        "cap.openclaw.skill.email-sequence"
+      ]
+    },
+    {
+      "nodeId": "sop-邮件收件箱摘要与优先级整理",
+      "nodeLabel": "邮件收件箱摘要与优先级整理",
+      "capabilityId": "cap.openclaw.sop.workflow-c9523b0a",
+      "bundleDir": "/Users/liumobei/.openclaw/workspace/apps/mission-control/publish-bundles/邮件收件箱摘要与优先级整理",
+      "zipPath": "/Users/liumobei/.openclaw/workspace/apps/mission-control/publish-bundles/邮件收件箱摘要与优先级整理.zip",
+      "relativeZipPath": "publish-bundles/邮件收件箱摘要与优先级整理.zip",
+      "downloadUrl": "/publish-bundles/邮件收件箱摘要与优先级整理.zip",
+      "dependencies": [],
+      "packagedCapabilities": [
+        "cap.openclaw.skill.assistant-orchestrator",
+        "cap.openclaw.skill.email-sequence",
+        "cap.openclaw.skill.web-search-plus"
+      ]
+    },
+    {
+      "nodeId": "sop-邮件回复草稿与发送建议",
+      "nodeLabel": "邮件回复草稿与发送建议",
+      "capabilityId": "cap.openclaw.sop.workflow-8c040ba6",
+      "bundleDir": "/Users/liumobei/.openclaw/workspace/apps/mission-control/publish-bundles/邮件回复草稿与发送建议",
+      "zipPath": "/Users/liumobei/.openclaw/workspace/apps/mission-control/publish-bundles/邮件回复草稿与发送建议.zip",
+      "relativeZipPath": "publish-bundles/邮件回复草稿与发送建议.zip",
+      "downloadUrl": "/publish-bundles/邮件回复草稿与发送建议.zip",
+      "dependencies": [],
+      "packagedCapabilities": [
+        "cap.openclaw.skill.assistant-orchestrator",
+        "cap.openclaw.skill.email-sequence"
+      ]
+    },
+    {
+      "nodeId": "sop-content-growth-plan",
+      "nodeLabel": "个人成长规划",
+      "capabilityId": "cap.openclaw.sop.content-growth-plan",
+      "bundleDir": "/Users/liumobei/.openclaw/workspace/apps/mission-control/publish-bundles/个人成长规划",
+      "zipPath": "/Users/liumobei/.openclaw/workspace/apps/mission-control/publish-bundles/个人成长规划.zip",
+      "relativeZipPath": "publish-bundles/个人成长规划.zip",
+      "downloadUrl": "/publish-bundles/个人成长规划.zip",
+      "dependencies": [
+        "cap.openclaw.foundation.files-repo",
+        "cap.openclaw.foundation.knowledge-index"
+      ],
+      "packagedCapabilities": []
+    },
+    {
+      "nodeId": "sop-content-personal-profile",
+      "nodeLabel": "个人档案与回忆",
+      "capabilityId": "cap.openclaw.sop.content-personal-profile",
+      "bundleDir": "/Users/liumobei/.openclaw/workspace/apps/mission-control/publish-bundles/个人档案与回忆",
+      "zipPath": "/Users/liumobei/.openclaw/workspace/apps/mission-control/publish-bundles/个人档案与回忆.zip",
+      "relativeZipPath": "publish-bundles/个人档案与回忆.zip",
+      "downloadUrl": "/publish-bundles/个人档案与回忆.zip",
+      "dependencies": [
+        "cap.openclaw.foundation.files-repo",
+        "cap.openclaw.foundation.knowledge-index"
+      ],
+      "packagedCapabilities": []
+    },
+    {
+      "nodeId": "sop-content-diary-review",
+      "nodeLabel": "个人日记与周月复盘",
+      "capabilityId": "cap.openclaw.sop.content-diary-review",
+      "bundleDir": "/Users/liumobei/.openclaw/workspace/apps/mission-control/publish-bundles/个人日记与周月复盘",
+      "zipPath": "/Users/liumobei/.openclaw/workspace/apps/mission-control/publish-bundles/个人日记与周月复盘.zip",
+      "relativeZipPath": "publish-bundles/个人日记与周月复盘.zip",
+      "downloadUrl": "/publish-bundles/个人日记与周月复盘.zip",
+      "dependencies": [
+        "cap.openclaw.foundation.files-repo",
+        "cap.openclaw.foundation.knowledge-index"
+      ],
+      "packagedCapabilities": []
+    },
+    {
+      "nodeId": "sop-研究资料矩阵与证据整理",
+      "nodeLabel": "研究资料矩阵与证据整理",
+      "capabilityId": "cap.openclaw.sop.workflow-ff3ad013",
+      "bundleDir": "/Users/liumobei/.openclaw/workspace/apps/mission-control/publish-bundles/研究资料矩阵与证据整理",
+      "zipPath": "/Users/liumobei/.openclaw/workspace/apps/mission-control/publish-bundles/研究资料矩阵与证据整理.zip",
+      "relativeZipPath": "publish-bundles/研究资料矩阵与证据整理.zip",
+      "downloadUrl": "/publish-bundles/研究资料矩阵与证据整理.zip",
+      "dependencies": [],
+      "packagedCapabilities": [
+        "cap.openclaw.skill.qmd-skill",
+        "cap.openclaw.skill.social-content",
+        "cap.openclaw.skill.web-search-plus"
+      ]
+    },
+    {
+      "nodeId": "sop-content-content-pipeline",
+      "nodeLabel": "内容生产流水线",
+      "capabilityId": "cap.openclaw.sop.content-content-pipeline",
+      "bundleDir": "/Users/liumobei/.openclaw/workspace/apps/mission-control/publish-bundles/内容生产流水线",
+      "zipPath": "/Users/liumobei/.openclaw/workspace/apps/mission-control/publish-bundles/内容生产流水线.zip",
+      "relativeZipPath": "publish-bundles/内容生产流水线.zip",
+      "downloadUrl": "/publish-bundles/内容生产流水线.zip",
+      "dependencies": [
+        "cap.openclaw.foundation.cron-jobs",
+        "cap.openclaw.foundation.files-repo",
+        "cap.openclaw.foundation.messaging"
+      ],
+      "packagedCapabilities": [
+        "cap.openclaw.skill.social-content"
+      ]
+    },
+    {
+      "nodeId": "sop-博客文章分析与改写方案",
+      "nodeLabel": "博客文章分析与改写方案",
+      "capabilityId": "cap.openclaw.sop.workflow-c62a80e1",
+      "bundleDir": "/Users/liumobei/.openclaw/workspace/apps/mission-control/publish-bundles/博客文章分析与改写方案",
+      "zipPath": "/Users/liumobei/.openclaw/workspace/apps/mission-control/publish-bundles/博客文章分析与改写方案.zip",
+      "relativeZipPath": "publish-bundles/博客文章分析与改写方案.zip",
+      "downloadUrl": "/publish-bundles/博客文章分析与改写方案.zip",
+      "dependencies": [],
+      "packagedCapabilities": [
+        "cap.openclaw.skill.assistant-orchestrator",
+        "cap.openclaw.skill.frontend-design",
+        "cap.openclaw.skill.penpot-uiux-design",
+        "cap.openclaw.skill.web-design-guidelines",
+        "cap.openclaw.skill.web-search-plus"
+      ]
+    },
+    {
+      "nodeId": "sop-xiaohongshu-comment-semantic-extraction-auto-excel",
+      "nodeLabel": "评论语义提取与结构化",
+      "capabilityId": "cap.openclaw.sop.xiaohongshu-comment-semantic-extraction-auto-excel",
+      "bundleDir": "/Users/liumobei/.openclaw/workspace/apps/mission-control/publish-bundles/评论语义提取与结构化",
+      "zipPath": "/Users/liumobei/.openclaw/workspace/apps/mission-control/publish-bundles/评论语义提取与结构化.zip",
+      "relativeZipPath": "publish-bundles/评论语义提取与结构化.zip",
+      "downloadUrl": "/publish-bundles/评论语义提取与结构化.zip",
+      "dependencies": [],
+      "packagedCapabilities": [
+        "cap.openclaw.skill.alex-session-wrap-up",
+        "cap.openclaw.skill.journal-revision-workflow",
+        "cap.openclaw.skill.self-improving",
+        "cap.openclaw.skill.social-content",
+        "cap.openclaw.skill.xiaohongshu-skills"
+      ]
+    },
+    {
+      "nodeId": "sop-本地视频-gemini-增强分析",
+      "nodeLabel": "本地视频 Gemini 增强分析",
+      "capabilityId": "cap.openclaw.sop.gemini-25ee7d23",
+      "bundleDir": "/Users/liumobei/.openclaw/workspace/apps/mission-control/publish-bundles/本地视频-gemini-增强分析",
+      "zipPath": "/Users/liumobei/.openclaw/workspace/apps/mission-control/publish-bundles/本地视频-gemini-增强分析.zip",
+      "relativeZipPath": "publish-bundles/本地视频-gemini-增强分析.zip",
+      "downloadUrl": "/publish-bundles/本地视频-gemini-增强分析.zip",
+      "dependencies": [],
+      "packagedCapabilities": [
+        "cap.openclaw.skill.baoyu-danger-gemini-web",
+        "cap.openclaw.skill.douyin-video",
+        "cap.openclaw.skill.remotion-video-production",
+        "cap.openclaw.skill.video-production",
+        "cap.openclaw.skill.video-prompting-guide",
+        "cap.openclaw.skill.videoagent-video-studio"
+      ]
+    },
+    {
+      "nodeId": "sop-抖音单条视频分析与知识入库",
+      "nodeLabel": "单条内容洞察与入库",
+      "capabilityId": "cap.openclaw.sop.workflow-bcea6618",
+      "bundleDir": "/Users/liumobei/.openclaw/workspace/apps/mission-control/publish-bundles/单条内容洞察与入库",
+      "zipPath": "/Users/liumobei/.openclaw/workspace/apps/mission-control/publish-bundles/单条内容洞察与入库.zip",
+      "relativeZipPath": "publish-bundles/单条内容洞察与入库.zip",
+      "downloadUrl": "/publish-bundles/单条内容洞察与入库.zip",
+      "dependencies": [],
+      "packagedCapabilities": [
+        "cap.openclaw.skill.baoyu-danger-gemini-web",
+        "cap.openclaw.skill.douyin-video",
+        "cap.openclaw.skill.qmd-skill",
+        "cap.openclaw.skill.remotion-video-production",
+        "cap.openclaw.skill.video-production",
+        "cap.openclaw.skill.video-prompting-guide",
+        "cap.openclaw.skill.videoagent-video-studio",
+        "cap.openclaw.skill.xiaohongshu-skills"
+      ]
+    },
+    {
+      "nodeId": "sop-短视频对标账号分析三阶段链路",
+      "nodeLabel": "短视频对标账号分析三阶段链路",
+      "capabilityId": "cap.openclaw.sop.workflow-60e58f7e",
+      "bundleDir": "/Users/liumobei/.openclaw/workspace/apps/mission-control/publish-bundles/短视频对标账号分析三阶段链路",
+      "zipPath": "/Users/liumobei/.openclaw/workspace/apps/mission-control/publish-bundles/短视频对标账号分析三阶段链路.zip",
+      "relativeZipPath": "publish-bundles/短视频对标账号分析三阶段链路.zip",
+      "downloadUrl": "/publish-bundles/短视频对标账号分析三阶段链路.zip",
+      "dependencies": [],
+      "packagedCapabilities": [
+        "cap.openclaw.skill.alex-session-wrap-up",
+        "cap.openclaw.skill.baoyu-danger-gemini-web",
+        "cap.openclaw.skill.douyin-video",
+        "cap.openclaw.skill.remotion-video-production",
+        "cap.openclaw.skill.social-content",
+        "cap.openclaw.skill.video-production",
+        "cap.openclaw.skill.video-prompting-guide",
+        "cap.openclaw.skill.videoagent-video-studio"
+      ]
+    },
+    {
+      "nodeId": "sop-抖音热点雷达与选题池",
+      "nodeLabel": "平台热点选题雷达",
+      "capabilityId": "cap.openclaw.sop.workflow-8e7d89ea",
+      "bundleDir": "/Users/liumobei/.openclaw/workspace/apps/mission-control/publish-bundles/平台热点选题雷达",
+      "zipPath": "/Users/liumobei/.openclaw/workspace/apps/mission-control/publish-bundles/平台热点选题雷达.zip",
+      "relativeZipPath": "publish-bundles/平台热点选题雷达.zip",
+      "downloadUrl": "/publish-bundles/平台热点选题雷达.zip",
+      "dependencies": [
+        "cap.openclaw.integration.skill"
+      ],
+      "packagedCapabilities": [
+        "cap.openclaw.skill.assistant-orchestrator",
+        "cap.openclaw.skill.social-content",
+        "cap.openclaw.skill.web-search-plus",
+        "cap.openclaw.skill.xiaohongshu-skills"
+      ]
+    },
+    {
+      "nodeId": "sop-x-趋势信号摘要与观点池",
+      "nodeLabel": "趋势信号与观点池",
+      "capabilityId": "cap.openclaw.sop.x-01186f69",
+      "bundleDir": "/Users/liumobei/.openclaw/workspace/apps/mission-control/publish-bundles/趋势信号与观点池",
+      "zipPath": "/Users/liumobei/.openclaw/workspace/apps/mission-control/publish-bundles/趋势信号与观点池.zip",
+      "relativeZipPath": "publish-bundles/趋势信号与观点池.zip",
+      "downloadUrl": "/publish-bundles/趋势信号与观点池.zip",
+      "dependencies": [
+        "cap.openclaw.integration.x-twitter-skill"
+      ],
+      "packagedCapabilities": [
+        "cap.openclaw.skill.assistant-orchestrator",
+        "cap.openclaw.skill.social-content",
+        "cap.openclaw.skill.web-search-plus"
+      ]
+    },
+    {
+      "nodeId": "sop-收藏视频洞察入库",
+      "nodeLabel": "收藏内容洞察",
+      "capabilityId": "cap.openclaw.sop.workflow-b3ed9783",
+      "bundleDir": "/Users/liumobei/.openclaw/workspace/apps/mission-control/publish-bundles/收藏内容洞察",
+      "zipPath": "/Users/liumobei/.openclaw/workspace/apps/mission-control/publish-bundles/收藏内容洞察.zip",
+      "relativeZipPath": "publish-bundles/收藏内容洞察.zip",
+      "downloadUrl": "/publish-bundles/收藏内容洞察.zip",
+      "dependencies": [],
+      "packagedCapabilities": [
+        "cap.openclaw.skill.douyin-video",
+        "cap.openclaw.skill.remotion-video-production",
+        "cap.openclaw.skill.social-content",
+        "cap.openclaw.skill.video-production",
+        "cap.openclaw.skill.video-prompting-guide",
+        "cap.openclaw.skill.videoagent-video-studio"
+      ]
+    },
+    {
+      "nodeId": "sop-gemini-多轮视频追问分析",
+      "nodeLabel": "Gemini 多轮视频追问分析",
+      "capabilityId": "cap.openclaw.sop.gemini-21ce414b",
+      "bundleDir": "/Users/liumobei/.openclaw/workspace/apps/mission-control/publish-bundles/gemini-多轮视频追问分析",
+      "zipPath": "/Users/liumobei/.openclaw/workspace/apps/mission-control/publish-bundles/gemini-多轮视频追问分析.zip",
+      "relativeZipPath": "publish-bundles/gemini-多轮视频追问分析.zip",
+      "downloadUrl": "/publish-bundles/gemini-多轮视频追问分析.zip",
+      "dependencies": [],
+      "packagedCapabilities": [
+        "cap.openclaw.skill.alex-session-wrap-up",
+        "cap.openclaw.skill.baoyu-danger-gemini-web",
+        "cap.openclaw.skill.douyin-video",
+        "cap.openclaw.skill.remotion-video-production",
+        "cap.openclaw.skill.video-production",
+        "cap.openclaw.skill.video-prompting-guide",
+        "cap.openclaw.skill.videoagent-video-studio"
+      ]
+    },
+    {
+      "nodeId": "sop-小红书内容多平台改写包",
+      "nodeLabel": "多平台内容改写包",
+      "capabilityId": "cap.openclaw.sop.workflow-4fd5a428",
+      "bundleDir": "/Users/liumobei/.openclaw/workspace/apps/mission-control/publish-bundles/多平台内容改写包",
+      "zipPath": "/Users/liumobei/.openclaw/workspace/apps/mission-control/publish-bundles/多平台内容改写包.zip",
+      "relativeZipPath": "publish-bundles/多平台内容改写包.zip",
+      "downloadUrl": "/publish-bundles/多平台内容改写包.zip",
+      "dependencies": [],
+      "packagedCapabilities": [
+        "cap.openclaw.skill.social-content"
+      ]
+    },
+    {
+      "nodeId": "sop-短视频脚本与分镜交付包",
+      "nodeLabel": "短视频脚本与分镜交付",
+      "capabilityId": "cap.openclaw.sop.workflow-7d8ef248",
+      "bundleDir": "/Users/liumobei/.openclaw/workspace/apps/mission-control/publish-bundles/短视频脚本与分镜交付",
+      "zipPath": "/Users/liumobei/.openclaw/workspace/apps/mission-control/publish-bundles/短视频脚本与分镜交付.zip",
+      "relativeZipPath": "publish-bundles/短视频脚本与分镜交付.zip",
+      "downloadUrl": "/publish-bundles/短视频脚本与分镜交付.zip",
+      "dependencies": [],
+      "packagedCapabilities": [
+        "cap.openclaw.skill.ai-image-generation",
+        "cap.openclaw.skill.assistant-orchestrator",
+        "cap.openclaw.skill.remotion-best-practices",
+        "cap.openclaw.skill.remotion-video-production",
+        "cap.openclaw.skill.vercel-react-best-practices"
+      ]
+    },
+    {
+      "nodeId": "sop-content-content-writer",
+      "nodeLabel": "长文内容生成",
+      "capabilityId": "cap.openclaw.sop.content-content-writer",
+      "bundleDir": "/Users/liumobei/.openclaw/workspace/apps/mission-control/publish-bundles/长文内容生成",
+      "zipPath": "/Users/liumobei/.openclaw/workspace/apps/mission-control/publish-bundles/长文内容生成.zip",
+      "relativeZipPath": "publish-bundles/长文内容生成.zip",
+      "downloadUrl": "/publish-bundles/长文内容生成.zip",
+      "dependencies": [
+        "cap.openclaw.foundation.browser-ops",
+        "cap.openclaw.foundation.knowledge-index",
+        "cap.openclaw.foundation.web-search"
+      ],
+      "packagedCapabilities": []
+    },
+    {
+      "nodeId": "sop-content-dev-testing",
+      "nodeLabel": "测试与验收清单",
+      "capabilityId": "cap.openclaw.sop.content-dev-testing",
+      "bundleDir": "/Users/liumobei/.openclaw/workspace/apps/mission-control/publish-bundles/测试与验收清单",
+      "zipPath": "/Users/liumobei/.openclaw/workspace/apps/mission-control/publish-bundles/测试与验收清单.zip",
+      "relativeZipPath": "publish-bundles/测试与验收清单.zip",
+      "downloadUrl": "/publish-bundles/测试与验收清单.zip",
+      "dependencies": [
+        "cap.openclaw.foundation.files-repo"
+      ],
+      "packagedCapabilities": []
+    },
+    {
+      "nodeId": "sop-content-dev-coding",
+      "nodeLabel": "代码编写与优化",
+      "capabilityId": "cap.openclaw.sop.content-dev-coding",
+      "bundleDir": "/Users/liumobei/.openclaw/workspace/apps/mission-control/publish-bundles/代码编写与优化",
+      "zipPath": "/Users/liumobei/.openclaw/workspace/apps/mission-control/publish-bundles/代码编写与优化.zip",
+      "relativeZipPath": "publish-bundles/代码编写与优化.zip",
+      "downloadUrl": "/publish-bundles/代码编写与优化.zip",
+      "dependencies": [
+        "cap.openclaw.foundation.files-repo"
+      ],
+      "packagedCapabilities": []
+    },
+    {
+      "nodeId": "sop-content-dev-integration",
+      "nodeLabel": "接口联调与调试",
+      "capabilityId": "cap.openclaw.sop.content-dev-integration",
+      "bundleDir": "/Users/liumobei/.openclaw/workspace/apps/mission-control/publish-bundles/接口联调与调试",
+      "zipPath": "/Users/liumobei/.openclaw/workspace/apps/mission-control/publish-bundles/接口联调与调试.zip",
+      "relativeZipPath": "publish-bundles/接口联调与调试.zip",
+      "downloadUrl": "/publish-bundles/接口联调与调试.zip",
+      "dependencies": [
+        "cap.openclaw.foundation.files-repo"
+      ],
+      "packagedCapabilities": []
+    },
+    {
+      "nodeId": "sop-网页落地页生成与交付包",
+      "nodeLabel": "网页落地页生成与交付包",
+      "capabilityId": "cap.openclaw.sop.workflow-1dcf62c4",
+      "bundleDir": "/Users/liumobei/.openclaw/workspace/apps/mission-control/publish-bundles/网页落地页生成与交付包",
+      "zipPath": "/Users/liumobei/.openclaw/workspace/apps/mission-control/publish-bundles/网页落地页生成与交付包.zip",
+      "relativeZipPath": "publish-bundles/网页落地页生成与交付包.zip",
+      "downloadUrl": "/publish-bundles/网页落地页生成与交付包.zip",
+      "dependencies": [],
+      "packagedCapabilities": [
+        "cap.openclaw.skill.ai-image-generation",
+        "cap.openclaw.skill.assistant-orchestrator",
+        "cap.openclaw.skill.frontend-design",
+        "cap.openclaw.skill.penpot-uiux-design",
+        "cap.openclaw.skill.video-prompting-guide",
+        "cap.openclaw.skill.web-design-guidelines"
+      ]
+    },
+    {
+      "nodeId": "sop-content-dev-planning",
+      "nodeLabel": "需求拆解与阶段计划",
+      "capabilityId": "cap.openclaw.sop.content-dev-planning",
+      "bundleDir": "/Users/liumobei/.openclaw/workspace/apps/mission-control/publish-bundles/需求拆解与阶段计划",
+      "zipPath": "/Users/liumobei/.openclaw/workspace/apps/mission-control/publish-bundles/需求拆解与阶段计划.zip",
+      "relativeZipPath": "publish-bundles/需求拆解与阶段计划.zip",
+      "downloadUrl": "/publish-bundles/需求拆解与阶段计划.zip",
+      "dependencies": [
+        "cap.openclaw.foundation.files-repo"
+      ],
+      "packagedCapabilities": []
+    },
+    {
+      "nodeId": "sop-content-dev-automation",
+      "nodeLabel": "自动化脚本与工具封装",
+      "capabilityId": "cap.openclaw.sop.content-dev-automation",
+      "bundleDir": "/Users/liumobei/.openclaw/workspace/apps/mission-control/publish-bundles/自动化脚本与工具封装",
+      "zipPath": "/Users/liumobei/.openclaw/workspace/apps/mission-control/publish-bundles/自动化脚本与工具封装.zip",
+      "relativeZipPath": "publish-bundles/自动化脚本与工具封装.zip",
+      "downloadUrl": "/publish-bundles/自动化脚本与工具封装.zip",
+      "dependencies": [
+        "cap.openclaw.foundation.files-repo"
+      ],
+      "packagedCapabilities": []
+    },
+    {
+      "nodeId": "sop-content-research-experiment",
+      "nodeLabel": "实验设计与统计方法建议",
+      "capabilityId": "cap.openclaw.sop.content-research-experiment",
+      "bundleDir": "/Users/liumobei/.openclaw/workspace/apps/mission-control/publish-bundles/实验设计与统计方法建议",
+      "zipPath": "/Users/liumobei/.openclaw/workspace/apps/mission-control/publish-bundles/实验设计与统计方法建议.zip",
+      "relativeZipPath": "publish-bundles/实验设计与统计方法建议.zip",
+      "downloadUrl": "/publish-bundles/实验设计与统计方法建议.zip",
+      "dependencies": [
+        "cap.openclaw.foundation.knowledge-index"
+      ],
+      "packagedCapabilities": []
+    },
+    {
+      "nodeId": "sop-content-research-literature",
+      "nodeLabel": "文献检索与引用整理",
+      "capabilityId": "cap.openclaw.sop.content-research-literature",
+      "bundleDir": "/Users/liumobei/.openclaw/workspace/apps/mission-control/publish-bundles/文献检索与引用整理",
+      "zipPath": "/Users/liumobei/.openclaw/workspace/apps/mission-control/publish-bundles/文献检索与引用整理.zip",
+      "relativeZipPath": "publish-bundles/文献检索与引用整理.zip",
+      "downloadUrl": "/publish-bundles/文献检索与引用整理.zip",
+      "dependencies": [
+        "cap.openclaw.foundation.browser-ops",
+        "cap.openclaw.foundation.knowledge-index",
+        "cap.openclaw.foundation.web-search"
+      ],
+      "packagedCapabilities": []
+    },
+    {
+      "nodeId": "sop-content-research-docs",
+      "nodeLabel": "项目书/任务书/手册编写（含技术路线/方法学整理）",
+      "capabilityId": "cap.openclaw.sop.content-research-docs",
+      "bundleDir": "/Users/liumobei/.openclaw/workspace/apps/mission-control/publish-bundles/项目书-任务书-手册编写-含技术路线-方法学整理",
+      "zipPath": "/Users/liumobei/.openclaw/workspace/apps/mission-control/publish-bundles/项目书-任务书-手册编写-含技术路线-方法学整理.zip",
+      "relativeZipPath": "publish-bundles/项目书-任务书-手册编写-含技术路线-方法学整理.zip",
+      "downloadUrl": "/publish-bundles/项目书-任务书-手册编写-含技术路线-方法学整理.zip",
+      "dependencies": [
+        "cap.openclaw.foundation.files-repo",
+        "cap.openclaw.foundation.knowledge-index"
+      ],
+      "packagedCapabilities": []
+    },
+    {
+      "nodeId": "sop-content-project-version-trace",
+      "nodeLabel": "版本管理与回溯",
+      "capabilityId": "cap.openclaw.sop.content-project-version-trace",
+      "bundleDir": "/Users/liumobei/.openclaw/workspace/apps/mission-control/publish-bundles/版本管理与回溯",
+      "zipPath": "/Users/liumobei/.openclaw/workspace/apps/mission-control/publish-bundles/版本管理与回溯.zip",
+      "relativeZipPath": "publish-bundles/版本管理与回溯.zip",
+      "downloadUrl": "/publish-bundles/版本管理与回溯.zip",
+      "dependencies": [
+        "cap.openclaw.foundation.files-repo"
+      ],
+      "packagedCapabilities": []
+    },
+    {
+      "nodeId": "sop-content-project-extract-summary",
+      "nodeLabel": "关键内容提取与摘要",
+      "capabilityId": "cap.openclaw.sop.content-project-extract-summary",
+      "bundleDir": "/Users/liumobei/.openclaw/workspace/apps/mission-control/publish-bundles/关键内容提取与摘要",
+      "zipPath": "/Users/liumobei/.openclaw/workspace/apps/mission-control/publish-bundles/关键内容提取与摘要.zip",
+      "relativeZipPath": "publish-bundles/关键内容提取与摘要.zip",
+      "downloadUrl": "/publish-bundles/关键内容提取与摘要.zip",
+      "dependencies": [
+        "cap.openclaw.foundation.files-repo",
+        "cap.openclaw.foundation.knowledge-index"
+      ],
+      "packagedCapabilities": []
+    },
+    {
+      "nodeId": "sop-项目资料交接包",
+      "nodeLabel": "项目资料交接包",
+      "capabilityId": "cap.openclaw.sop.workflow-d522a60e",
+      "bundleDir": "/Users/liumobei/.openclaw/workspace/apps/mission-control/publish-bundles/项目资料交接包",
+      "zipPath": "/Users/liumobei/.openclaw/workspace/apps/mission-control/publish-bundles/项目资料交接包.zip",
+      "relativeZipPath": "publish-bundles/项目资料交接包.zip",
+      "downloadUrl": "/publish-bundles/项目资料交接包.zip",
+      "dependencies": [],
+      "packagedCapabilities": []
+    },
+    {
+      "nodeId": "sop-content-project-file-index",
+      "nodeLabel": "资料清单化与索引",
+      "capabilityId": "cap.openclaw.sop.content-project-file-index",
+      "bundleDir": "/Users/liumobei/.openclaw/workspace/apps/mission-control/publish-bundles/资料清单化与索引",
+      "zipPath": "/Users/liumobei/.openclaw/workspace/apps/mission-control/publish-bundles/资料清单化与索引.zip",
+      "relativeZipPath": "publish-bundles/资料清单化与索引.zip",
+      "downloadUrl": "/publish-bundles/资料清单化与索引.zip",
+      "dependencies": [
+        "cap.openclaw.foundation.files-repo"
+      ],
+      "packagedCapabilities": []
+    },
+    {
+      "nodeId": "sop-content-project-file-organize",
+      "nodeLabel": "自动整理归档",
+      "capabilityId": "cap.openclaw.sop.content-project-file-organize",
+      "bundleDir": "/Users/liumobei/.openclaw/workspace/apps/mission-control/publish-bundles/自动整理归档",
+      "zipPath": "/Users/liumobei/.openclaw/workspace/apps/mission-control/publish-bundles/自动整理归档.zip",
+      "relativeZipPath": "publish-bundles/自动整理归档.zip",
+      "downloadUrl": "/publish-bundles/自动整理归档.zip",
+      "dependencies": [
+        "cap.openclaw.foundation.files-repo"
+      ],
+      "packagedCapabilities": []
+    },
+    {
+      "nodeId": "sop-服务异常排查与恢复建议",
+      "nodeLabel": "服务异常排查与恢复建议",
+      "capabilityId": "cap.openclaw.sop.workflow-9a809a15",
+      "bundleDir": "/Users/liumobei/.openclaw/workspace/apps/mission-control/publish-bundles/服务异常排查与恢复建议",
+      "zipPath": "/Users/liumobei/.openclaw/workspace/apps/mission-control/publish-bundles/服务异常排查与恢复建议.zip",
+      "relativeZipPath": "publish-bundles/服务异常排查与恢复建议.zip",
+      "downloadUrl": "/publish-bundles/服务异常排查与恢复建议.zip",
+      "dependencies": [],
+      "packagedCapabilities": []
+    },
+    {
+      "nodeId": "sop-技能缺口检查与安装计划",
+      "nodeLabel": "技能缺口检查与安装计划",
+      "capabilityId": "cap.openclaw.sop.workflow-9fe1238c",
+      "bundleDir": "/Users/liumobei/.openclaw/workspace/apps/mission-control/publish-bundles/技能缺口检查与安装计划",
+      "zipPath": "/Users/liumobei/.openclaw/workspace/apps/mission-control/publish-bundles/技能缺口检查与安装计划.zip",
+      "relativeZipPath": "publish-bundles/技能缺口检查与安装计划.zip",
+      "downloadUrl": "/publish-bundles/技能缺口检查与安装计划.zip",
+      "dependencies": [],
+      "packagedCapabilities": [
+        "cap.openclaw.skill.find-skills"
+      ]
+    }
+  ]
+}

@@ -4,15 +4,21 @@ import { GithubOAuthState } from "../contracts/types";
 import { CommunityPackageManifest } from "../contracts/community-package";
 import { createId, loadDatabase, saveDatabase } from "./store";
 
-const githubClientId = process.env.GITHUB_CLIENT_ID || "";
-const githubClientSecret = process.env.GITHUB_CLIENT_SECRET || "";
-const githubCallbackUrl =
-  process.env.GITHUB_CALLBACK_URL || "http://127.0.0.1:3400/auth/github/callback";
-const githubReleaseRepo = process.env.GITHUB_RELEASE_REPO || "";
-const githubToken = process.env.GITHUB_TOKEN || "";
+function githubConfig() {
+  const db = loadDatabase();
+  const saved = db.settings.github;
+  return {
+    githubClientId: process.env.GITHUB_CLIENT_ID || saved.clientId || "",
+    githubClientSecret: process.env.GITHUB_CLIENT_SECRET || saved.clientSecret || "",
+    githubCallbackUrl: process.env.GITHUB_CALLBACK_URL || saved.callbackUrl || "http://127.0.0.1:3400/auth/github/callback",
+    githubReleaseRepo: process.env.GITHUB_RELEASE_REPO || saved.releaseRepo || "",
+    githubToken: process.env.GITHUB_TOKEN || saved.token || "",
+  };
+}
 
 export function githubOauthConfigured() {
-  return Boolean(githubClientId && githubClientSecret && githubCallbackUrl);
+  const config = githubConfig();
+  return Boolean(config.githubClientId && config.githubClientSecret && config.githubCallbackUrl);
 }
 
 export function createGithubOAuthState(input: {
@@ -49,15 +55,17 @@ export function consumeGithubOAuthState(stateId: string) {
 }
 
 export function buildGithubAuthorizeUrl(stateId: string) {
+  const config = githubConfig();
   const url = new URL("https://github.com/login/oauth/authorize");
-  url.searchParams.set("client_id", githubClientId);
-  url.searchParams.set("redirect_uri", githubCallbackUrl);
+  url.searchParams.set("client_id", config.githubClientId);
+  url.searchParams.set("redirect_uri", config.githubCallbackUrl);
   url.searchParams.set("scope", "read:user user:email");
   url.searchParams.set("state", stateId);
   return url.toString();
 }
 
 export async function exchangeGithubCode(code: string) {
+  const config = githubConfig();
   const response = await fetch("https://github.com/login/oauth/access_token", {
     method: "POST",
     headers: {
@@ -65,10 +73,10 @@ export async function exchangeGithubCode(code: string) {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      client_id: githubClientId,
-      client_secret: githubClientSecret,
+      client_id: config.githubClientId,
+      client_secret: config.githubClientSecret,
       code,
-      redirect_uri: githubCallbackUrl,
+      redirect_uri: config.githubCallbackUrl,
     }),
   });
   if (!response.ok) {
@@ -111,6 +119,7 @@ export async function fetchGithubIdentity(accessToken: string) {
 }
 
 function releaseRepoParts() {
+  const { githubReleaseRepo } = githubConfig();
   const [owner, repo] = githubReleaseRepo.split("/");
   if (!owner || !repo) {
     throw new Error("GITHUB_RELEASE_REPO must be set as owner/repo");
@@ -119,6 +128,7 @@ function releaseRepoParts() {
 }
 
 function githubHeaders() {
+  const { githubToken } = githubConfig();
   if (!githubToken) {
     throw new Error("GITHUB_TOKEN is required for GitHub release sync");
   }

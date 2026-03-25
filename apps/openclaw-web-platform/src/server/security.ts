@@ -6,6 +6,17 @@ import { Session, User, UserRole } from "../contracts/types";
 const sessionSecret = process.env.OPENCLAW_WEB_SESSION_SECRET || "change-me";
 const downloadSecret = process.env.OPENCLAW_WEB_DOWNLOAD_SECRET || "change-me-too";
 
+function secureCookiesEnabled() {
+  if (process.env.OPENCLAW_WEB_SECURE_COOKIE === "1") {
+    return true;
+  }
+  if (process.env.OPENCLAW_WEB_SECURE_COOKIE === "0") {
+    return false;
+  }
+  const baseUrl = process.env.OPENCLAW_WEB_BASE_URL || "";
+  return baseUrl.startsWith("https://");
+}
+
 type WindowCounter = {
   count: number;
   resetAt: number;
@@ -49,17 +60,44 @@ export function rateLimit(prefix: string, limit: number, windowMs: number) {
   };
 }
 
+export function checkRateLimit(key: string, limit: number, windowMs: number) {
+  const now = Date.now();
+  const current = buckets.get(key);
+  if (!current || current.resetAt < now) {
+    buckets.set(key, { count: 1, resetAt: now + windowMs });
+    return {
+      allowed: true,
+      retryAfterSeconds: 0,
+    };
+  }
+  if (current.count >= limit) {
+    return {
+      allowed: false,
+      retryAfterSeconds: Math.max(1, Math.ceil((current.resetAt - now) / 1000)),
+    };
+  }
+  current.count += 1;
+  return {
+    allowed: true,
+    retryAfterSeconds: 0,
+  };
+}
+
 export function setSessionCookie(res: Response, sessionId: string) {
   res.cookie("oc_web_session", sessionId, {
     httpOnly: true,
     sameSite: "lax",
-    secure: process.env.NODE_ENV === "production",
+    secure: secureCookiesEnabled(),
     maxAge: 1000 * 60 * 60 * 24 * 7,
   });
 }
 
 export function clearSessionCookie(res: Response) {
-  res.clearCookie("oc_web_session");
+  res.clearCookie("oc_web_session", {
+    httpOnly: true,
+    sameSite: "lax",
+    secure: secureCookiesEnabled(),
+  });
 }
 
 export function sessionFromRequest(req: Request): { session: Session; user: User } | null {

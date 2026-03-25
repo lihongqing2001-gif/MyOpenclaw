@@ -1,0 +1,140 @@
+{
+  "schemaVersion": "community-package-v1",
+  "packageId": "cap.openclaw.sop.content-project-file-index",
+  "type": "sop-pack",
+  "name": "资料清单化与索引",
+  "version": "0.2.0",
+  "author": {
+    "name": "OpenClaw",
+    "id": "official/openclaw"
+  },
+  "description": "资料库盘点、审计",
+  "source": {
+    "kind": "local-export",
+    "createdAt": "2026-03-24T10:52:07Z"
+  },
+  "capabilities": [
+    {
+      "id": "cap.openclaw.sop.content-project-file-index",
+      "label": "资料清单化与索引",
+      "summary": "资料库盘点、审计",
+      "entrypoint": "python3 /Users/liumobei/.openclaw/workspace/apps/mission-control/scripts/run_project_file_index.py --target-dir <目标目录>"
+    }
+  ],
+  "dependencies": [
+    {
+      "id": "cap.openclaw.foundation.files-repo",
+      "label": "文件与版本管理",
+      "kind": "foundation",
+      "required": true,
+      "installCommand": "read/write/edit/exec + git",
+      "installUrl": "",
+      "bundled": false
+    }
+  ],
+  "compatibility": {
+    "openclawMinVersion": "2026.3.2",
+    "installMode": "local-console",
+    "platforms": [
+      "macos",
+      "linux",
+      "windows"
+    ]
+  },
+  "permissions": [
+    {
+      "key": "filesystem.read",
+      "required": true,
+      "reason": "Read packaged SOP, docs, and supporting local files."
+    },
+    {
+      "key": "process.exec",
+      "required": true,
+      "reason": "Run packaged scripts or workflow commands after local user confirmation."
+    }
+  ],
+  "checksums": {
+    "algorithm": "sha256",
+    "files": [
+      {
+        "path": "OPENCLAW.md",
+        "sha256": "12eb6d07dc4f0dc281bedd33efbecfa6ac622a73ae878824d4c3cce1d8984695"
+      },
+      {
+        "path": "README.md",
+        "sha256": "2a18dfeb84cd678d68048c90922e77558682aa734f00ec0ae7c17dca7c0b881d"
+      },
+      {
+        "path": "capability-manifest.json",
+        "sha256": "fd87e540ec7f2ec1827a3976535c9224ff66baad449f20fe20ce9fef4d2be8cb"
+      },
+      {
+        "path": "dependency-hints.json",
+        "sha256": "be6d0881dbd9b9ec8cb3ff06dce7b866d7c4d7fb72fdf91c25877b9758d8c746"
+      },
+      {
+        "path": "healthcheck.py",
+        "sha256": "a4e186fde4e5fdf203cca7e9294dfd06f51e28328351ff3661710adde7ff0de2"
+      },
+      {
+        "path": "install.py",
+        "sha256": "678407e93e5eb7e2f084a3116786b33102fa539938e636f1d23adb9b7d0f8666"
+      },
+      {
+        "path": "schemas/community-package-v1.schema.json",
+        "sha256": "fbfce78f0b3bea1bb68dc0d51ca99e2149cb1743fae6f3c4825d1e881e7ec8d8"
+      },
+      {
+        "path": "scripts/run_project_file_index.py",
+        "sha256": "d92ab5035351f2ba5c15e876b24f5cc77c7eadac8997cf385ec978c0f1102d26"
+      },
+      {
+        "path": "sops/资料清单化与索引.md",
+        "sha256": "0afc6e0efc0db9b5c8796dd00a101d62ea6dc6203e86035c0f375d314052c178"
+      }
+    ]
+  },
+  "docs": [
+    {
+      "title": "OPENCLAW",
+      "path": "OPENCLAW.md"
+    },
+    {
+      "title": "README",
+      "path": "README.md"
+    },
+    {
+      "title": "资料清单化与索引",
+      "path": "sops/资料清单化与索引.md"
+    }
+  ],
+  "assets": [
+    {
+      "path": "OPENCLAW.md",
+      "kind": "knowledge",
+      "label": "OPENCLAW.md"
+    },
+    {
+      "path": "README.md",
+      "kind": "knowledge",
+      "label": "README.md"
+    },
+    {
+      "path": "schemas/community-package-v1.schema.json",
+      "kind": "document",
+      "label": "community-package-v1.schema.json"
+    },
+    {
+      "path": "scripts/run_project_file_index.py",
+      "kind": "script",
+      "label": "run_project_file_index.py"
+    },
+    {
+      "path": "sops/资料清单化与索引.md",
+      "kind": "knowledge",
+      "label": "资料清单化与索引.md"
+    }
+  ],
+  "reviewStatus": "draft",
+  "visibility": "private"
+}

@@ -1,0 +1,14 @@
+[
+  {
+    "capability_id": "cap.openclaw.foundation.knowledge-index",
+    "label": "知识库归档与标签",
+    "summary": "分类归档→打标签→结构化摘要→可检索复用",
+    "source_type": "foundation",
+    "source_path": "/Users/liumobei/.openclaw/workspace/content_system/skilltree/data.json",
+    "install_command": "/knowledge ingest --domain <领域> --platform <平台>",
+    "install_url": null,
+    "installed": true,
+    "evidence": "declared",
+    "packaged": false
+  }
+]

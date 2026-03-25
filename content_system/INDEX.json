@@ -1,0 +1,300 @@
+{
+  "generated_at": "2026-03-20T13:24:05.585415+08:00",
+  "target_dir": "/Users/liumobei/.openclaw/workspace/content_system",
+  "primary_artifact": "/Users/liumobei/.openclaw/workspace/content_system/INDEX.md",
+  "execution_summary": "已生成资料索引，共 58 个文件；默认查看 INDEX.md。",
+  "files": [
+    {
+      "path": ".DS_Store",
+      "type": "文件",
+      "size": 6148
+    },
+    {
+      "path": "01_research/选题雷达/2026-03-19_科研_选题雷达.md",
+      "type": "文档",
+      "size": 4645
+    },
+    {
+      "path": "03_script/20260306_AI科普_首日3条.md",
+      "type": "文档",
+      "size": 1835
+    },
+    {
+      "path": "06_data/复盘/2026-W12_本周复盘.md",
+      "type": "文档",
+      "size": 3173
+    },
+    {
+      "path": "06_data/日记/2026-03-18_日记.md",
+      "type": "文档",
+      "size": 2878
+    },
+    {
+      "path": "06_data/日记/2026-03-18_日记摘要.md",
+      "type": "文档",
+      "size": 2624
+    },
+    {
+      "path": "07_archive/skilltree/2026-03-18-1457/data.json",
+      "type": "数据",
+      "size": 14209
+    },
+    {
+      "path": "07_archive/skilltree/2026-03-18-1457/index.html",
+      "type": "页面",
+      "size": 5910
+    },
+    {
+      "path": "07_archive/skilltree/2026-03-18-1457/manifest.txt",
+      "type": "文档",
+      "size": 389
+    },
+    {
+      "path": "07_archive/skilltree/2026-03-18-1749/ARCHIVE_RULES.md",
+      "type": "文档",
+      "size": 1553
+    },
+    {
+      "path": "07_archive/skilltree/2026-03-18-1749/INDEX.json",
+      "type": "数据",
+      "size": 537
+    },
+    {
+      "path": "07_archive/skilltree/2026-03-18-1749/INDEX.md",
+      "type": "文档",
+      "size": 420
+    },
+    {
+      "path": "07_archive/skilltree/2026-03-18-1749/data.json",
+      "type": "数据",
+      "size": 14209
+    },
+    {
+      "path": "07_archive/skilltree/2026-03-18-1749/index.html",
+      "type": "页面",
+      "size": 5910
+    },
+    {
+      "path": "07_archive/skilltree/2026-03-18-1749/manifest.json",
+      "type": "数据",
+      "size": 875
+    },
+    {
+      "path": "07_archive/skilltree/2026-03-18-1753/ARCHIVE_RULES.md",
+      "type": "文档",
+      "size": 1553
+    },
+    {
+      "path": "07_archive/skilltree/2026-03-18-1753/INDEX.json",
+      "type": "数据",
+      "size": 619
+    },
+    {
+      "path": "07_archive/skilltree/2026-03-18-1753/INDEX.md",
+      "type": "文档",
+      "size": 457
+    },
+    {
+      "path": "07_archive/skilltree/2026-03-18-1753/data.json",
+      "type": "数据",
+      "size": 14209
+    },
+    {
+      "path": "07_archive/skilltree/2026-03-18-1753/index.html",
+      "type": "页面",
+      "size": 5910
+    },
+    {
+      "path": "07_archive/skilltree/2026-03-18-1753/manifest.json",
+      "type": "数据",
+      "size": 875
+    },
+    {
+      "path": "07_archive/skilltree/2026-03-19-2033/ARCHIVE_RULES.md",
+      "type": "文档",
+      "size": 1553
+    },
+    {
+      "path": "07_archive/skilltree/2026-03-19-2033/INDEX.json",
+      "type": "数据",
+      "size": 619
+    },
+    {
+      "path": "07_archive/skilltree/2026-03-19-2033/INDEX.md",
+      "type": "文档",
+      "size": 457
+    },
+    {
+      "path": "07_archive/skilltree/2026-03-19-2033/data.json",
+      "type": "数据",
+      "size": 14209
+    },
+    {
+      "path": "07_archive/skilltree/2026-03-19-2033/index.html",
+      "type": "页面",
+      "size": 5910
+    },
+    {
+      "path": "07_archive/skilltree/2026-03-19-2033/manifest.json",
+      "type": "数据",
+      "size": 875
+    },
+    {
+      "path": "INDEX.json",
+      "type": "数据",
+      "size": 7598
+    },
+    {
+      "path": "INDEX.md",
+      "type": "文档",
+      "size": 4901
+    },
+    {
+      "path": "final/小红书/小盖风格_AI效率与审美_厚版.md",
+      "type": "文档",
+      "size": 2943
+    },
+    {
+      "path": "final/小红书/小盖风格_会开得越多_真正稀缺的是深度工作_厚版.md",
+      "type": "文档",
+      "size": 3173
+    },
+    {
+      "path": "final/小红书/小盖风格_很多人的焦虑不是因为不努力_而是一直活在别人的节奏里_厚版.md",
+      "type": "文档",
+      "size": 3335
+    },
+    {
+      "path": "final/小红书/小盖风格_焦虑并不总是坏事_它也可能是在提醒你生活失焦了_厚版.md",
+      "type": "文档",
+      "size": 3457
+    },
+    {
+      "path": "final/小红书/小盖风格_真正拉开人与人差距的_常常不是努力_而是判断力_厚版.md",
+      "type": "文档",
+      "size": 3431
+    },
+    {
+      "path": "knowledge/AI/小红书/AillnAI_GPT54_模型更新.md",
+      "type": "文档",
+      "size": 701
+    },
+    {
+      "path": "knowledge/AI/小红书/AillnAI_技术栈_2026-02.md",
+      "type": "文档",
+      "size": 839
+    },
+    {
+      "path": "knowledge/分类与标签规范.md",
+      "type": "文档",
+      "size": 812
+    },
+    {
+      "path": "knowledge/创业/小红书/小盖_Manus_收购思考.md",
+      "type": "文档",
+      "size": 611
+    },
+    {
+      "path": "knowledge/创业/小红书/小盖_OpenClaw_Wrapper机会.md",
+      "type": "文档",
+      "size": 587
+    },
+    {
+      "path": "knowledge/观点/小红书/小盖_播客AI_主体性.md",
+      "type": "文档",
+      "size": 595
+    },
+    {
+      "path": "knowledge/观点/小红书/小盖_教育与AI_观点.md",
+      "type": "文档",
+      "size": 655
+    },
+    {
+      "path": "knowledge/观点/小红书/小盖_春晚AI_拐点.md",
+      "type": "文档",
+      "size": 658
+    },
+    {
+      "path": "knowledge/观点/小红书/小盖_第二大脑_叙事.md",
+      "type": "文档",
+      "size": 640
+    },
+    {
+      "path": "knowledge/观点/小红书/小盖风格_AI效率与审美_厚版.md",
+      "type": "文档",
+      "size": 2943
+    },
+    {
+      "path": "knowledge/观点/小红书/小盖风格_会开得越多_真正稀缺的是深度工作_厚版.md",
+      "type": "文档",
+      "size": 4780
+    },
+    {
+      "path": "knowledge/观点/小红书/小盖风格_很多人的焦虑不是因为不努力_而是一直活在别人的节奏里_厚版.md",
+      "type": "文档",
+      "size": 5026
+    },
+    {
+      "path": "knowledge/观点/小红书/小盖风格_焦虑并不总是坏事_它也可能是在提醒你生活失焦了_厚版.md",
+      "type": "文档",
+      "size": 5098
+    },
+    {
+      "path": "knowledge/观点/小红书/小盖风格_真正拉开人与人差距的_常常不是努力_而是判断力_厚版.md",
+      "type": "文档",
+      "size": 4948
+    },
+    {
+      "path": "skilltree/ARCHIVE_RULES.md",
+      "type": "文档",
+      "size": 1553
+    },
+    {
+      "path": "skilltree/INDEX.json",
+      "type": "数据",
+      "size": 807
+    },
+    {
+      "path": "skilltree/INDEX.md",
+      "type": "文档",
+      "size": 539
+    },
+    {
+      "path": "skilltree/data.json",
+      "type": "数据",
+      "size": 14209
+    },
+    {
+      "path": "skilltree/index.html",
+      "type": "页面",
+      "size": 5910
+    },
+    {
+      "path": "templates/任务面板_每周.md",
+      "type": "文档",
+      "size": 279
+    },
+    {
+      "path": "templates/任务面板_每日.md",
+      "type": "文档",
+      "size": 485
+    },
+    {
+      "path": "templates/复盘表模板.md",
+      "type": "文档",
+      "size": 182
+    },
+    {
+      "path": "templates/自我进化规则.md",
+      "type": "文档",
+      "size": 578
+    },
+    {
+      "path": "templates/选题池模板.md",
+      "type": "文档",
+      "size": 239
+    }
+  ],
+  "node_count": null,
+  "category_count": null
+}

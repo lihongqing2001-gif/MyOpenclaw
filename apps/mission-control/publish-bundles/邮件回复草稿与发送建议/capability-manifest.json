@@ -1,0 +1,39 @@
+{
+  "id": "cap.openclaw.sop.workflow-8c040ba6",
+  "name": "邮件回复草稿与发送建议",
+  "version": "0.2.0",
+  "description": "针对一封或一组邮件生成可直接使用的回复草稿，并给出发送建议。",
+  "domain": "个人管理",
+  "category": "日程规划与提醒",
+  "tags": [
+    "个人管理",
+    "日程规划与提醒",
+    "sop"
+  ],
+  "ownership": "openclaw",
+  "publish": "local-bundle",
+  "dependencies": [],
+  "requires": ">=2026.3.2",
+  "skills": [
+    "skills/assistant-orchestrator/SKILL.md",
+    "skills/email-sequence/SKILL.md"
+  ],
+  "sops": [
+    "sops/邮件回复草稿与发送建议.md"
+  ],
+  "install": "python3 install.py",
+  "healthcheck": "python3 healthcheck.py",
+  "outputs": [
+    "outputs/cap.openclaw.sop.workflow-8c040ba6/"
+  ],
+  "packaged_capabilities": [
+    "cap.openclaw.skill.assistant-orchestrator",
+    "cap.openclaw.skill.email-sequence"
+  ],
+  "entrypoints": [
+    {
+      "label": "邮件回复草稿与发送建议",
+      "command": "__OPENCLAW_WORKFLOW__ sop-邮件回复草稿与发送建议"
+    }
+  ]
+}

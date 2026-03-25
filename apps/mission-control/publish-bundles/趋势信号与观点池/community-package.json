@@ -1,0 +1,562 @@
+{
+  "schemaVersion": "community-package-v1",
+  "packageId": "cap.openclaw.sop.x-01186f69",
+  "type": "sop-pack",
+  "name": "趋势信号与观点池",
+  "version": "0.2.0",
+  "author": {
+    "name": "OpenClaw",
+    "id": "official/openclaw"
+  },
+  "description": "围绕一个关键词、人物、品牌或行业，持续整理 X 上的热门观点、争议点和可转化内容角度。",
+  "source": {
+    "kind": "local-export",
+    "createdAt": "2026-03-24T10:52:05Z"
+  },
+  "capabilities": [
+    {
+      "id": "cap.openclaw.sop.x-01186f69",
+      "label": "趋势信号与观点池",
+      "summary": "围绕一个关键词、人物、品牌或行业，持续整理 X 上的热门观点、争议点和可转化内容角度。",
+      "entrypoint": "__OPENCLAW_WORKFLOW__ sop-x-趋势信号摘要与观点池"
+    },
+    {
+      "id": "cap.openclaw.skill.assistant-orchestrator",
+      "label": "assistant-orchestrator",
+      "summary": "Bundled supporting capability.",
+      "entrypoint": ""
+    },
+    {
+      "id": "cap.openclaw.skill.social-content",
+      "label": "social-content",
+      "summary": "Bundled supporting capability.",
+      "entrypoint": ""
+    },
+    {
+      "id": "cap.openclaw.skill.web-search-plus",
+      "label": "web-search-plus",
+      "summary": "Bundled supporting capability.",
+      "entrypoint": ""
+    }
+  ],
+  "dependencies": [
+    {
+      "id": "cap.openclaw.integration.x-twitter-skill",
+      "label": "X / Twitter 搜索或抓取 skill",
+      "kind": "integration",
+      "required": true,
+      "installCommand": "",
+      "installUrl": "",
+      "bundled": false
+    },
+    {
+      "id": "cap.openclaw.skill.assistant-orchestrator",
+      "label": "assistant-orchestrator",
+      "kind": "skill",
+      "required": false,
+      "installCommand": "claw skill install assistant-orchestrator",
+      "installUrl": "",
+      "bundled": true
+    },
+    {
+      "id": "cap.openclaw.skill.social-content",
+      "label": "social-content",
+      "kind": "skill",
+      "required": false,
+      "installCommand": "claw skill install social-content",
+      "installUrl": "",
+      "bundled": true
+    },
+    {
+      "id": "cap.openclaw.skill.web-search-plus",
+      "label": "web-search-plus",
+      "kind": "skill",
+      "required": false,
+      "installCommand": "claw skill install web-search-plus",
+      "installUrl": "https://serper.dev",
+      "bundled": true
+    }
+  ],
+  "compatibility": {
+    "openclawMinVersion": "2026.3.2",
+    "installMode": "local-console",
+    "platforms": [
+      "macos",
+      "linux",
+      "windows"
+    ]
+  },
+  "permissions": [
+    {
+      "key": "filesystem.read",
+      "required": true,
+      "reason": "Read packaged SOP, docs, and supporting local files."
+    }
+  ],
+  "checksums": {
+    "algorithm": "sha256",
+    "files": [
+      {
+        "path": "OPENCLAW.md",
+        "sha256": "ba71d21ce717cd00842ff61462db4a16fc20607e90fa641812e0d00f7e56f2a9"
+      },
+      {
+        "path": "README.md",
+        "sha256": "d709bab83a77158ee0648c581f8e735fdcfd83b350b2580a3ec178c281d71783"
+      },
+      {
+        "path": "capability-manifest.json",
+        "sha256": "f0f3d88950938dd869feaf11e57f82504588a539212918b908c9c76c77e41566"
+      },
+      {
+        "path": "dependency-hints.json",
+        "sha256": "d44d3a9ea75b7cbb3704ace50af1bcb30b2d927e40b5ac727df2e6868bf1d479"
+      },
+      {
+        "path": "healthcheck.py",
+        "sha256": "f4247a85e3aa47d767f96cfbb6b09bf1da6bae77e7e3bfffccacc3ccf04ad0b9"
+      },
+      {
+        "path": "install.py",
+        "sha256": "e514e26bbb19a96808ecbed25ff9d0135c28501a3af08ca03873cb57e13e3c70"
+      },
+      {
+        "path": "knowledge/x_signal_digest.md",
+        "sha256": "fd530d8b45a779f1ec9cc32d56cb90fb1bccfd6b0c96c0959642a7b0b651e46c"
+      },
+      {
+        "path": "schemas/community-package-v1.schema.json",
+        "sha256": "fbfce78f0b3bea1bb68dc0d51ca99e2149cb1743fae6f3c4825d1e881e7ec8d8"
+      },
+      {
+        "path": "skills/assistant-orchestrator/SKILL.md",
+        "sha256": "24848fef15090e4cbba1299aff02c4af665206f6c633c6aec6b0857ce2ce79f9"
+      },
+      {
+        "path": "skills/assistant-orchestrator/outputs/email-daily-triage/leehongking-qq-com/2026-03-24__triage.json",
+        "sha256": "ea89c6047ce3f6784d3ade6a6357e4975a3250fb8cd33cf5223ac4c511a682aa"
+      },
+      {
+        "path": "skills/assistant-orchestrator/outputs/email-daily-triage/leehongking-qq-com/2026-03-24__triage.md",
+        "sha256": "50b2247dfa506fe6736448a2166da180e06cdb73bfa93dc5880fbe19062e8b24"
+      },
+      {
+        "path": "skills/assistant-orchestrator/outputs/邮件摘要_2026-03-24.md",
+        "sha256": "ac8553890334caf164dda3e21d9396d65b198d51eb52c4360674343fc8a99b8b"
+      },
+      {
+        "path": "skills/assistant-orchestrator/references/swarm-blueprint.md",
+        "sha256": "132c5c07a7949d915d81dc846bfed21a48c4afd18ae0f750e477606b0da98644"
+      },
+      {
+        "path": "skills/social-content/SKILL.md",
+        "sha256": "72e7f6bbed00a77512bb4afc4b93b7d527948450d8b5a37e8cc3deec23cf2680"
+      },
+      {
+        "path": "skills/social-content/evals/evals.json",
+        "sha256": "9e9da40856215d4993aefeacdbf69b721316b94b02c4b474106eaad3cfa8301c"
+      },
+      {
+        "path": "skills/social-content/references/platforms.md",
+        "sha256": "3c4e1b15717a3bcd4ed0cf29dc167dac28aa88bbf01723fde53815122396090f"
+      },
+      {
+        "path": "skills/social-content/references/post-templates.md",
+        "sha256": "db6525e51a690b61faf97a0acf51a2a57526de90da01c6bb37679d056c18c7f4"
+      },
+      {
+        "path": "skills/social-content/references/reverse-engineering.md",
+        "sha256": "c27bef59d463b3b11331c1770f4a23e9e6bbce7d7c8db1e7f7f4f14ba206243f"
+      },
+      {
+        "path": "skills/web-search-plus/CHANGELOG.md",
+        "sha256": "9a33e39afc41021baa68a7f628d50e8b3cd7059ee7210aa1608d8cecbb9350fd"
+      },
+      {
+        "path": "skills/web-search-plus/FAQ.md",
+        "sha256": "b7e6bef9f68fa3084b595154c69fba19a60dcb84ba55fd5864488fcd379f9c38"
+      },
+      {
+        "path": "skills/web-search-plus/README.md",
+        "sha256": "abca5d028a5f4e338293e340373c4efead011a10fbaefe523ed3da7b08e16d76"
+      },
+      {
+        "path": "skills/web-search-plus/SKILL.md",
+        "sha256": "e5e607557ced98ed064aa07b8580f3e849839a1ec448746bcb59b2e8c0548b63"
+      },
+      {
+        "path": "skills/web-search-plus/TROUBLESHOOTING.md",
+        "sha256": "8fc5644eee8e61c6562c666cb6cbff9415f96a18ad13be7402c17f3b941bf384"
+      },
+      {
+        "path": "skills/web-search-plus/_meta.json",
+        "sha256": "d53f6e59af9dbbd97c8a9d8fcc92ed9575611e33267b230ab2eb44362f5a2ca2"
+      },
+      {
+        "path": "skills/web-search-plus/config.example.json",
+        "sha256": "e722457a64aa5ae32b30edab78ea617f1bf369a70295d3c5869cbe266d731986"
+      },
+      {
+        "path": "skills/web-search-plus/config.json",
+        "sha256": "447265ab11d9740b68e6407bf4467e1f48e5a9a5f0ca14df72bdb52df0826f0b"
+      },
+      {
+        "path": "skills/web-search-plus/package.json",
+        "sha256": "467e5a30441e76352a12407ac47500abf576dfaec688cd82a604856f990e5e46"
+      },
+      {
+        "path": "skills/web-search-plus/scripts/search.py",
+        "sha256": "4f43e9a5908b8b9fdf51262eec37f7730c40061d958d4d1460ffe28f56734680"
+      },
+      {
+        "path": "skills/web-search-plus/scripts/setup.py",
+        "sha256": "f193ba80573ce4e0e430b13d74c70a4e4707d4e12d1f6b24c02ff1957ae0c89d"
+      },
+      {
+        "path": "skills/web-search-plus/temp_web_search_plus/CHANGELOG.md",
+        "sha256": "9a33e39afc41021baa68a7f628d50e8b3cd7059ee7210aa1608d8cecbb9350fd"
+      },
+      {
+        "path": "skills/web-search-plus/temp_web_search_plus/FAQ.md",
+        "sha256": "b7e6bef9f68fa3084b595154c69fba19a60dcb84ba55fd5864488fcd379f9c38"
+      },
+      {
+        "path": "skills/web-search-plus/temp_web_search_plus/README.md",
+        "sha256": "abca5d028a5f4e338293e340373c4efead011a10fbaefe523ed3da7b08e16d76"
+      },
+      {
+        "path": "skills/web-search-plus/temp_web_search_plus/SKILL.md",
+        "sha256": "e5e607557ced98ed064aa07b8580f3e849839a1ec448746bcb59b2e8c0548b63"
+      },
+      {
+        "path": "skills/web-search-plus/temp_web_search_plus/TROUBLESHOOTING.md",
+        "sha256": "8fc5644eee8e61c6562c666cb6cbff9415f96a18ad13be7402c17f3b941bf384"
+      },
+      {
+        "path": "skills/web-search-plus/temp_web_search_plus/_meta.json",
+        "sha256": "d53f6e59af9dbbd97c8a9d8fcc92ed9575611e33267b230ab2eb44362f5a2ca2"
+      },
+      {
+        "path": "skills/web-search-plus/temp_web_search_plus/config.example.json",
+        "sha256": "e722457a64aa5ae32b30edab78ea617f1bf369a70295d3c5869cbe266d731986"
+      },
+      {
+        "path": "skills/web-search-plus/temp_web_search_plus/config.json",
+        "sha256": "cd5fd7c220153570735772cce3a902738e6d9835cdad6e0572ef9e57ba471c21"
+      },
+      {
+        "path": "skills/web-search-plus/temp_web_search_plus/package.json",
+        "sha256": "467e5a30441e76352a12407ac47500abf576dfaec688cd82a604856f990e5e46"
+      },
+      {
+        "path": "skills/web-search-plus/temp_web_search_plus/scripts/search.py",
+        "sha256": "4f43e9a5908b8b9fdf51262eec37f7730c40061d958d4d1460ffe28f56734680"
+      },
+      {
+        "path": "skills/web-search-plus/temp_web_search_plus/scripts/setup.py",
+        "sha256": "f193ba80573ce4e0e430b13d74c70a4e4707d4e12d1f6b24c02ff1957ae0c89d"
+      },
+      {
+        "path": "skills/web-search-plus/temp_web_search_plus/test-auto-routing.sh",
+        "sha256": "3df211b33710a6a3165c0a82e283da7ba2929bd145c6095442da7cc7805656be"
+      },
+      {
+        "path": "skills/web-search-plus/test-auto-routing.sh",
+        "sha256": "3df211b33710a6a3165c0a82e283da7ba2929bd145c6095442da7cc7805656be"
+      },
+      {
+        "path": "sops/趋势信号与观点池.md",
+        "sha256": "17b11f8a862dda67705fa616bd34ee457aed399a25b5f40f5fba285274bfb775"
+      }
+    ]
+  },
+  "docs": [
+    {
+      "title": "OPENCLAW",
+      "path": "OPENCLAW.md"
+    },
+    {
+      "title": "README",
+      "path": "README.md"
+    },
+    {
+      "title": "x_signal_digest",
+      "path": "knowledge/x_signal_digest.md"
+    },
+    {
+      "title": "SKILL",
+      "path": "skills/assistant-orchestrator/SKILL.md"
+    },
+    {
+      "title": "2026-03-24__triage",
+      "path": "skills/assistant-orchestrator/outputs/email-daily-triage/leehongking-qq-com/2026-03-24__triage.md"
+    },
+    {
+      "title": "邮件摘要_2026-03-24",
+      "path": "skills/assistant-orchestrator/outputs/邮件摘要_2026-03-24.md"
+    },
+    {
+      "title": "swarm-blueprint",
+      "path": "skills/assistant-orchestrator/references/swarm-blueprint.md"
+    },
+    {
+      "title": "SKILL",
+      "path": "skills/social-content/SKILL.md"
+    },
+    {
+      "title": "platforms",
+      "path": "skills/social-content/references/platforms.md"
+    },
+    {
+      "title": "post-templates",
+      "path": "skills/social-content/references/post-templates.md"
+    },
+    {
+      "title": "reverse-engineering",
+      "path": "skills/social-content/references/reverse-engineering.md"
+    },
+    {
+      "title": "CHANGELOG",
+      "path": "skills/web-search-plus/CHANGELOG.md"
+    },
+    {
+      "title": "FAQ",
+      "path": "skills/web-search-plus/FAQ.md"
+    },
+    {
+      "title": "README",
+      "path": "skills/web-search-plus/README.md"
+    },
+    {
+      "title": "SKILL",
+      "path": "skills/web-search-plus/SKILL.md"
+    },
+    {
+      "title": "TROUBLESHOOTING",
+      "path": "skills/web-search-plus/TROUBLESHOOTING.md"
+    },
+    {
+      "title": "CHANGELOG",
+      "path": "skills/web-search-plus/temp_web_search_plus/CHANGELOG.md"
+    },
+    {
+      "title": "FAQ",
+      "path": "skills/web-search-plus/temp_web_search_plus/FAQ.md"
+    },
+    {
+      "title": "README",
+      "path": "skills/web-search-plus/temp_web_search_plus/README.md"
+    },
+    {
+      "title": "SKILL",
+      "path": "skills/web-search-plus/temp_web_search_plus/SKILL.md"
+    },
+    {
+      "title": "TROUBLESHOOTING",
+      "path": "skills/web-search-plus/temp_web_search_plus/TROUBLESHOOTING.md"
+    },
+    {
+      "title": "趋势信号与观点池",
+      "path": "sops/趋势信号与观点池.md"
+    }
+  ],
+  "assets": [
+    {
+      "path": "OPENCLAW.md",
+      "kind": "knowledge",
+      "label": "OPENCLAW.md"
+    },
+    {
+      "path": "README.md",
+      "kind": "knowledge",
+      "label": "README.md"
+    },
+    {
+      "path": "knowledge/x_signal_digest.md",
+      "kind": "knowledge",
+      "label": "x_signal_digest.md"
+    },
+    {
+      "path": "schemas/community-package-v1.schema.json",
+      "kind": "document",
+      "label": "community-package-v1.schema.json"
+    },
+    {
+      "path": "skills/assistant-orchestrator/SKILL.md",
+      "kind": "knowledge",
+      "label": "SKILL.md"
+    },
+    {
+      "path": "skills/assistant-orchestrator/outputs/email-daily-triage/leehongking-qq-com/2026-03-24__triage.json",
+      "kind": "document",
+      "label": "2026-03-24__triage.json"
+    },
+    {
+      "path": "skills/assistant-orchestrator/outputs/email-daily-triage/leehongking-qq-com/2026-03-24__triage.md",
+      "kind": "knowledge",
+      "label": "2026-03-24__triage.md"
+    },
+    {
+      "path": "skills/assistant-orchestrator/outputs/邮件摘要_2026-03-24.md",
+      "kind": "knowledge",
+      "label": "邮件摘要_2026-03-24.md"
+    },
+    {
+      "path": "skills/assistant-orchestrator/references/swarm-blueprint.md",
+      "kind": "knowledge",
+      "label": "swarm-blueprint.md"
+    },
+    {
+      "path": "skills/social-content/SKILL.md",
+      "kind": "knowledge",
+      "label": "SKILL.md"
+    },
+    {
+      "path": "skills/social-content/evals/evals.json",
+      "kind": "document",
+      "label": "evals.json"
+    },
+    {
+      "path": "skills/social-content/references/platforms.md",
+      "kind": "knowledge",
+      "label": "platforms.md"
+    },
+    {
+      "path": "skills/social-content/references/post-templates.md",
+      "kind": "knowledge",
+      "label": "post-templates.md"
+    },
+    {
+      "path": "skills/social-content/references/reverse-engineering.md",
+      "kind": "knowledge",
+      "label": "reverse-engineering.md"
+    },
+    {
+      "path": "skills/web-search-plus/CHANGELOG.md",
+      "kind": "knowledge",
+      "label": "CHANGELOG.md"
+    },
+    {
+      "path": "skills/web-search-plus/FAQ.md",
+      "kind": "knowledge",
+      "label": "FAQ.md"
+    },
+    {
+      "path": "skills/web-search-plus/README.md",
+      "kind": "knowledge",
+      "label": "README.md"
+    },
+    {
+      "path": "skills/web-search-plus/SKILL.md",
+      "kind": "knowledge",
+      "label": "SKILL.md"
+    },
+    {
+      "path": "skills/web-search-plus/TROUBLESHOOTING.md",
+      "kind": "knowledge",
+      "label": "TROUBLESHOOTING.md"
+    },
+    {
+      "path": "skills/web-search-plus/_meta.json",
+      "kind": "document",
+      "label": "_meta.json"
+    },
+    {
+      "path": "skills/web-search-plus/config.example.json",
+      "kind": "document",
+      "label": "config.example.json"
+    },
+    {
+      "path": "skills/web-search-plus/config.json",
+      "kind": "document",
+      "label": "config.json"
+    },
+    {
+      "path": "skills/web-search-plus/package.json",
+      "kind": "document",
+      "label": "package.json"
+    },
+    {
+      "path": "skills/web-search-plus/scripts/search.py",
+      "kind": "script",
+      "label": "search.py"
+    },
+    {
+      "path": "skills/web-search-plus/scripts/setup.py",
+      "kind": "script",
+      "label": "setup.py"
+    },
+    {
+      "path": "skills/web-search-plus/temp_web_search_plus/CHANGELOG.md",
+      "kind": "knowledge",
+      "label": "CHANGELOG.md"
+    },
+    {
+      "path": "skills/web-search-plus/temp_web_search_plus/FAQ.md",
+      "kind": "knowledge",
+      "label": "FAQ.md"
+    },
+    {
+      "path": "skills/web-search-plus/temp_web_search_plus/README.md",
+      "kind": "knowledge",
+      "label": "README.md"
+    },
+    {
+      "path": "skills/web-search-plus/temp_web_search_plus/SKILL.md",
+      "kind": "knowledge",
+      "label": "SKILL.md"
+    },
+    {
+      "path": "skills/web-search-plus/temp_web_search_plus/TROUBLESHOOTING.md",
+      "kind": "knowledge",
+      "label": "TROUBLESHOOTING.md"
+    },
+    {
+      "path": "skills/web-search-plus/temp_web_search_plus/_meta.json",
+      "kind": "document",
+      "label": "_meta.json"
+    },
+    {
+      "path": "skills/web-search-plus/temp_web_search_plus/config.example.json",
+      "kind": "document",
+      "label": "config.example.json"
+    },
+    {
+      "path": "skills/web-search-plus/temp_web_search_plus/config.json",
+      "kind": "document",
+      "label": "config.json"
+    },
+    {
+      "path": "skills/web-search-plus/temp_web_search_plus/package.json",
+      "kind": "document",
+      "label": "package.json"
+    },
+    {
+      "path": "skills/web-search-plus/temp_web_search_plus/scripts/search.py",
+      "kind": "script",
+      "label": "search.py"
+    },
+    {
+      "path": "skills/web-search-plus/temp_web_search_plus/scripts/setup.py",
+      "kind": "script",
+      "label": "setup.py"
+    },
+    {
+      "path": "skills/web-search-plus/temp_web_search_plus/test-auto-routing.sh",
+      "kind": "script",
+      "label": "test-auto-routing.sh"
+    },
+    {
+      "path": "skills/web-search-plus/test-auto-routing.sh",
+      "kind": "script",
+      "label": "test-auto-routing.sh"
+    },
+    {
+      "path": "sops/趋势信号与观点池.md",
+      "kind": "knowledge",
+      "label": "趋势信号与观点池.md"
+    }
+  ],
+  "reviewStatus": "draft",
+  "visibility": "private"
+}

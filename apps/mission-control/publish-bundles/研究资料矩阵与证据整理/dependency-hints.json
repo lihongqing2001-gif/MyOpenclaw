@@ -1,0 +1,38 @@
+[
+  {
+    "capability_id": "cap.openclaw.skill.qmd-skill",
+    "label": "qmd",
+    "summary": "Local hybrid search for markdown notes and docs. Use when searching notes, finding related content, or retrieving documents from indexed collections.",
+    "source_type": "skill",
+    "source_path": "/Users/liumobei/.openclaw/workspace/skills/qmd-skill/SKILL.md",
+    "install_command": "claw skill install qmd-skill",
+    "install_url": null,
+    "installed": true,
+    "evidence": "explicit-text",
+    "packaged": true
+  },
+  {
+    "capability_id": "cap.openclaw.skill.social-content",
+    "label": "social-content",
+    "summary": "When the user wants help creating, scheduling, or optimizing social media content for LinkedIn, Twitter/X, Instagram, TikTok, Facebook, or other platforms. Also use when the user mentions 'LinkedIn post,' 'Twitter thread,' 'social media,' 'content calendar,' 'social scheduling,' 'engagement,' 'viral content,' 'what should I post,' 'repurpose this content,' 'tweet ideas,' 'LinkedIn carousel,' 'social media strategy,' or 'grow my following.' Use this for any social media content creation, repurposing, or scheduling task. For broader content strategy, see content-strategy.",
+    "source_type": "skill",
+    "source_path": "/Users/liumobei/.agents/skills/social-content/SKILL.md",
+    "install_command": "claw skill install social-content",
+    "install_url": null,
+    "installed": true,
+    "evidence": "explicit-text",
+    "packaged": true
+  },
+  {
+    "capability_id": "cap.openclaw.skill.web-search-plus",
+    "label": "web-search-plus",
+    "summary": "Unified search skill with Intelligent Auto-Routing. Uses multi-signal analysis to automatically select between Serper (Google), Tavily (Research), Exa (Neural), You.com (RAG/Real-time), and SearXNG (Privacy/Self-hosted) with confidence scoring.",
+    "source_type": "skill",
+    "source_path": "/Users/liumobei/.openclaw/workspace/skills/web-search-plus/SKILL.md",
+    "install_command": "claw skill install web-search-plus",
+    "install_url": "https://serper.dev",
+    "installed": true,
+    "evidence": "explicit-text",
+    "packaged": true
+  }
+]

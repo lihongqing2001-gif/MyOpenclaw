@@ -1,0 +1,62 @@
+[
+  {
+    "capability_id": "cap.openclaw.skill.journal-revision-workflow",
+    "label": "journal-revision-workflow",
+    "summary": "Use when revising a journal submission, responding to editor or reviewer comments, building a revision matrix, coordinating Word Track Changes handoff, and checking resubmission readiness.",
+    "source_type": "skill",
+    "source_path": "/Users/liumobei/.codex/skills/journal-revision-workflow/SKILL.md",
+    "install_command": "claw skill install journal-revision-workflow",
+    "install_url": null,
+    "installed": true,
+    "evidence": "explicit-text",
+    "packaged": true
+  },
+  {
+    "capability_id": "cap.openclaw.skill.self-improving",
+    "label": "Self-Improving Agent (With Self-Reflection)",
+    "summary": "Self-reflection + Self-criticism + Self-learning + Self-organizing memory. Agent evaluates its own work, catches mistakes, and improves permanently. Use before starting work and after responding to the user.",
+    "source_type": "skill",
+    "source_path": "/Users/liumobei/.openclaw/workspace/skills/self-improving/SKILL.md",
+    "install_command": "claw skill install self-improving",
+    "install_url": null,
+    "installed": true,
+    "evidence": "explicit-text",
+    "packaged": true
+  },
+  {
+    "capability_id": "cap.openclaw.skill.alex-session-wrap-up",
+    "label": "session-wrap-up",
+    "summary": "End-of-session automation that commits unpushed work, extracts learnings, detects patterns, and persists rules. Uses gpt-4o-mini for pattern detection. Runs at session end or on-demand.",
+    "source_type": "skill",
+    "source_path": "/Users/liumobei/.openclaw/workspace/skills/alex-session-wrap-up/SKILL.md",
+    "install_command": "claw skill install alex-session-wrap-up",
+    "install_url": null,
+    "installed": true,
+    "evidence": "explicit-text",
+    "packaged": true
+  },
+  {
+    "capability_id": "cap.openclaw.skill.social-content",
+    "label": "social-content",
+    "summary": "When the user wants help creating, scheduling, or optimizing social media content for LinkedIn, Twitter/X, Instagram, TikTok, Facebook, or other platforms. Also use when the user mentions 'LinkedIn post,' 'Twitter thread,' 'social media,' 'content calendar,' 'social scheduling,' 'engagement,' 'viral content,' 'what should I post,' 'repurpose this content,' 'tweet ideas,' 'LinkedIn carousel,' 'social media strategy,' or 'grow my following.' Use this for any social media content creation, repurposing, or scheduling task. For broader content strategy, see content-strategy.",
+    "source_type": "skill",
+    "source_path": "/Users/liumobei/.agents/skills/social-content/SKILL.md",
+    "install_command": "claw skill install social-content",
+    "install_url": null,
+    "installed": true,
+    "evidence": "explicit-text",
+    "packaged": true
+  },
+  {
+    "capability_id": "cap.openclaw.skill.xiaohongshu-skills",
+    "label": "xiaohongshu-skills",
+    "summary": "|",
+    "source_type": "skill",
+    "source_path": "/Users/liumobei/.openclaw/workspace/skills/xiaohongshu-skills/SKILL.md",
+    "install_command": "claw skill install xiaohongshu-skills",
+    "install_url": "https://github.com/anthropics/openclaw",
+    "installed": true,
+    "evidence": "explicit-text",
+    "packaged": true
+  }
+]

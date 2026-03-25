@@ -2,11 +2,11 @@
 
 ## Product Lines
 
-- `OpenClaw Local Console`
+- `Forge Console`
   - local-first
   - single-user trust model
   - package import/install/enable/disable/rollback
-- `OpenClaw Web Platform`
+- `Forge Hub`
   - public web app
   - authenticated submissions and downloads
   - reviewer and super-admin governance

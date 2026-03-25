@@ -1,0 +1,14 @@
+[
+  {
+    "capability_id": "cap.openclaw.skill.find-skills",
+    "label": "find-skills",
+    "summary": "Helps users discover and install agent skills when they ask questions like \"how do I do X\", \"find a skill for X\", \"is there a skill that can...\", or express interest in extending capabilities. This skill should be used when the user is looking for functionality that might exist as an installable skill.",
+    "source_type": "skill",
+    "source_path": "/Users/liumobei/.agents/skills/find-skills/SKILL.md",
+    "install_command": "claw skill install find-skills",
+    "install_url": "https://skills.sh/",
+    "installed": true,
+    "evidence": "explicit-text",
+    "packaged": true
+  }
+]

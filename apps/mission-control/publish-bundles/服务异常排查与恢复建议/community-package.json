@@ -1,0 +1,129 @@
+{
+  "schemaVersion": "community-package-v1",
+  "packageId": "cap.openclaw.sop.workflow-9a809a15",
+  "type": "sop-pack",
+  "name": "服务异常排查与恢复建议",
+  "version": "0.2.0",
+  "author": {
+    "name": "OpenClaw",
+    "id": "official/openclaw"
+  },
+  "description": "在服务异常、页面打不开、任务卡死、健康检查异常时，快速形成一份排查与恢复建议。",
+  "source": {
+    "kind": "local-export",
+    "createdAt": "2026-03-24T10:52:07Z"
+  },
+  "capabilities": [
+    {
+      "id": "cap.openclaw.sop.workflow-9a809a15",
+      "label": "服务异常排查与恢复建议",
+      "summary": "在服务异常、页面打不开、任务卡死、健康检查异常时，快速形成一份排查与恢复建议。",
+      "entrypoint": "__OPENCLAW_WORKFLOW__ sop-服务异常排查与恢复建议"
+    }
+  ],
+  "dependencies": [],
+  "compatibility": {
+    "openclawMinVersion": "2026.3.2",
+    "installMode": "local-console",
+    "platforms": [
+      "macos",
+      "linux",
+      "windows"
+    ]
+  },
+  "permissions": [
+    {
+      "key": "filesystem.read",
+      "required": true,
+      "reason": "Read packaged SOP, docs, and supporting local files."
+    }
+  ],
+  "checksums": {
+    "algorithm": "sha256",
+    "files": [
+      {
+        "path": "OPENCLAW.md",
+        "sha256": "16e3bb7ffb1244f2fa0fe850832276b4c2a86f05aaec2ef43c768f7c6ffba2ed"
+      },
+      {
+        "path": "README.md",
+        "sha256": "731e08cca0b93adec6e3b7bdfd530aa714f8a47470693ef039656ce2b615d073"
+      },
+      {
+        "path": "capability-manifest.json",
+        "sha256": "2e0435e5b763b39c994c32077dc5820da3df501c32c93abaac1f42d831c791a7"
+      },
+      {
+        "path": "dependency-hints.json",
+        "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      },
+      {
+        "path": "healthcheck.py",
+        "sha256": "19477f3d55de5a7cecc854ec3cf364af6505df827b282432a56f63dcdad0b079"
+      },
+      {
+        "path": "install.py",
+        "sha256": "91acb15233d117671202568099a685fc6b90363470f67672c90131a5d3074f9d"
+      },
+      {
+        "path": "knowledge/ops_incident_triage.md",
+        "sha256": "1360cce3787e07b050a8e16e3e0c65c401d95e8f644c4a7e72f24088e51c052f"
+      },
+      {
+        "path": "schemas/community-package-v1.schema.json",
+        "sha256": "fbfce78f0b3bea1bb68dc0d51ca99e2149cb1743fae6f3c4825d1e881e7ec8d8"
+      },
+      {
+        "path": "sops/服务异常排查与恢复建议.md",
+        "sha256": "57a2c0e5d351f2fe29ebc12beca4f69225ec58f7a0534b8b212d7094a0241fd8"
+      }
+    ]
+  },
+  "docs": [
+    {
+      "title": "OPENCLAW",
+      "path": "OPENCLAW.md"
+    },
+    {
+      "title": "README",
+      "path": "README.md"
+    },
+    {
+      "title": "ops_incident_triage",
+      "path": "knowledge/ops_incident_triage.md"
+    },
+    {
+      "title": "服务异常排查与恢复建议",
+      "path": "sops/服务异常排查与恢复建议.md"
+    }
+  ],
+  "assets": [
+    {
+      "path": "OPENCLAW.md",
+      "kind": "knowledge",
+      "label": "OPENCLAW.md"
+    },
+    {
+      "path": "README.md",
+      "kind": "knowledge",
+      "label": "README.md"
+    },
+    {
+      "path": "knowledge/ops_incident_triage.md",
+      "kind": "knowledge",
+      "label": "ops_incident_triage.md"
+    },
+    {
+      "path": "schemas/community-package-v1.schema.json",
+      "kind": "document",
+      "label": "community-package-v1.schema.json"
+    },
+    {
+      "path": "sops/服务异常排查与恢复建议.md",
+      "kind": "knowledge",
+      "label": "服务异常排查与恢复建议.md"
+    }
+  ],
+  "reviewStatus": "draft",
+  "visibility": "private"
+}

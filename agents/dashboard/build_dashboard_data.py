@@ -6,6 +6,7 @@ from datetime import datetime
 ROOT = Path('/Users/liumobei/.openclaw/workspace')
 REGISTRY = ROOT / 'agents/registry/registry.yaml'
 COMM_LOG = ROOT / 'agents/runs/COMM_LOG.md'
+SWARM = ROOT / 'agents/swarm/active-tasks.json'
 OUT = ROOT / 'agents/dashboard/data/dashboard-data.js'
 
 
@@ -64,8 +65,22 @@ def parse_comm(path: Path):
     return records
 
 
+def parse_swarm(path: Path):
+    if not path.exists():
+        return {'updated_at': None, 'tasks': []}
+    try:
+        payload = json.loads(path.read_text(encoding='utf-8'))
+    except Exception:
+        return {'updated_at': None, 'tasks': []}
+    return {
+        'updated_at': payload.get('updated_at'),
+        'tasks': payload.get('tasks', [])
+    }
+
+
 agents = parse_registry(REGISTRY)
 comm = parse_comm(COMM_LOG)
+swarm = parse_swarm(SWARM)
 
 agent_cards = []
 for a in agents:
@@ -85,18 +100,24 @@ status_count = {}
 for c in agent_cards:
     status_count[c['runtime_status']] = status_count.get(c['runtime_status'], 0) + 1
 
+swarm_tasks = swarm['tasks']
 metrics = {
     'total_agents': len(agent_cards),
     'total_handoffs': len(comm),
     'ready_agents': status_count.get('READY', 0),
     'blocked_agents': status_count.get('BLOCKED', 0),
+    'swarm_tasks': len(swarm_tasks),
+    'swarm_review': len([t for t in swarm_tasks if t.get('status') == 'REVIEW']),
+    'swarm_verified': len([t for t in swarm_tasks if t.get('status') == 'VERIFIED']),
+    'swarm_blocked': len([t for t in swarm_tasks if t.get('status') == 'BLOCKED']),
     'updated_at': datetime.now().isoformat(timespec='seconds')
 }
 
 payload = {
     'metrics': metrics,
     'agents': agent_cards,
-    'handoffs': comm[-20:]
+    'handoffs': comm[-20:],
+    'swarm': swarm
 }
 
 OUT.write_text('window.DASHBOARD_DATA = ' + json.dumps(payload, ensure_ascii=False, indent=2) + ';\n', encoding='utf-8')

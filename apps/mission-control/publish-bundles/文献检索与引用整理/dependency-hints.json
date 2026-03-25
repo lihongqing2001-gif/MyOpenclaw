@@ -1,0 +1,38 @@
+[
+  {
+    "capability_id": "cap.openclaw.foundation.web-search",
+    "label": "搜索与网页抓取",
+    "summary": "搜索→提取→摘要→入库",
+    "source_type": "foundation",
+    "source_path": "/Users/liumobei/.openclaw/workspace/content_system/skilltree/data.json",
+    "install_command": "web_search / web_fetch",
+    "install_url": null,
+    "installed": true,
+    "evidence": "declared",
+    "packaged": false
+  },
+  {
+    "capability_id": "cap.openclaw.foundation.knowledge-index",
+    "label": "知识库归档与标签",
+    "summary": "分类归档→打标签→结构化摘要→可检索复用",
+    "source_type": "foundation",
+    "source_path": "/Users/liumobei/.openclaw/workspace/content_system/skilltree/data.json",
+    "install_command": "/knowledge ingest --domain <领域> --platform <平台>",
+    "install_url": null,
+    "installed": true,
+    "evidence": "declared",
+    "packaged": false
+  },
+  {
+    "capability_id": "cap.openclaw.foundation.browser-ops",
+    "label": "网页浏览与采集",
+    "summary": "打开网页→提取内容→截图/摘要",
+    "source_type": "foundation",
+    "source_path": "/Users/liumobei/.openclaw/workspace/content_system/skilltree/data.json",
+    "install_command": "浏览器快照/点击/抓取",
+    "install_url": null,
+    "installed": true,
+    "evidence": "declared",
+    "packaged": false
+  }
+]

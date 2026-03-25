@@ -1,0 +1,62 @@
+[
+  {
+    "capability_id": "cap.openclaw.skill.assistant-orchestrator",
+    "label": "assistant-orchestrator",
+    "summary": "Personal assistant operating rules for this workspace. Use when the user asks about schedules, reminders, Apple Notes/Reminders/Calendar syncing, weekly/monthly planning, skill discovery, or OpenClaw agent-swarm orchestration. Also use when the user says the assistant should take over, asks to remember a workflow, or wants rules summarized into an auto-applied skill.",
+    "source_type": "skill",
+    "source_path": "/Users/liumobei/.openclaw/workspace/skills/assistant-orchestrator/SKILL.md",
+    "install_command": "claw skill install assistant-orchestrator",
+    "install_url": null,
+    "installed": true,
+    "evidence": "explicit-text",
+    "packaged": true
+  },
+  {
+    "capability_id": "cap.openclaw.skill.frontend-design",
+    "label": "frontend-design",
+    "summary": "Create distinctive, production-grade frontend interfaces with high design quality. Use this skill when the user asks to build web components, pages, artifacts, posters, or applications (examples include websites, landing pages, dashboards, React components, HTML/CSS layouts, or when styling/beautifying any web UI). Generates creative, polished code and UI design that avoids generic AI aesthetics.",
+    "source_type": "skill",
+    "source_path": "/Users/liumobei/.agents/skills/frontend-design/SKILL.md",
+    "install_command": "claw skill install frontend-design",
+    "install_url": null,
+    "installed": true,
+    "evidence": "explicit-text",
+    "packaged": true
+  },
+  {
+    "capability_id": "cap.openclaw.skill.penpot-uiux-design",
+    "label": "penpot-uiux-design",
+    "summary": "Comprehensive guide for creating professional UI/UX designs in Penpot using MCP tools. Use this skill when: (1) Creating new UI/UX designs for web, mobile, or desktop applications, (2) Building design systems with components and tokens, (3) Designing dashboards, forms, navigation, or landing pages, (4) Applying accessibility standards and best practices, (5) Following platform guidelines (iOS, Android, Material Design), (6) Reviewing or improving existing Penpot designs for usability. Triggers: \"design a UI\", \"create interface\", \"build layout\", \"design dashboard\", \"create form\", \"design landing page\", \"make it accessible\", \"design system\", \"component library\".",
+    "source_type": "skill",
+    "source_path": "/Users/liumobei/.agents/skills/penpot-uiux-design/SKILL.md",
+    "install_command": "claw skill install penpot-uiux-design",
+    "install_url": null,
+    "installed": true,
+    "evidence": "explicit-text",
+    "packaged": true
+  },
+  {
+    "capability_id": "cap.openclaw.skill.web-design-guidelines",
+    "label": "web-design-guidelines",
+    "summary": "Review UI code for Web Interface Guidelines compliance. Use when asked to \"review my UI\", \"check accessibility\", \"audit design\", \"review UX\", or \"check my site against best practices\".",
+    "source_type": "skill",
+    "source_path": "/Users/liumobei/.agents/skills/web-design-guidelines/SKILL.md",
+    "install_command": "claw skill install web-design-guidelines",
+    "install_url": null,
+    "installed": true,
+    "evidence": "explicit-text",
+    "packaged": true
+  },
+  {
+    "capability_id": "cap.openclaw.skill.web-search-plus",
+    "label": "web-search-plus",
+    "summary": "Unified search skill with Intelligent Auto-Routing. Uses multi-signal analysis to automatically select between Serper (Google), Tavily (Research), Exa (Neural), You.com (RAG/Real-time), and SearXNG (Privacy/Self-hosted) with confidence scoring.",
+    "source_type": "skill",
+    "source_path": "/Users/liumobei/.openclaw/workspace/skills/web-search-plus/SKILL.md",
+    "install_command": "claw skill install web-search-plus",
+    "install_url": "https://serper.dev",
+    "installed": true,
+    "evidence": "explicit-text",
+    "packaged": true
+  }
+]

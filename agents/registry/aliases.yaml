@@ -22,6 +22,6 @@ aliases:
     slug: executor
     target: executor-v1
   - key: 生
-    display: 生活助理
+    display: 秘书
     slug: life-assistant
     target: life-assistant-v1

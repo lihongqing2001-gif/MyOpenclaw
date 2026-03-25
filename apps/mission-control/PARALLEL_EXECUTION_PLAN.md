@@ -1,4 +1,4 @@
-# OpenClaw Web App Parallel Execution Plan
+# Forge Console Parallel Execution Plan
 
 ## Current verified status
 

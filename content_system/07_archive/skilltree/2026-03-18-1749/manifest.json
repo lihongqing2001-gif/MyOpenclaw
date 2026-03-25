@@ -1,0 +1,31 @@
+{
+  "generated_at": "2026-03-18T17:49:18.055457+08:00",
+  "target_dir": "/Users/liumobei/.openclaw/workspace/content_system/skilltree",
+  "files": [
+    {
+      "path": "ARCHIVE_RULES.md",
+      "size": 1553,
+      "sha256": "a6eef111ea61da8e9a1621c718dc2a516620018463b3bf53ab369a44814ebb61"
+    },
+    {
+      "path": "INDEX.json",
+      "size": 537,
+      "sha256": "cc1afd8559698074cb39e6e6279e08ef722846787e08e24728a1d0382b9defc6"
+    },
+    {
+      "path": "INDEX.md",
+      "size": 420,
+      "sha256": "6106a2fc4e7071e0ad310d2c471f4fea4c1c6bc1d4881f2b68293a8134cc3e4a"
+    },
+    {
+      "path": "data.json",
+      "size": 14209,
+      "sha256": "8c7269dc811f609717452bb55f6c4f8532fc8994cf9cbe45e44155ed68f66f8a"
+    },
+    {
+      "path": "index.html",
+      "size": 5910,
+      "sha256": "c3c27ae410ec2709ac6276ba645871c12efd91094bc1da89e63bfc6ed3ebf816"
+    }
+  ]
+}

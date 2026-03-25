@@ -1,0 +1,33 @@
+{
+  "generated_at": "2026-03-18T17:53:46.339222+08:00",
+  "target_dir": "/Users/liumobei/.openclaw/workspace/content_system/skilltree",
+  "files": [
+    {
+      "path": "ARCHIVE_RULES.md",
+      "type": "文档",
+      "size": 1553
+    },
+    {
+      "path": "INDEX.json",
+      "type": "数据",
+      "size": 619
+    },
+    {
+      "path": "INDEX.md",
+      "type": "文档",
+      "size": 457
+    },
+    {
+      "path": "data.json",
+      "type": "数据",
+      "size": 14209
+    },
+    {
+      "path": "index.html",
+      "type": "页面",
+      "size": 5910
+    }
+  ],
+  "node_count": 27,
+  "category_count": 10
+}

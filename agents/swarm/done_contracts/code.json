@@ -1,0 +1,8 @@
+{
+  "name": "code",
+  "required_checks": ["branch_exists", "ci_passed", "verified"],
+  "notes": [
+    "Do not mark done until code is committed and tests are passing.",
+    "Verification must be evidence-backed."
+  ]
+}

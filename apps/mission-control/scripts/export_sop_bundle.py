@@ -1,6 +1,7 @@
 import argparse
 import hashlib
 import json
+import os
 import re
 import shutil
 import subprocess
@@ -14,6 +15,8 @@ from typing import Any
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_BASE_URL = "http://127.0.0.1:3000"
 COMMUNITY_SCHEMA_PATH = PROJECT_ROOT.parent / "packages" / "community-package-v1" / "manifest.schema.json"
+DEFAULT_RESOURCE_OWNER = "openclaw-labs"
+RELEASE_SCHEMA_VERSION = "openclaw-resource-release-v1"
 
 
 def safe_name(value: str) -> str:
@@ -23,6 +26,20 @@ def safe_name(value: str) -> str:
 def normalize_token(value: str) -> str:
     normalized = re.sub(r"[^a-z0-9]+", "-", value.lower()).strip("-")
     return normalized or "item"
+
+
+def has_non_ascii(value: str) -> bool:
+    return any(ord(ch) > 127 for ch in value)
+
+
+def stable_token_for_source(value: str) -> str:
+    token = normalize_token(value)
+    if has_non_ascii(value):
+        suffix = hashlib.sha1(value.encode("utf-8")).hexdigest()[:8]
+        if token == "item":
+            return f"workflow-{suffix}"
+        return f"{token}-{suffix}"
+    return token
 
 
 def fetch_skill_tree(base_url: str) -> list[dict[str, Any]]:
@@ -105,6 +122,156 @@ def sha256_for_path(target: Path) -> str:
         for chunk in iter(lambda: handle.read(1024 * 1024), b""):
             digest.update(chunk)
     return digest.hexdigest()
+
+
+def iso_now() -> str:
+    return subprocess.run(
+        ["date", "-u", "+%Y-%m-%dT%H:%M:%SZ"],
+        capture_output=True,
+        text=True,
+        check=False,
+    ).stdout.strip()
+
+
+def github_owner() -> str:
+    env_value = (os.environ.get("OPENCLAW_RESOURCE_GITHUB_OWNER") or "").strip()
+    if env_value:
+        return env_value
+    process = subprocess.run(
+        ["git", "remote", "get-url", "origin"],
+        cwd=PROJECT_ROOT.parents[2],
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    remote = process.stdout.strip()
+    match = re.search(r"github\\.com[:/]+([^/]+)/", remote)
+    if match:
+        return match.group(1)
+    return DEFAULT_RESOURCE_OWNER
+
+
+def package_repo_name(package_type: str) -> str:
+    mapping = {
+        "skill-pack": "openclaw-skills",
+        "sop-pack": "openclaw-sops",
+        "demo-pack": "openclaw-demos",
+        "tutorial-pack": "openclaw-tutorials",
+        "case-pack": "openclaw-cases",
+    }
+    return mapping.get(package_type, "openclaw-resources")
+
+
+def package_homepage(package_type: str, slug: str) -> str:
+    owner = github_owner()
+    repo = package_repo_name(package_type)
+    return f"https://github.com/{owner}/{repo}/tree/main/resources/{slug}"
+
+
+def skill_source_metadata(source_path: str | None, slug: str) -> dict[str, str]:
+    if not source_path:
+        return {
+            "install_url": "",
+            "mirror_status": "upstream-only",
+            "repository": "",
+            "license": "Unknown",
+        }
+    skill_dir = Path(source_path).expanduser().resolve().parent
+    if str(skill_dir).startswith(str(WORKSPACE_ROOT / "skills")) and not (skill_dir / "_meta.json").exists():
+        homepage = package_homepage("skill-pack", slug)
+        return {
+            "install_url": homepage,
+            "mirror_status": "official",
+            "repository": f"https://github.com/{github_owner()}/{package_repo_name('skill-pack')}",
+            "license": "Proprietary",
+        }
+    return {
+        "install_url": "",
+        "mirror_status": "upstream-only",
+        "repository": "",
+        "license": "Unknown",
+    }
+
+
+def build_release_manifest(
+    package_type: str,
+    package_id: str,
+    name: str,
+    version: str,
+    slug: str,
+    source: dict[str, Any],
+    install: dict[str, Any],
+) -> dict[str, Any]:
+    return {
+        "schemaVersion": RELEASE_SCHEMA_VERSION,
+        "resourceType": package_type,
+        "resourceId": package_id,
+        "name": name,
+        "version": version,
+        "artifactType": "openclaw-resource-bundle",
+        "git": git_metadata(PROJECT_ROOT),
+        "source": source,
+        "license": source.get("license") or "Not specified",
+        "install": install,
+        "homepage": source.get("homepage") or package_homepage(package_type, slug),
+        "archiveFile": f"{slug}-v{version}.zip",
+        "builtAt": iso_now(),
+    }
+
+
+def git_metadata(root: Path) -> dict[str, str | bool]:
+    def run(*args: str) -> str:
+        result = subprocess.run(
+            ["git", *args],
+            cwd=root,
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        return result.stdout.strip()
+
+    return {
+        "commit": run("rev-parse", "HEAD"),
+        "branch": run("rev-parse", "--abbrev-ref", "HEAD"),
+        "tag": run("describe", "--tags", "--exact-match"),
+        "repo": run("remote", "get-url", "origin"),
+        "dirty": bool(run("status", "--short")),
+    }
+
+
+def build_install_doc(name: str, package_id: str, install: dict[str, Any], source: dict[str, Any]) -> str:
+    lines = [
+        f"# Install {name}",
+        "",
+        f"- Package ID: `{package_id}`",
+        f"- Install via: `{install.get('via', 'forge-console')}`",
+        f"- Source: `{source.get('mirrorStatus', 'official')}`",
+    ]
+    if source.get("repository"):
+        lines.append(f"- Repository: {source['repository']}")
+    if source.get("homepage"):
+        lines.append(f"- Homepage: {source['homepage']}")
+    if source.get("license"):
+        lines.append(f"- License: {source['license']}")
+    lines.extend(
+        [
+            "",
+            "## Recommended Install Flow",
+            "",
+            "1. Download the release asset or clone the official resource repository.",
+            "2. Open Forge Console.",
+            "3. Go to Community Packages and import the package zip.",
+            "4. Inspect metadata, permissions, and dependencies before install.",
+        ]
+    )
+    if install.get("command"):
+        lines.extend(["", "## Install Command", "", f"```bash\n{install['command']}\n```"])
+    if install.get("url"):
+        lines.extend(["", "## Source / Install Link", "", install["url"]])
+    if install.get("notes"):
+        lines.extend(["", "## Notes", ""])
+        lines.extend(f"- {note}" for note in install["notes"])
+    return "\n".join(lines) + "\n"
 
 
 def asset_kind_for_path(target: Path) -> str:
@@ -244,7 +411,7 @@ def capability_id_for_node(node: dict[str, Any]) -> str:
     node_id = str(node.get("id") or "").strip()
     if node_id.startswith("sop-"):
         node_id = node_id[4:]
-    token = normalize_token(node_id or str(node.get("label") or "workflow"))
+    token = stable_token_for_source(node_id or str(node.get("label") or "workflow"))
     return f"cap.openclaw.sop.{token}"
 
 
@@ -428,6 +595,7 @@ def build_dependency_hints(node: dict[str, Any]) -> list[dict[str, Any]]:
         seen.add(capability_id)
         source_path = module.get("sourcePath")
         packaged = bool(source_path and Path(source_path).expanduser().exists() and str(source_path).endswith("/SKILL.md"))
+        source_meta = skill_source_metadata(source_path, normalize_token(Path(source_path).parent.name) if source_path else normalize_token(module.get("label") or capability_id))
         hints.append(
             {
                 "capability_id": capability_id,
@@ -436,7 +604,10 @@ def build_dependency_hints(node: dict[str, Any]) -> list[dict[str, Any]]:
                 "source_type": module.get("sourceType"),
                 "source_path": source_path,
                 "install_command": module.get("installCommand"),
-                "install_url": module.get("installUrl"),
+                "install_url": module.get("installUrl") or source_meta["install_url"],
+                "source_repository": source_meta["repository"],
+                "mirror_status": source_meta["mirror_status"],
+                "license": source_meta["license"],
                 "installed": bool(module.get("installed")),
                 "evidence": module.get("evidence"),
                 "packaged": packaged,
@@ -715,6 +886,38 @@ def export_bundle_from_nodes(
         target_schema_dir.mkdir(parents=True, exist_ok=True)
         shutil.copy2(COMMUNITY_SCHEMA_PATH, target_schema_dir / "community-package-v1.schema.json")
 
+    bundle_slug = safe_name(bundle_dir_name) or safe_name(manifest["id"]) or "resource"
+    owner = github_owner()
+    repository = f"https://github.com/{owner}/{package_repo_name('sop-pack')}"
+    install_doc = {
+        "via": "forge-console",
+        "command": f"Import `{bundle_slug}-v{manifest['version']}.zip` in Forge Console, then install `{manifest['id']}` locally.",
+        "url": package_homepage("sop-pack", bundle_slug),
+        "notes": [
+            "This package is intended for Forge Console local installation.",
+            "External dependencies remain visible in the dependency list and should be installed before enablement.",
+        ],
+    }
+    release_manifest = build_release_manifest(
+        "sop-pack",
+        manifest["id"],
+        manifest["name"],
+        manifest["version"],
+        bundle_slug,
+        {
+            "kind": "local-export",
+            "repository": repository,
+            "homepage": package_homepage("sop-pack", bundle_slug),
+            "license": "Proprietary",
+            "mirrorStatus": "official",
+            "createdAt": iso_now(),
+        },
+        install_doc,
+    )
+
+    write_file(bundle_root / "install.md", build_install_doc(manifest["name"], manifest["id"], install_doc, release_manifest["source"]))
+    write_file(bundle_root / "release-manifest.json", json.dumps(release_manifest, ensure_ascii=False, indent=2))
+
     docs, assets = collect_bundle_docs_and_assets(bundle_root)
     community_package = {
         "schemaVersion": "community-package-v1",
@@ -729,13 +932,13 @@ def export_bundle_from_nodes(
         "description": manifest.get("description") or f"Portable SOP package for {manifest['name']}.",
         "source": {
             "kind": "local-export",
-            "createdAt": subprocess.run(
-                ["date", "-u", "+%Y-%m-%dT%H:%M:%SZ"],
-                capture_output=True,
-                text=True,
-                check=False,
-            ).stdout.strip(),
+            "repository": repository,
+            "homepage": package_homepage("sop-pack", bundle_slug),
+            "license": "Proprietary",
+            "mirrorStatus": "official",
+            "createdAt": iso_now(),
         },
+        "install": install_doc,
         "capabilities": build_community_capabilities(node, packaged_capabilities),
         "dependencies": build_community_dependency_entries(dependency_hints),
         "compatibility": {
@@ -758,7 +961,7 @@ def export_bundle_from_nodes(
         json.dumps(community_package, ensure_ascii=False, indent=2),
     )
 
-    zip_path = output_root / f"{bundle_dir_name}.zip"
+    zip_path = output_root / release_manifest["archiveFile"]
     if zip_path.exists():
         zip_path.unlink()
     with zipfile.ZipFile(zip_path, "w", compression=zipfile.ZIP_DEFLATED) as zf:

@@ -1,6 +1,5 @@
 import express from "express";
 import { spawn, spawnSync } from "node:child_process";
-import { createServer as createViteServer } from "vite";
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
@@ -23,6 +22,14 @@ import { buildWorkspaceKnowledgeItems } from "./src/server/knowledgeLoader";
 import { loadSkillTreeNodes, recordRuntimeSkillEvidence } from "./src/server/skillTreeLoader";
 import { getSkillSourceRoots } from "./src/server/skillIndex";
 import { getRepoRoot, getRuntimeRoot } from "./src/server/workspaceTopology";
+import {
+  acceptConsoleGrant,
+  clearConsoleSessionCookie,
+  cloudConsoleAccessEnabled,
+  readConsoleSession,
+  requestHasInternalConsoleAccess,
+  setConsoleSessionCookie,
+} from "./src/server/cloudConsoleAccess";
 import {
   AgentStatus,
   AgentTask,
@@ -84,7 +91,7 @@ const AGENT_OFFLINE_TIMEOUT_MS = 15000;
 const TASK_CLAIM_TIMEOUT_MS = 30000;
 const MAX_RECENT_TASKS = 8;
 const DEFAULT_HISTORY_GROUP_LIMIT = 6;
-const APP_DEV_SESSION_ID = "openclaw-web-app-dev";
+const APP_DEV_SESSION_ID = "forge-console-dev";
 const homeDir = os.homedir();
 const workspaceRoot = getRepoRoot();
 const runtimeRoot = getRuntimeRoot();
@@ -100,10 +107,15 @@ const docRoots = [
   ...getSkillSourceRoots(),
   process.cwd(),
 ];
+const cloudOfficialPackageRoot =
+  process.env.SOLOCORE_CLOUD_PACKAGE_ROOT ||
+  process.env.OPENCLAW_CLOUD_PACKAGE_ROOT ||
+  "/var/lib/openclaw-web-platform/data/storage";
 const fileActionRoots = [
   ...docRoots,
   path.join(homeDir, "Desktop"),
   path.join(homeDir, "Downloads"),
+  cloudOfficialPackageRoot,
 ];
 const knowledgeCasesRoot = path.join(runtimeRoot, "knowledge", "cases");
 const runtimeLessonsRoot = path.join(runtimeRoot, "knowledge", "runtime-lessons");
@@ -164,6 +176,16 @@ let residentAgentStartGracePassed = false;
 const RESIDENT_AGENT_START_GRACE_MS = 8000;
 const RESIDENT_AGENT_RESTART_DELAY_MS = 4000;
 
+function residentAgentAutostartEnabled() {
+  if (process.env.OPENCLAW_DISABLE_AGENT_AUTOSTART === "1") {
+    return false;
+  }
+  if (process.env.OPENCLAW_ENABLE_AGENT_AUTOSTART === "1") {
+    return true;
+  }
+  return process.env.NODE_ENV !== "production";
+}
+
 function now() {
   return Date.now();
 }
@@ -217,7 +239,7 @@ function spawnResidentAgent() {
 }
 
 function ensureResidentAgent() {
-  if (process.env.OPENCLAW_DISABLE_AGENT_AUTOSTART === "1") {
+  if (!residentAgentAutostartEnabled()) {
     return;
   }
   if (agentState.online) {
@@ -2588,6 +2610,15 @@ function isAllowedFileActionPath(targetPath: string) {
   return fileActionRoots.some((root) => resolved.startsWith(path.resolve(root)));
 }
 
+function isAllowedCloudPackagePath(targetPath: string) {
+  const resolved = path.resolve(targetPath);
+  const cloudRoots = [
+    cloudOfficialPackageRoot,
+    path.join(cloudOfficialPackageRoot, "packages"),
+  ];
+  return cloudRoots.some((root) => resolved.startsWith(path.resolve(root)));
+}
+
 function ensureDir(targetPath: string) {
   fs.mkdirSync(targetPath, { recursive: true });
 }
@@ -2628,13 +2659,16 @@ function runQmdUpdateSync() {
 }
 
 function bootstrapAppDevSession() {
+  if (process.env.OPENCLAW_DISABLE_APP_DEV_SESSION === "1" || process.env.NODE_ENV === "production") {
+    return;
+  }
   if (appDevSessionBootstrapped) {
     return;
   }
   appDevSessionBootstrapped = true;
 
   const message =
-    "接管 OpenClaw Web Console 的长期开发与维护。先读取 ~/.openclaw/workspace/apps/mission-control/OPENCLAW_INSTRUCTIONS.md、USER_MANUAL.md、AGENTS.md、agent-routing.config.json。你的角色是主编排者，不是单一工程师。持续处理这个应用的反馈、自进化任务、UI 改进、SOP 执行链修复，并把任务分配给最合适的 agents。";
+    "接管 SoloCore Console 的长期开发与维护。先读取 ~/.openclaw/workspace/apps/mission-control/OPENCLAW_INSTRUCTIONS.md、USER_MANUAL.md、AGENTS.md、agent-routing.config.json。你的角色是主编排者，不是单一工程师。持续处理这个应用的反馈、自进化任务、UI 改进、SOP 执行链修复，并把任务分配给最合适的 agents。";
 
   const child = spawn(
     "openclaw",
@@ -2701,11 +2735,115 @@ function feedbackSuggestions(feedback: string, task: AgentTask, sentiment: strin
   return [...new Set(suggestions)];
 }
 
+function renderConsoleAccessRequiredHtml() {
+  const hubUrl = process.env.OPENCLAW_WEB_BASE_URL || process.env.SOLOCORE_HUB_BASE_URL || "";
+  const href = hubUrl ? `${hubUrl.replace(/\/+$/, "")}/cloud-console` : "/cloud-console";
+  return `<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SoloCore Console Access Required</title>
+    <style>
+      body { margin: 0; min-height: 100vh; display: grid; place-items: center; background: #0a0e17; color: #e2e8f0; font: 16px/1.6 -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif; }
+      .card { width: min(560px, calc(100vw - 32px)); background: rgba(15, 23, 42, 0.96); border: 1px solid rgba(51, 65, 85, 0.8); border-radius: 24px; padding: 32px; box-shadow: 0 24px 80px rgba(15, 23, 42, 0.4); }
+      h1 { margin: 0 0 12px; font-size: 28px; }
+      p { margin: 0 0 14px; color: #94a3b8; }
+      a { display: inline-flex; margin-top: 8px; padding: 12px 18px; border-radius: 999px; background: #2563eb; color: white; text-decoration: none; font-weight: 600; }
+    </style>
+  </head>
+  <body>
+    <div class="card">
+      <h1>Access Required</h1>
+      <p>This SoloCore Console is deployed as a separate cloud app and only accepts Hub-issued access grants.</p>
+      <p>Return to SoloCore Hub, redeem your authorization code, and launch the Console again from there.</p>
+      <a href="${escapeHtml(href)}">Open SoloCore Hub Access Page</a>
+    </div>
+  </body>
+</html>`;
+}
+
 async function startServer() {
   const app = express();
   const port = process.env.PORT ? parseInt(process.env.PORT, 10) : 3000;
+  const host =
+    process.env.HOST ||
+    process.env.OPENCLAW_BIND_HOST ||
+    (process.env.NODE_ENV === "production" ? "127.0.0.1" : "0.0.0.0");
 
   app.use(express.json({ limit: "50mb" }));
+
+  app.get("/auth/access", (req, res) => {
+    if (!cloudConsoleAccessEnabled()) {
+      return res.redirect("/");
+    }
+    const grant = typeof req.query.grant === "string" ? req.query.grant.trim() : "";
+    const redirectTo = typeof req.query.redirectTo === "string" ? req.query.redirectTo : "/";
+    const claims = acceptConsoleGrant(grant);
+    if (!claims) {
+      res.status(401).setHeader("Content-Type", "text/html; charset=utf-8");
+      res.send(renderConsoleAccessRequiredHtml());
+      return;
+    }
+    setConsoleSessionCookie(res, claims);
+    res.redirect(redirectTo.startsWith("/") ? redirectTo : "/");
+  });
+
+  app.get("/auth/session", (req, res) => {
+    const session = readConsoleSession(req);
+    if (!session) {
+      return res.json({
+        authenticated: false,
+        user: null,
+      });
+    }
+    return res.json({
+      authenticated: true,
+      user: {
+        id: session.sub,
+        email: session.email,
+        role: session.role,
+      },
+      expiresAt: new Date(session.exp * 1000).toISOString(),
+    });
+  });
+
+  app.post("/auth/logout", (_req, res) => {
+    clearConsoleSessionCookie(res);
+    res.json({ success: true });
+  });
+
+  app.use((req, res, next) => {
+    if (!cloudConsoleAccessEnabled()) {
+      next();
+      return;
+    }
+    if (
+      req.path === "/auth/access" ||
+      req.path === "/auth/session" ||
+      req.path === "/auth/logout"
+    ) {
+      next();
+      return;
+    }
+    if (requestHasInternalConsoleAccess(req)) {
+      next();
+      return;
+    }
+    const session = readConsoleSession(req);
+    if (session) {
+      (req as express.Request & { cloudConsoleSession?: typeof session }).cloudConsoleSession = session;
+      next();
+      return;
+    }
+    if (req.path.startsWith("/api/")) {
+      res.status(401).json({ error: "Cloud console access required" });
+      return;
+    }
+    res.status(401).setHeader("Content-Type", "text/html; charset=utf-8");
+    res.send(renderConsoleAccessRequiredHtml());
+  });
+
   app.use("/exports", express.static(path.join(process.cwd(), "exports")));
 
   let clients: express.Response[] = [];
@@ -2851,7 +2989,7 @@ async function startServer() {
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>${escapeHtml(artifact.title)} · OpenClaw Console</title>
+    <title>${escapeHtml(artifact.title)} · SoloCore Console</title>
     <style>
       body { margin: 0; background: #f6f7fb; color: #12151d; font: 16px/1.65 -apple-system, BlinkMacSystemFont, "SF Pro Text", "PingFang SC", sans-serif; }
       .shell { max-width: 980px; margin: 0 auto; padding: 32px 20px 80px; }
@@ -3215,7 +3353,7 @@ async function startServer() {
       if (!packagePath) {
         return res.status(400).json({ error: "packagePath is required" });
       }
-      if (!isAllowedFileActionPath(packagePath)) {
+      if (!isAllowedFileActionPath(packagePath) && !isAllowedCloudPackagePath(packagePath)) {
         return res.status(403).json({ error: "Package path not allowed" });
       }
       return res.json(
@@ -4233,6 +4371,7 @@ async function startServer() {
   });
 
   if (process.env.NODE_ENV !== "production") {
+    const { createServer: createViteServer } = await import("vite");
     const vite = await createViteServer({
       server: { middlewareMode: true },
       appType: "spa",
@@ -4242,18 +4381,20 @@ async function startServer() {
     app.use(express.static("dist"));
   }
 
-  app.listen(port, "0.0.0.0", () => {
-    console.log(`Server running on http://localhost:${port}`);
-    console.log("OpenClaw broker endpoints ready:");
+  app.listen(port, host, () => {
+    console.log(`Server running on http://${host}:${port}`);
+    console.log("SoloCore broker endpoints ready:");
     console.log("  UI SSE:          GET  /api/v1/stream");
     console.log("  Agent poll:      POST /api/v1/agent/poll");
     console.log("  Agent task sync: POST /api/v1/agent/task-update");
     console.log(`  App dev session: ${APP_DEV_SESSION_ID}`);
     bootstrapAppDevSession();
-    setTimeout(() => {
-      residentAgentStartGracePassed = true;
-      ensureResidentAgent();
-    }, RESIDENT_AGENT_START_GRACE_MS);
+    if (residentAgentAutostartEnabled()) {
+      setTimeout(() => {
+        residentAgentStartGracePassed = true;
+        ensureResidentAgent();
+      }, RESIDENT_AGENT_START_GRACE_MS);
+    }
   });
 }
 

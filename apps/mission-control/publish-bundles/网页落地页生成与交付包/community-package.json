@@ -1,0 +1,407 @@
+{
+  "schemaVersion": "community-package-v1",
+  "packageId": "cap.openclaw.sop.workflow-1dcf62c4",
+  "type": "sop-pack",
+  "name": "网页落地页生成与交付包",
+  "version": "0.2.0",
+  "author": {
+    "name": "OpenClaw",
+    "id": "official/openclaw"
+  },
+  "description": "围绕一个主题、产品或活动，输出一套可直接交付的网页落地页方案。",
+  "source": {
+    "kind": "local-export",
+    "createdAt": "2026-03-24T10:52:07Z"
+  },
+  "capabilities": [
+    {
+      "id": "cap.openclaw.sop.workflow-1dcf62c4",
+      "label": "网页落地页生成与交付包",
+      "summary": "围绕一个主题、产品或活动，输出一套可直接交付的网页落地页方案。",
+      "entrypoint": "__OPENCLAW_WORKFLOW__ sop-网页落地页生成与交付包"
+    },
+    {
+      "id": "cap.openclaw.skill.ai-image-generation",
+      "label": "ai-image-generation",
+      "summary": "Bundled supporting capability.",
+      "entrypoint": ""
+    },
+    {
+      "id": "cap.openclaw.skill.assistant-orchestrator",
+      "label": "assistant-orchestrator",
+      "summary": "Bundled supporting capability.",
+      "entrypoint": ""
+    },
+    {
+      "id": "cap.openclaw.skill.frontend-design",
+      "label": "frontend-design",
+      "summary": "Bundled supporting capability.",
+      "entrypoint": ""
+    },
+    {
+      "id": "cap.openclaw.skill.penpot-uiux-design",
+      "label": "penpot-uiux-design",
+      "summary": "Bundled supporting capability.",
+      "entrypoint": ""
+    },
+    {
+      "id": "cap.openclaw.skill.video-prompting-guide",
+      "label": "video-prompting-guide",
+      "summary": "Bundled supporting capability.",
+      "entrypoint": ""
+    },
+    {
+      "id": "cap.openclaw.skill.web-design-guidelines",
+      "label": "web-design-guidelines",
+      "summary": "Bundled supporting capability.",
+      "entrypoint": ""
+    }
+  ],
+  "dependencies": [
+    {
+      "id": "cap.openclaw.skill.ai-image-generation",
+      "label": "ai-image-generation",
+      "kind": "skill",
+      "required": false,
+      "installCommand": "claw skill install ai-image-generation",
+      "installUrl": "https://inference.sh",
+      "bundled": true
+    },
+    {
+      "id": "cap.openclaw.skill.assistant-orchestrator",
+      "label": "assistant-orchestrator",
+      "kind": "skill",
+      "required": false,
+      "installCommand": "claw skill install assistant-orchestrator",
+      "installUrl": "",
+      "bundled": true
+    },
+    {
+      "id": "cap.openclaw.skill.frontend-design",
+      "label": "frontend-design",
+      "kind": "skill",
+      "required": false,
+      "installCommand": "claw skill install frontend-design",
+      "installUrl": "",
+      "bundled": true
+    },
+    {
+      "id": "cap.openclaw.skill.penpot-uiux-design",
+      "label": "penpot-uiux-design",
+      "kind": "skill",
+      "required": false,
+      "installCommand": "claw skill install penpot-uiux-design",
+      "installUrl": "",
+      "bundled": true
+    },
+    {
+      "id": "cap.openclaw.skill.video-prompting-guide",
+      "label": "video-prompting-guide",
+      "kind": "skill",
+      "required": false,
+      "installCommand": "claw skill install video-prompting-guide",
+      "installUrl": "https://inference.sh",
+      "bundled": true
+    },
+    {
+      "id": "cap.openclaw.skill.web-design-guidelines",
+      "label": "web-design-guidelines",
+      "kind": "skill",
+      "required": false,
+      "installCommand": "claw skill install web-design-guidelines",
+      "installUrl": "",
+      "bundled": true
+    }
+  ],
+  "compatibility": {
+    "openclawMinVersion": "2026.3.2",
+    "installMode": "local-console",
+    "platforms": [
+      "macos",
+      "linux",
+      "windows"
+    ]
+  },
+  "permissions": [
+    {
+      "key": "filesystem.read",
+      "required": true,
+      "reason": "Read packaged SOP, docs, and supporting local files."
+    }
+  ],
+  "checksums": {
+    "algorithm": "sha256",
+    "files": [
+      {
+        "path": "OPENCLAW.md",
+        "sha256": "cb2f11f3e7d08f4c0359964148b30caefb270c8eecb14ddfde6ffc52a1688d54"
+      },
+      {
+        "path": "README.md",
+        "sha256": "03258571fed757cd61ffddc3bfe2e0a27c44155c807ee82cba483da41207d7b2"
+      },
+      {
+        "path": "capability-manifest.json",
+        "sha256": "247e2e45bca2f19b6636ca4e24c27be6bcfe0de64de97403d1a0510fc6e2703b"
+      },
+      {
+        "path": "dependency-hints.json",
+        "sha256": "88a31036680fff315d1ef853300b7b5312cd003704bf450747ab2606a3fee354"
+      },
+      {
+        "path": "healthcheck.py",
+        "sha256": "fdf2471baf0b5383924a7cf02e06f60415c2a85f0b6d61fc8526c8c2579e9548"
+      },
+      {
+        "path": "install.py",
+        "sha256": "7ed49d0baa123f26ef7b96297174fdee13a886937047fede48529934d0396e45"
+      },
+      {
+        "path": "knowledge/landing_page_delivery_pack.md",
+        "sha256": "3156402afd7fe82ba8d02e843c28096a0bed8d022aaca5d49cbb073eca5cbc5a"
+      },
+      {
+        "path": "schemas/community-package-v1.schema.json",
+        "sha256": "fbfce78f0b3bea1bb68dc0d51ca99e2149cb1743fae6f3c4825d1e881e7ec8d8"
+      },
+      {
+        "path": "skills/ai-image-generation/SKILL.md",
+        "sha256": "f80268b28e09a8622ca96347b4e518d091e7fc25d0ab1d6fedc440e920714397"
+      },
+      {
+        "path": "skills/assistant-orchestrator/SKILL.md",
+        "sha256": "24848fef15090e4cbba1299aff02c4af665206f6c633c6aec6b0857ce2ce79f9"
+      },
+      {
+        "path": "skills/assistant-orchestrator/outputs/email-daily-triage/leehongking-qq-com/2026-03-24__triage.json",
+        "sha256": "ea89c6047ce3f6784d3ade6a6357e4975a3250fb8cd33cf5223ac4c511a682aa"
+      },
+      {
+        "path": "skills/assistant-orchestrator/outputs/email-daily-triage/leehongking-qq-com/2026-03-24__triage.md",
+        "sha256": "50b2247dfa506fe6736448a2166da180e06cdb73bfa93dc5880fbe19062e8b24"
+      },
+      {
+        "path": "skills/assistant-orchestrator/outputs/邮件摘要_2026-03-24.md",
+        "sha256": "ac8553890334caf164dda3e21d9396d65b198d51eb52c4360674343fc8a99b8b"
+      },
+      {
+        "path": "skills/assistant-orchestrator/references/swarm-blueprint.md",
+        "sha256": "132c5c07a7949d915d81dc846bfed21a48c4afd18ae0f750e477606b0da98644"
+      },
+      {
+        "path": "skills/frontend-design/LICENSE.txt",
+        "sha256": "0d542e0c8804e39aa7f37eb00da5a762149dc682d7829451287e11b938e94594"
+      },
+      {
+        "path": "skills/frontend-design/SKILL.md",
+        "sha256": "b81e2ff87ed8fa4d6c377ccb127a7254c9e6a77e3ae94f21e6b514f7bb2945a0"
+      },
+      {
+        "path": "skills/penpot-uiux-design/SKILL.md",
+        "sha256": "d15c5f2607fc96c272738343f58d054357bf54042be36f7d68a1f473fc78bdfe"
+      },
+      {
+        "path": "skills/penpot-uiux-design/references/accessibility.md",
+        "sha256": "04f5a97f6edeb22c5b79e1aad304cb8d597a4a9612b6ce3770116c5e383c6f33"
+      },
+      {
+        "path": "skills/penpot-uiux-design/references/component-patterns.md",
+        "sha256": "03c7bcc8e68bb27cd314ce5177774ba3f99898e73678677c39976fd9a95f289a"
+      },
+      {
+        "path": "skills/penpot-uiux-design/references/platform-guidelines.md",
+        "sha256": "e2fc62d9ad2aa89ff60a46e8dc741c360d902371bbbc36b0cb0decf4fc5bc7a1"
+      },
+      {
+        "path": "skills/penpot-uiux-design/references/setup-troubleshooting.md",
+        "sha256": "5eceba271320c73a4ed22db14b4c02331b5768f98121eab74cd3e6440bb4f521"
+      },
+      {
+        "path": "skills/video-prompting-guide/SKILL.md",
+        "sha256": "151d9f9d649a102a3fe82e4ae5f22f17df85332fbc6b06f715cc66c48c627347"
+      },
+      {
+        "path": "skills/web-design-guidelines/SKILL.md",
+        "sha256": "f4647ca866a3accf763777f83e7682954f0187cd6bea7eea0399796652414e8f"
+      },
+      {
+        "path": "sops/网页落地页生成与交付包.md",
+        "sha256": "1ef7c6de9b7554721cc9f754f49d906aefd71cc25bcf2e55cf04892ca0c4d68f"
+      }
+    ]
+  },
+  "docs": [
+    {
+      "title": "OPENCLAW",
+      "path": "OPENCLAW.md"
+    },
+    {
+      "title": "README",
+      "path": "README.md"
+    },
+    {
+      "title": "landing_page_delivery_pack",
+      "path": "knowledge/landing_page_delivery_pack.md"
+    },
+    {
+      "title": "SKILL",
+      "path": "skills/ai-image-generation/SKILL.md"
+    },
+    {
+      "title": "SKILL",
+      "path": "skills/assistant-orchestrator/SKILL.md"
+    },
+    {
+      "title": "2026-03-24__triage",
+      "path": "skills/assistant-orchestrator/outputs/email-daily-triage/leehongking-qq-com/2026-03-24__triage.md"
+    },
+    {
+      "title": "邮件摘要_2026-03-24",
+      "path": "skills/assistant-orchestrator/outputs/邮件摘要_2026-03-24.md"
+    },
+    {
+      "title": "swarm-blueprint",
+      "path": "skills/assistant-orchestrator/references/swarm-blueprint.md"
+    },
+    {
+      "title": "SKILL",
+      "path": "skills/frontend-design/SKILL.md"
+    },
+    {
+      "title": "SKILL",
+      "path": "skills/penpot-uiux-design/SKILL.md"
+    },
+    {
+      "title": "accessibility",
+      "path": "skills/penpot-uiux-design/references/accessibility.md"
+    },
+    {
+      "title": "component-patterns",
+      "path": "skills/penpot-uiux-design/references/component-patterns.md"
+    },
+    {
+      "title": "platform-guidelines",
+      "path": "skills/penpot-uiux-design/references/platform-guidelines.md"
+    },
+    {
+      "title": "setup-troubleshooting",
+      "path": "skills/penpot-uiux-design/references/setup-troubleshooting.md"
+    },
+    {
+      "title": "SKILL",
+      "path": "skills/video-prompting-guide/SKILL.md"
+    },
+    {
+      "title": "SKILL",
+      "path": "skills/web-design-guidelines/SKILL.md"
+    },
+    {
+      "title": "网页落地页生成与交付包",
+      "path": "sops/网页落地页生成与交付包.md"
+    }
+  ],
+  "assets": [
+    {
+      "path": "OPENCLAW.md",
+      "kind": "knowledge",
+      "label": "OPENCLAW.md"
+    },
+    {
+      "path": "README.md",
+      "kind": "knowledge",
+      "label": "README.md"
+    },
+    {
+      "path": "knowledge/landing_page_delivery_pack.md",
+      "kind": "knowledge",
+      "label": "landing_page_delivery_pack.md"
+    },
+    {
+      "path": "schemas/community-package-v1.schema.json",
+      "kind": "document",
+      "label": "community-package-v1.schema.json"
+    },
+    {
+      "path": "skills/ai-image-generation/SKILL.md",
+      "kind": "knowledge",
+      "label": "SKILL.md"
+    },
+    {
+      "path": "skills/assistant-orchestrator/SKILL.md",
+      "kind": "knowledge",
+      "label": "SKILL.md"
+    },
+    {
+      "path": "skills/assistant-orchestrator/outputs/email-daily-triage/leehongking-qq-com/2026-03-24__triage.json",
+      "kind": "document",
+      "label": "2026-03-24__triage.json"
+    },
+    {
+      "path": "skills/assistant-orchestrator/outputs/email-daily-triage/leehongking-qq-com/2026-03-24__triage.md",
+      "kind": "knowledge",
+      "label": "2026-03-24__triage.md"
+    },
+    {
+      "path": "skills/assistant-orchestrator/outputs/邮件摘要_2026-03-24.md",
+      "kind": "knowledge",
+      "label": "邮件摘要_2026-03-24.md"
+    },
+    {
+      "path": "skills/assistant-orchestrator/references/swarm-blueprint.md",
+      "kind": "knowledge",
+      "label": "swarm-blueprint.md"
+    },
+    {
+      "path": "skills/frontend-design/LICENSE.txt",
+      "kind": "knowledge",
+      "label": "LICENSE.txt"
+    },
+    {
+      "path": "skills/frontend-design/SKILL.md",
+      "kind": "knowledge",
+      "label": "SKILL.md"
+    },
+    {
+      "path": "skills/penpot-uiux-design/SKILL.md",
+      "kind": "knowledge",
+      "label": "SKILL.md"
+    },
+    {
+      "path": "skills/penpot-uiux-design/references/accessibility.md",
+      "kind": "knowledge",
+      "label": "accessibility.md"
+    },
+    {
+      "path": "skills/penpot-uiux-design/references/component-patterns.md",
+      "kind": "knowledge",
+      "label": "component-patterns.md"
+    },
+    {
+      "path": "skills/penpot-uiux-design/references/platform-guidelines.md",
+      "kind": "knowledge",
+      "label": "platform-guidelines.md"
+    },
+    {
+      "path": "skills/penpot-uiux-design/references/setup-troubleshooting.md",
+      "kind": "knowledge",
+      "label": "setup-troubleshooting.md"
+    },
+    {
+      "path": "skills/video-prompting-guide/SKILL.md",
+      "kind": "knowledge",
+      "label": "SKILL.md"
+    },
+    {
+      "path": "skills/web-design-guidelines/SKILL.md",
+      "kind": "knowledge",
+      "label": "SKILL.md"
+    },
+    {
+      "path": "sops/网页落地页生成与交付包.md",
+      "kind": "knowledge",
+      "label": "网页落地页生成与交付包.md"
+    }
+  ],
+  "reviewStatus": "draft",
+  "visibility": "private"
+}

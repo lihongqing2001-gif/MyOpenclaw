@@ -1,0 +1,305 @@
+{
+  "schemaVersion": "community-package-v1",
+  "packageId": "cap.openclaw.sop.telegram-4567deb0",
+  "type": "sop-pack",
+  "name": "邮件每日分诊与 Telegram 推送",
+  "version": "0.2.0",
+  "author": {
+    "name": "OpenClaw",
+    "id": "official/openclaw"
+  },
+  "description": "每天自动读取一个已保存的邮箱账户档案，只抓新增/未处理邮件，产出一份分诊报告，并优先通过 OpenClaw 已连通的 WhatsApp 主通道把待你拍板的重点推送给你。",
+  "source": {
+    "kind": "local-export",
+    "createdAt": "2026-03-24T10:52:00Z"
+  },
+  "capabilities": [
+    {
+      "id": "cap.openclaw.sop.telegram-4567deb0",
+      "label": "邮件每日分诊与 Telegram 推送",
+      "summary": "每天自动读取一个已保存的邮箱账户档案，只抓新增/未处理邮件，产出一份分诊报告，并优先通过 OpenClaw 已连通的 WhatsApp 主通道把待你拍板的重点推送给你。",
+      "entrypoint": "python3 /Users/liumobei/.openclaw/workspace/apps/mission-control/scripts/run_email_daily_triage.py --email-profile <邮箱账户档案> --notify-channel <通知通道（可选覆盖）> --mailbox-scope <邮箱范围> --time-window <时间窗口> --unread-only <是否需要只看未读> --only-unprocessed <是否需要只看未处理> --max-messages <最大邮件数> --push-mode <推送模式>"
+    },
+    {
+      "id": "cap.openclaw.skill.assistant-orchestrator",
+      "label": "assistant-orchestrator",
+      "summary": "Bundled supporting capability.",
+      "entrypoint": ""
+    },
+    {
+      "id": "cap.openclaw.skill.email-sequence",
+      "label": "email-sequence",
+      "summary": "Bundled supporting capability.",
+      "entrypoint": ""
+    }
+  ],
+  "dependencies": [
+    {
+      "id": "cap.openclaw.skill.assistant-orchestrator",
+      "label": "assistant-orchestrator",
+      "kind": "skill",
+      "required": false,
+      "installCommand": "claw skill install assistant-orchestrator",
+      "installUrl": "",
+      "bundled": true
+    },
+    {
+      "id": "cap.openclaw.skill.email-sequence",
+      "label": "email-sequence",
+      "kind": "skill",
+      "required": false,
+      "installCommand": "claw skill install email-sequence",
+      "installUrl": "",
+      "bundled": true
+    },
+    {
+      "id": "cap.openclaw.integration.openclaw-notifier",
+      "label": "OpenClaw notifier（WhatsApp / Telegram / Discord / Feishu）",
+      "kind": "integration",
+      "required": true,
+      "installCommand": "",
+      "installUrl": "",
+      "bundled": false
+    }
+  ],
+  "compatibility": {
+    "openclawMinVersion": "2026.3.2",
+    "installMode": "local-console",
+    "platforms": [
+      "macos",
+      "linux",
+      "windows"
+    ]
+  },
+  "permissions": [
+    {
+      "key": "filesystem.read",
+      "required": true,
+      "reason": "Read packaged SOP, docs, and supporting local files."
+    },
+    {
+      "key": "process.exec",
+      "required": true,
+      "reason": "Run packaged scripts or workflow commands after local user confirmation."
+    }
+  ],
+  "checksums": {
+    "algorithm": "sha256",
+    "files": [
+      {
+        "path": "OPENCLAW.md",
+        "sha256": "2733b8b008f922417f409abe367b5c797b74107c16f86a1e70ed6a063940e64f"
+      },
+      {
+        "path": "README.md",
+        "sha256": "f88fd3b04d90d92c4f5111fc7b04ea929d8fb658a11cf87c2ff915e2dc4eedd7"
+      },
+      {
+        "path": "capability-manifest.json",
+        "sha256": "23a2b103529cf2eee5e6c01a79116486bfd41d7acb172070679b6ce67685ef26"
+      },
+      {
+        "path": "dependency-hints.json",
+        "sha256": "8ed06b1597c4be04850b4c984b90329e0da7a4617656a966d6b64a1b4b5b5d73"
+      },
+      {
+        "path": "healthcheck.py",
+        "sha256": "282e79787d481422378bcead4069938ebaeead41b8e00c898a82449ba96df2a7"
+      },
+      {
+        "path": "install.py",
+        "sha256": "35a2db4483189e37fc0b7ff9555c36585efd4d8226f61f5026bb0f9b7173a0d1"
+      },
+      {
+        "path": "knowledge/email_daily_triage_push.md",
+        "sha256": "88ab7989b8c1f3493c178493d85e66b01f31259c6e5c65cf4d2aa9c5ac6d6387"
+      },
+      {
+        "path": "schemas/community-package-v1.schema.json",
+        "sha256": "fbfce78f0b3bea1bb68dc0d51ca99e2149cb1743fae6f3c4825d1e881e7ec8d8"
+      },
+      {
+        "path": "scripts/run_email_daily_triage.py",
+        "sha256": "6119e02f9f751aea8ed76092224f3acd7d11394c9ce9aac611363296681b2c77"
+      },
+      {
+        "path": "skills/assistant-orchestrator/SKILL.md",
+        "sha256": "24848fef15090e4cbba1299aff02c4af665206f6c633c6aec6b0857ce2ce79f9"
+      },
+      {
+        "path": "skills/assistant-orchestrator/outputs/email-daily-triage/leehongking-qq-com/2026-03-24__triage.json",
+        "sha256": "ea89c6047ce3f6784d3ade6a6357e4975a3250fb8cd33cf5223ac4c511a682aa"
+      },
+      {
+        "path": "skills/assistant-orchestrator/outputs/email-daily-triage/leehongking-qq-com/2026-03-24__triage.md",
+        "sha256": "50b2247dfa506fe6736448a2166da180e06cdb73bfa93dc5880fbe19062e8b24"
+      },
+      {
+        "path": "skills/assistant-orchestrator/outputs/邮件摘要_2026-03-24.md",
+        "sha256": "ac8553890334caf164dda3e21d9396d65b198d51eb52c4360674343fc8a99b8b"
+      },
+      {
+        "path": "skills/assistant-orchestrator/references/swarm-blueprint.md",
+        "sha256": "132c5c07a7949d915d81dc846bfed21a48c4afd18ae0f750e477606b0da98644"
+      },
+      {
+        "path": "skills/email-sequence/SKILL.md",
+        "sha256": "c82b9b655fc24729e7d08e7ac2aa09f421babe8925104c91d492ea59832f51a3"
+      },
+      {
+        "path": "skills/email-sequence/evals/evals.json",
+        "sha256": "3ec2a39a2eaeaa03553a648ee5a4018351286a64313aaba06e0c5bc82d343bbf"
+      },
+      {
+        "path": "skills/email-sequence/references/copy-guidelines.md",
+        "sha256": "02f08897e4aa99ecc4ec1893d61d0c26d0c5e62e09af26f175087455e9b68e01"
+      },
+      {
+        "path": "skills/email-sequence/references/email-types.md",
+        "sha256": "a5dd4f0555a7b21d2ff426948d15657825b9d16265652563f5e272d2e1879bfd"
+      },
+      {
+        "path": "skills/email-sequence/references/sequence-templates.md",
+        "sha256": "d47b12e263ad52b72ab741c490bbc98d8bf8034d61faccc50b7dbb2650a9fba0"
+      },
+      {
+        "path": "sops/邮件每日分诊与-telegram-推送.md",
+        "sha256": "b722bde02c7b2948930a514dfbfb21312d395259c26d968e4515c6c09b87690c"
+      }
+    ]
+  },
+  "docs": [
+    {
+      "title": "OPENCLAW",
+      "path": "OPENCLAW.md"
+    },
+    {
+      "title": "README",
+      "path": "README.md"
+    },
+    {
+      "title": "email_daily_triage_push",
+      "path": "knowledge/email_daily_triage_push.md"
+    },
+    {
+      "title": "SKILL",
+      "path": "skills/assistant-orchestrator/SKILL.md"
+    },
+    {
+      "title": "2026-03-24__triage",
+      "path": "skills/assistant-orchestrator/outputs/email-daily-triage/leehongking-qq-com/2026-03-24__triage.md"
+    },
+    {
+      "title": "邮件摘要_2026-03-24",
+      "path": "skills/assistant-orchestrator/outputs/邮件摘要_2026-03-24.md"
+    },
+    {
+      "title": "swarm-blueprint",
+      "path": "skills/assistant-orchestrator/references/swarm-blueprint.md"
+    },
+    {
+      "title": "SKILL",
+      "path": "skills/email-sequence/SKILL.md"
+    },
+    {
+      "title": "copy-guidelines",
+      "path": "skills/email-sequence/references/copy-guidelines.md"
+    },
+    {
+      "title": "email-types",
+      "path": "skills/email-sequence/references/email-types.md"
+    },
+    {
+      "title": "sequence-templates",
+      "path": "skills/email-sequence/references/sequence-templates.md"
+    },
+    {
+      "title": "邮件每日分诊与-telegram-推送",
+      "path": "sops/邮件每日分诊与-telegram-推送.md"
+    }
+  ],
+  "assets": [
+    {
+      "path": "OPENCLAW.md",
+      "kind": "knowledge",
+      "label": "OPENCLAW.md"
+    },
+    {
+      "path": "README.md",
+      "kind": "knowledge",
+      "label": "README.md"
+    },
+    {
+      "path": "knowledge/email_daily_triage_push.md",
+      "kind": "knowledge",
+      "label": "email_daily_triage_push.md"
+    },
+    {
+      "path": "schemas/community-package-v1.schema.json",
+      "kind": "document",
+      "label": "community-package-v1.schema.json"
+    },
+    {
+      "path": "scripts/run_email_daily_triage.py",
+      "kind": "script",
+      "label": "run_email_daily_triage.py"
+    },
+    {
+      "path": "skills/assistant-orchestrator/SKILL.md",
+      "kind": "knowledge",
+      "label": "SKILL.md"
+    },
+    {
+      "path": "skills/assistant-orchestrator/outputs/email-daily-triage/leehongking-qq-com/2026-03-24__triage.json",
+      "kind": "document",
+      "label": "2026-03-24__triage.json"
+    },
+    {
+      "path": "skills/assistant-orchestrator/outputs/email-daily-triage/leehongking-qq-com/2026-03-24__triage.md",
+      "kind": "knowledge",
+      "label": "2026-03-24__triage.md"
+    },
+    {
+      "path": "skills/assistant-orchestrator/outputs/邮件摘要_2026-03-24.md",
+      "kind": "knowledge",
+      "label": "邮件摘要_2026-03-24.md"
+    },
+    {
+      "path": "skills/assistant-orchestrator/references/swarm-blueprint.md",
+      "kind": "knowledge",
+      "label": "swarm-blueprint.md"
+    },
+    {
+      "path": "skills/email-sequence/SKILL.md",
+      "kind": "knowledge",
+      "label": "SKILL.md"
+    },
+    {
+      "path": "skills/email-sequence/evals/evals.json",
+      "kind": "document",
+      "label": "evals.json"
+    },
+    {
+      "path": "skills/email-sequence/references/copy-guidelines.md",
+      "kind": "knowledge",
+      "label": "copy-guidelines.md"
+    },
+    {
+      "path": "skills/email-sequence/references/email-types.md",
+      "kind": "knowledge",
+      "label": "email-types.md"
+    },
+    {
+      "path": "skills/email-sequence/references/sequence-templates.md",
+      "kind": "knowledge",
+      "label": "sequence-templates.md"
+    },
+    {
+      "path": "sops/邮件每日分诊与-telegram-推送.md",
+      "kind": "knowledge",
+      "label": "邮件每日分诊与-telegram-推送.md"
+    }
+  ],
+  "reviewStatus": "draft",
+  "visibility": "private"
+}

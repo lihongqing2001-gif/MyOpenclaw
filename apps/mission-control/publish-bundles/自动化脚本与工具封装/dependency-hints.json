@@ -1,0 +1,14 @@
+[
+  {
+    "capability_id": "cap.openclaw.foundation.files-repo",
+    "label": "文件与版本管理",
+    "summary": "创建/更新/归档/版本记录",
+    "source_type": "foundation",
+    "source_path": "/Users/liumobei/.openclaw/workspace/content_system/skilltree/data.json",
+    "install_command": "read/write/edit/exec + git",
+    "install_url": null,
+    "installed": true,
+    "evidence": "declared",
+    "packaged": false
+  }
+]

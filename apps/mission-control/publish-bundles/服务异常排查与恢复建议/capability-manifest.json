@@ -1,0 +1,33 @@
+{
+  "id": "cap.openclaw.sop.workflow-9a809a15",
+  "name": "服务异常排查与恢复建议",
+  "version": "0.2.0",
+  "description": "在服务异常、页面打不开、任务卡死、健康检查异常时，快速形成一份排查与恢复建议。",
+  "domain": "OpenClaw Workflow",
+  "category": "综合工作流",
+  "tags": [
+    "OpenClaw Workflow",
+    "综合工作流",
+    "sop"
+  ],
+  "ownership": "openclaw",
+  "publish": "local-bundle",
+  "dependencies": [],
+  "requires": ">=2026.3.2",
+  "skills": [],
+  "sops": [
+    "sops/服务异常排查与恢复建议.md"
+  ],
+  "install": "python3 install.py",
+  "healthcheck": "python3 healthcheck.py",
+  "outputs": [
+    "outputs/cap.openclaw.sop.workflow-9a809a15/"
+  ],
+  "packaged_capabilities": [],
+  "entrypoints": [
+    {
+      "label": "服务异常排查与恢复建议",
+      "command": "__OPENCLAW_WORKFLOW__ sop-服务异常排查与恢复建议"
+    }
+  ]
+}

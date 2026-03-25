@@ -1,0 +1,50 @@
+[
+  {
+    "capability_id": "cap.openclaw.skill.social-content",
+    "label": "social-content",
+    "summary": "When the user wants help creating, scheduling, or optimizing social media content for LinkedIn, Twitter/X, Instagram, TikTok, Facebook, or other platforms. Also use when the user mentions 'LinkedIn post,' 'Twitter thread,' 'social media,' 'content calendar,' 'social scheduling,' 'engagement,' 'viral content,' 'what should I post,' 'repurpose this content,' 'tweet ideas,' 'LinkedIn carousel,' 'social media strategy,' or 'grow my following.' Use this for any social media content creation, repurposing, or scheduling task. For broader content strategy, see content-strategy.",
+    "source_type": "skill",
+    "source_path": "/Users/liumobei/.agents/skills/social-content/SKILL.md",
+    "install_command": "claw skill install social-content",
+    "install_url": null,
+    "installed": true,
+    "evidence": "declared",
+    "packaged": true
+  },
+  {
+    "capability_id": "cap.openclaw.foundation.messaging",
+    "label": "WhatsApp 推送与通知",
+    "summary": "发送消息/提醒/分条推送",
+    "source_type": "foundation",
+    "source_path": "/Users/liumobei/.openclaw/workspace/content_system/skilltree/data.json",
+    "install_command": "message.send",
+    "install_url": null,
+    "installed": true,
+    "evidence": "declared",
+    "packaged": false
+  },
+  {
+    "capability_id": "cap.openclaw.foundation.cron-jobs",
+    "label": "定时任务编排",
+    "summary": "定时运行→自动触发→通知",
+    "source_type": "foundation",
+    "source_path": "/Users/liumobei/.openclaw/workspace/content_system/skilltree/data.json",
+    "install_command": "cron.add / cron.update",
+    "install_url": null,
+    "installed": true,
+    "evidence": "declared",
+    "packaged": false
+  },
+  {
+    "capability_id": "cap.openclaw.foundation.files-repo",
+    "label": "文件与版本管理",
+    "summary": "创建/更新/归档/版本记录",
+    "source_type": "foundation",
+    "source_path": "/Users/liumobei/.openclaw/workspace/content_system/skilltree/data.json",
+    "install_command": "read/write/edit/exec + git",
+    "install_url": null,
+    "installed": true,
+    "evidence": "declared",
+    "packaged": false
+  }
+]

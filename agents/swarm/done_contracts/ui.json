@@ -1,0 +1,8 @@
+{
+  "name": "ui",
+  "required_checks": ["branch_exists", "pr_created", "ci_passed", "verified"],
+  "notes": [
+    "UI tasks should include screenshot evidence before verification.",
+    "Do not mark done with UI changes unless preview or screenshot evidence exists."
+  ]
+}

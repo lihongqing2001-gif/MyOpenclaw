@@ -1,0 +1,37 @@
+{
+  "id": "cap.openclaw.sop.content-research-docs",
+  "name": "项目书/任务书/手册编写（含技术路线/方法学整理）",
+  "version": "0.2.0",
+  "description": "科研任务书、项目书、手册",
+  "domain": "项目产出与资料管理",
+  "category": "科研",
+  "tags": [
+    "项目产出与资料管理",
+    "科研",
+    "核心",
+    "main"
+  ],
+  "ownership": "openclaw",
+  "publish": "local-bundle",
+  "dependencies": [
+    "cap.openclaw.foundation.files-repo",
+    "cap.openclaw.foundation.knowledge-index"
+  ],
+  "requires": ">=2026.3.2",
+  "skills": [],
+  "sops": [
+    "sops/项目书-任务书-手册编写-含技术路线-方法学整理.md"
+  ],
+  "install": "python3 install.py",
+  "healthcheck": "python3 healthcheck.py",
+  "outputs": [
+    "outputs/cap.openclaw.sop.content-research-docs/"
+  ],
+  "packaged_capabilities": [],
+  "entrypoints": [
+    {
+      "label": "项目书/任务书/手册编写（含技术路线/方法学整理）",
+      "command": "__OPENCLAW_WORKFLOW__ sop-content-research-docs"
+    }
+  ]
+}

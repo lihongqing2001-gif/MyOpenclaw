@@ -1,8 +1,8 @@
-# OpenClaw Web Platform Handoff
+# SoloCore Hub Handoff
 
 ## Product Role
 
-`openclaw-web-platform` is the cloud-facing product line.
+`openclaw-web-platform` powers SoloCore Hub, the cloud-facing product line.
 
 It owns:
 

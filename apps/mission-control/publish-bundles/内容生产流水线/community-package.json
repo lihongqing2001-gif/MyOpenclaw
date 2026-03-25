@@ -1,0 +1,220 @@
+{
+  "schemaVersion": "community-package-v1",
+  "packageId": "cap.openclaw.sop.content-content-pipeline",
+  "type": "sop-pack",
+  "name": "内容生产流水线",
+  "version": "0.2.0",
+  "author": {
+    "name": "OpenClaw",
+    "id": "official/openclaw"
+  },
+  "description": "日更内容、选题实验、风格迭代",
+  "source": {
+    "kind": "local-export",
+    "createdAt": "2026-03-24T10:52:00Z"
+  },
+  "capabilities": [
+    {
+      "id": "cap.openclaw.sop.content-content-pipeline",
+      "label": "内容生产流水线",
+      "summary": "日更内容、选题实验、风格迭代",
+      "entrypoint": "__OPENCLAW_WORKFLOW__ sop-content-content-pipeline"
+    },
+    {
+      "id": "cap.openclaw.skill.social-content",
+      "label": "social-content",
+      "summary": "Bundled supporting capability.",
+      "entrypoint": ""
+    }
+  ],
+  "dependencies": [
+    {
+      "id": "cap.openclaw.skill.social-content",
+      "label": "social-content",
+      "kind": "skill",
+      "required": false,
+      "installCommand": "claw skill install social-content",
+      "installUrl": "",
+      "bundled": true
+    },
+    {
+      "id": "cap.openclaw.foundation.messaging",
+      "label": "WhatsApp 推送与通知",
+      "kind": "foundation",
+      "required": true,
+      "installCommand": "message.send",
+      "installUrl": "",
+      "bundled": false
+    },
+    {
+      "id": "cap.openclaw.foundation.cron-jobs",
+      "label": "定时任务编排",
+      "kind": "foundation",
+      "required": true,
+      "installCommand": "cron.add / cron.update",
+      "installUrl": "",
+      "bundled": false
+    },
+    {
+      "id": "cap.openclaw.foundation.files-repo",
+      "label": "文件与版本管理",
+      "kind": "foundation",
+      "required": true,
+      "installCommand": "read/write/edit/exec + git",
+      "installUrl": "",
+      "bundled": false
+    }
+  ],
+  "compatibility": {
+    "openclawMinVersion": "2026.3.2",
+    "installMode": "local-console",
+    "platforms": [
+      "macos",
+      "linux",
+      "windows"
+    ]
+  },
+  "permissions": [
+    {
+      "key": "filesystem.read",
+      "required": true,
+      "reason": "Read packaged SOP, docs, and supporting local files."
+    }
+  ],
+  "checksums": {
+    "algorithm": "sha256",
+    "files": [
+      {
+        "path": "OPENCLAW.md",
+        "sha256": "3fef479742ba1b3e69c1d7ca299b390e7fe8041517cbceee3dff2401ec93497f"
+      },
+      {
+        "path": "README.md",
+        "sha256": "3546dffdd422a05785b6a53e7ec4c0e0ba305c1634f4bd00e84c1bf8bc63020f"
+      },
+      {
+        "path": "capability-manifest.json",
+        "sha256": "b14b9d7c6b87382f6154a601c2f56853fbab77ebba9bdd50ad775104eea85774"
+      },
+      {
+        "path": "dependency-hints.json",
+        "sha256": "fa22acd91c2004b43a743e3d5c771a1f5fd992447b3e004ded1bac0e56bc9d1f"
+      },
+      {
+        "path": "healthcheck.py",
+        "sha256": "005a53e00f3fb6ae96e751d1c8b55aaad3997e03d2a2f8c475aa565ed8fdb955"
+      },
+      {
+        "path": "install.py",
+        "sha256": "a3a8505795b3da031c6242fc167638bb62087cf9690d51121c6396595672a665"
+      },
+      {
+        "path": "schemas/community-package-v1.schema.json",
+        "sha256": "fbfce78f0b3bea1bb68dc0d51ca99e2149cb1743fae6f3c4825d1e881e7ec8d8"
+      },
+      {
+        "path": "skills/social-content/SKILL.md",
+        "sha256": "72e7f6bbed00a77512bb4afc4b93b7d527948450d8b5a37e8cc3deec23cf2680"
+      },
+      {
+        "path": "skills/social-content/evals/evals.json",
+        "sha256": "9e9da40856215d4993aefeacdbf69b721316b94b02c4b474106eaad3cfa8301c"
+      },
+      {
+        "path": "skills/social-content/references/platforms.md",
+        "sha256": "3c4e1b15717a3bcd4ed0cf29dc167dac28aa88bbf01723fde53815122396090f"
+      },
+      {
+        "path": "skills/social-content/references/post-templates.md",
+        "sha256": "db6525e51a690b61faf97a0acf51a2a57526de90da01c6bb37679d056c18c7f4"
+      },
+      {
+        "path": "skills/social-content/references/reverse-engineering.md",
+        "sha256": "c27bef59d463b3b11331c1770f4a23e9e6bbce7d7c8db1e7f7f4f14ba206243f"
+      },
+      {
+        "path": "sops/内容生产流水线.md",
+        "sha256": "d2ee6e9935afb533dd17423916c54c096f87b97588dca33b8e87d886f6350d2f"
+      }
+    ]
+  },
+  "docs": [
+    {
+      "title": "OPENCLAW",
+      "path": "OPENCLAW.md"
+    },
+    {
+      "title": "README",
+      "path": "README.md"
+    },
+    {
+      "title": "SKILL",
+      "path": "skills/social-content/SKILL.md"
+    },
+    {
+      "title": "platforms",
+      "path": "skills/social-content/references/platforms.md"
+    },
+    {
+      "title": "post-templates",
+      "path": "skills/social-content/references/post-templates.md"
+    },
+    {
+      "title": "reverse-engineering",
+      "path": "skills/social-content/references/reverse-engineering.md"
+    },
+    {
+      "title": "内容生产流水线",
+      "path": "sops/内容生产流水线.md"
+    }
+  ],
+  "assets": [
+    {
+      "path": "OPENCLAW.md",
+      "kind": "knowledge",
+      "label": "OPENCLAW.md"
+    },
+    {
+      "path": "README.md",
+      "kind": "knowledge",
+      "label": "README.md"
+    },
+    {
+      "path": "schemas/community-package-v1.schema.json",
+      "kind": "document",
+      "label": "community-package-v1.schema.json"
+    },
+    {
+      "path": "skills/social-content/SKILL.md",
+      "kind": "knowledge",
+      "label": "SKILL.md"
+    },
+    {
+      "path": "skills/social-content/evals/evals.json",
+      "kind": "document",
+      "label": "evals.json"
+    },
+    {
+      "path": "skills/social-content/references/platforms.md",
+      "kind": "knowledge",
+      "label": "platforms.md"
+    },
+    {
+      "path": "skills/social-content/references/post-templates.md",
+      "kind": "knowledge",
+      "label": "post-templates.md"
+    },
+    {
+      "path": "skills/social-content/references/reverse-engineering.md",
+      "kind": "knowledge",
+      "label": "reverse-engineering.md"
+    },
+    {
+      "path": "sops/内容生产流水线.md",
+      "kind": "knowledge",
+      "label": "内容生产流水线.md"
+    }
+  ],
+  "reviewStatus": "draft",
+  "visibility": "private"
+}

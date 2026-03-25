@@ -1,0 +1,126 @@
+{
+  "schemaVersion": "community-package-v1",
+  "packageId": "cap.openclaw.sop.content-dev-coding",
+  "type": "sop-pack",
+  "name": "代码编写与优化",
+  "version": "0.2.0",
+  "author": {
+    "name": "OpenClaw",
+    "id": "official/openclaw"
+  },
+  "description": "功能开发、重构优化",
+  "source": {
+    "kind": "local-export",
+    "createdAt": "2026-03-24T10:52:07Z"
+  },
+  "capabilities": [
+    {
+      "id": "cap.openclaw.sop.content-dev-coding",
+      "label": "代码编写与优化",
+      "summary": "功能开发、重构优化",
+      "entrypoint": "__OPENCLAW_WORKFLOW__ sop-content-dev-coding"
+    }
+  ],
+  "dependencies": [
+    {
+      "id": "cap.openclaw.foundation.files-repo",
+      "label": "文件与版本管理",
+      "kind": "foundation",
+      "required": true,
+      "installCommand": "read/write/edit/exec + git",
+      "installUrl": "",
+      "bundled": false
+    }
+  ],
+  "compatibility": {
+    "openclawMinVersion": "2026.3.2",
+    "installMode": "local-console",
+    "platforms": [
+      "macos",
+      "linux",
+      "windows"
+    ]
+  },
+  "permissions": [
+    {
+      "key": "filesystem.read",
+      "required": true,
+      "reason": "Read packaged SOP, docs, and supporting local files."
+    }
+  ],
+  "checksums": {
+    "algorithm": "sha256",
+    "files": [
+      {
+        "path": "OPENCLAW.md",
+        "sha256": "359589893ddd5c7ada5c51ac970c8b00f197004899c951c9aacf05e3bb89c193"
+      },
+      {
+        "path": "README.md",
+        "sha256": "7f653a637d3bea7a8079bbe7ef1eda6a0e0ab58d2f64e21ca3af351d000a9e70"
+      },
+      {
+        "path": "capability-manifest.json",
+        "sha256": "fdf8685646b09717bfdd3aff6b604d13d8fb6c260c0e2f4342fad3e9a34a2226"
+      },
+      {
+        "path": "dependency-hints.json",
+        "sha256": "be6d0881dbd9b9ec8cb3ff06dce7b866d7c4d7fb72fdf91c25877b9758d8c746"
+      },
+      {
+        "path": "healthcheck.py",
+        "sha256": "25018652d71571d2c001bfc2eb11a953a157950e5a03f9ff2a0012328fb3467c"
+      },
+      {
+        "path": "install.py",
+        "sha256": "0716007a79c5e2c95e6d0bc2482a39eb683c4f0251935820a677a4b040726c5a"
+      },
+      {
+        "path": "schemas/community-package-v1.schema.json",
+        "sha256": "fbfce78f0b3bea1bb68dc0d51ca99e2149cb1743fae6f3c4825d1e881e7ec8d8"
+      },
+      {
+        "path": "sops/代码编写与优化.md",
+        "sha256": "1f6c63219423a10db42bf86633505873fbfbb30d62f47cc3229a94ad28239ad5"
+      }
+    ]
+  },
+  "docs": [
+    {
+      "title": "OPENCLAW",
+      "path": "OPENCLAW.md"
+    },
+    {
+      "title": "README",
+      "path": "README.md"
+    },
+    {
+      "title": "代码编写与优化",
+      "path": "sops/代码编写与优化.md"
+    }
+  ],
+  "assets": [
+    {
+      "path": "OPENCLAW.md",
+      "kind": "knowledge",
+      "label": "OPENCLAW.md"
+    },
+    {
+      "path": "README.md",
+      "kind": "knowledge",
+      "label": "README.md"
+    },
+    {
+      "path": "schemas/community-package-v1.schema.json",
+      "kind": "document",
+      "label": "community-package-v1.schema.json"
+    },
+    {
+      "path": "sops/代码编写与优化.md",
+      "kind": "knowledge",
+      "label": "代码编写与优化.md"
+    }
+  ],
+  "reviewStatus": "draft",
+  "visibility": "private"
+}

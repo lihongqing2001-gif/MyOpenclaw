@@ -31,6 +31,7 @@
     .k { color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: .04em; }
     .v { font-size: 28px; margin-top: 6px; font-weight: 700; }
     .panels { display: grid; grid-template-columns: 1.4fr 1fr; gap: 12px; }
+    .swarm-panel { margin-top: 12px; }
     table { width: 100%; border-collapse: collapse; }
     th, td { text-align: left; padding: 8px 6px; border-bottom: 1px dashed var(--line); font-size: 13px; }
     th { color: var(--muted); font-size: 12px; }
@@ -80,7 +81,17 @@
       </div>
     </div>
 
-    <div class="foot">数据源：agents/registry/registry.yaml + agents/workspaces/*/STATE.json + agents/runs/COMM_LOG.md</div>
+    <div class="panel swarm-panel">
+      <h3>Swarm 控制面</h3>
+      <table>
+        <thead>
+          <tr><th>request_id</th><th>状态</th><th>agent</th><th>branch</th><th>阻塞/总结</th><th>证据</th></tr>
+        </thead>
+        <tbody id="swarmBody"></tbody>
+      </table>
+    </div>
+
+    <div class="foot">数据源：agents/registry/registry.yaml + agents/workspaces/*/STATE.json + agents/runs/COMM_LOG.md + agents/swarm/active-tasks.json</div>
   </div>
 
   <script src="./data/dashboard-data.js"></script>
@@ -91,7 +102,11 @@
       ['Total Agents', d.metrics.total_agents || 0],
       ['Ready', d.metrics.ready_agents || 0],
       ['Blocked', d.metrics.blocked_agents || 0],
-      ['Handoffs', d.metrics.total_handoffs || 0]
+      ['Handoffs', d.metrics.total_handoffs || 0],
+      ['Swarm Tasks', d.metrics.swarm_tasks || 0],
+      ['Swarm Verified', d.metrics.swarm_verified || 0],
+      ['Swarm Review', d.metrics.swarm_review || 0],
+      ['Swarm Blocked', d.metrics.swarm_blocked || 0]
     ];
     document.getElementById('metricGrid').innerHTML = metrics.map(([k,v]) =>
       `<div class="card"><div class="k">${k}</div><div class="v">${v}</div></div>`).join('');
@@ -110,6 +125,22 @@
     document.getElementById('flowBody').innerHTML = (d.handoffs || []).slice().reverse().map(h =>
       `<tr><td>${h.request_id || '-'}</td><td>${h.from_agent || '-'} -> ${h.to_agent || '-'}</td><td>${h.status || '-'}</td></tr>`
     ).join('');
+
+    document.getElementById('swarmBody').innerHTML = ((d.swarm || {}).tasks || []).slice().reverse().map(t => {
+      const evidence = [];
+      if (t.review_evidence && t.review_evidence.pr_url) evidence.push('PR');
+      if (t.review_evidence && (t.review_evidence.screenshot_urls || []).length) evidence.push('Shot');
+      if (t.checks && t.checks.verified) evidence.push('Verified');
+      const note = t.blocked_reason || t.summary || '-';
+      return `<tr>
+        <td>${t.request_id || '-'}</td>
+        <td>${t.status || '-'}</td>
+        <td>${t.agent || '-'}</td>
+        <td>${t.branch || '-'}</td>
+        <td>${note}</td>
+        <td>${evidence.join(', ') || '-'}</td>
+      </tr>`;
+    }).join('');
   </script>
 </body>
 </html>

@@ -1,0 +1,33 @@
+{
+  "id": "cap.openclaw.sop.workflow-d522a60e",
+  "name": "项目资料交接包",
+  "version": "0.2.0",
+  "description": "把一个目录、项目或仓库整理成可以直接交给别人继续接手的交接包。",
+  "domain": "项目产出与资料管理",
+  "category": "文件与资料管理",
+  "tags": [
+    "项目产出与资料管理",
+    "文件与资料管理",
+    "sop"
+  ],
+  "ownership": "openclaw",
+  "publish": "local-bundle",
+  "dependencies": [],
+  "requires": ">=2026.3.2",
+  "skills": [],
+  "sops": [
+    "sops/项目资料交接包.md"
+  ],
+  "install": "python3 install.py",
+  "healthcheck": "python3 healthcheck.py",
+  "outputs": [
+    "outputs/cap.openclaw.sop.workflow-d522a60e/"
+  ],
+  "packaged_capabilities": [],
+  "entrypoints": [
+    {
+      "label": "项目资料交接包",
+      "command": "__OPENCLAW_WORKFLOW__ sop-项目资料交接包"
+    }
+  ]
+}

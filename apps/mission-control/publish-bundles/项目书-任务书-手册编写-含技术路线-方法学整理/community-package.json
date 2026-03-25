@@ -1,0 +1,135 @@
+{
+  "schemaVersion": "community-package-v1",
+  "packageId": "cap.openclaw.sop.content-research-docs",
+  "type": "sop-pack",
+  "name": "项目书/任务书/手册编写（含技术路线/方法学整理）",
+  "version": "0.2.0",
+  "author": {
+    "name": "OpenClaw",
+    "id": "official/openclaw"
+  },
+  "description": "科研任务书、项目书、手册",
+  "source": {
+    "kind": "local-export",
+    "createdAt": "2026-03-24T10:52:07Z"
+  },
+  "capabilities": [
+    {
+      "id": "cap.openclaw.sop.content-research-docs",
+      "label": "项目书/任务书/手册编写（含技术路线/方法学整理）",
+      "summary": "科研任务书、项目书、手册",
+      "entrypoint": "__OPENCLAW_WORKFLOW__ sop-content-research-docs"
+    }
+  ],
+  "dependencies": [
+    {
+      "id": "cap.openclaw.foundation.files-repo",
+      "label": "文件与版本管理",
+      "kind": "foundation",
+      "required": true,
+      "installCommand": "read/write/edit/exec + git",
+      "installUrl": "",
+      "bundled": false
+    },
+    {
+      "id": "cap.openclaw.foundation.knowledge-index",
+      "label": "知识库归档与标签",
+      "kind": "foundation",
+      "required": true,
+      "installCommand": "/knowledge ingest --domain <领域> --platform <平台>",
+      "installUrl": "",
+      "bundled": false
+    }
+  ],
+  "compatibility": {
+    "openclawMinVersion": "2026.3.2",
+    "installMode": "local-console",
+    "platforms": [
+      "macos",
+      "linux",
+      "windows"
+    ]
+  },
+  "permissions": [
+    {
+      "key": "filesystem.read",
+      "required": true,
+      "reason": "Read packaged SOP, docs, and supporting local files."
+    }
+  ],
+  "checksums": {
+    "algorithm": "sha256",
+    "files": [
+      {
+        "path": "OPENCLAW.md",
+        "sha256": "28831cb5ce41eb076362d97b8caec5ea6f5d05b4c39159208481985d88249ea7"
+      },
+      {
+        "path": "README.md",
+        "sha256": "2dc36a37681c88359bc80acf458dc48a5aadfeae13ef23202f851e1b3e5953e6"
+      },
+      {
+        "path": "capability-manifest.json",
+        "sha256": "e178dee0a8fc98f14d5d76033162cd5ff977efe99dbd40e1bd81194cad80adaf"
+      },
+      {
+        "path": "dependency-hints.json",
+        "sha256": "afd6c8fe96087b9067433473b44c82476453fff6128ecba27db767ef25e1f87c"
+      },
+      {
+        "path": "healthcheck.py",
+        "sha256": "36561de2824c45449acd4e5f3dd4e0a418f02573b60998fa30d3f53e87656395"
+      },
+      {
+        "path": "install.py",
+        "sha256": "3dd9a00754d03def28260507337248bae08194695c3546604def154877bcb7c0"
+      },
+      {
+        "path": "schemas/community-package-v1.schema.json",
+        "sha256": "fbfce78f0b3bea1bb68dc0d51ca99e2149cb1743fae6f3c4825d1e881e7ec8d8"
+      },
+      {
+        "path": "sops/项目书-任务书-手册编写-含技术路线-方法学整理.md",
+        "sha256": "134fef5c1863462c19c1c63920f21812feac63344578d9dd37a0943fcc44f90f"
+      }
+    ]
+  },
+  "docs": [
+    {
+      "title": "OPENCLAW",
+      "path": "OPENCLAW.md"
+    },
+    {
+      "title": "README",
+      "path": "README.md"
+    },
+    {
+      "title": "项目书-任务书-手册编写-含技术路线-方法学整理",
+      "path": "sops/项目书-任务书-手册编写-含技术路线-方法学整理.md"
+    }
+  ],
+  "assets": [
+    {
+      "path": "OPENCLAW.md",
+      "kind": "knowledge",
+      "label": "OPENCLAW.md"
+    },
+    {
+      "path": "README.md",
+      "kind": "knowledge",
+      "label": "README.md"
+    },
+    {
+      "path": "schemas/community-package-v1.schema.json",
+      "kind": "document",
+      "label": "community-package-v1.schema.json"
+    },
+    {
+      "path": "sops/项目书-任务书-手册编写-含技术路线-方法学整理.md",
+      "kind": "knowledge",
+      "label": "项目书-任务书-手册编写-含技术路线-方法学整理.md"
+    }
+  ],
+  "reviewStatus": "draft",
+  "visibility": "private"
+}

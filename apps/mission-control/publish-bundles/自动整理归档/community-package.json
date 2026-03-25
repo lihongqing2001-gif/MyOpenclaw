@@ -1,0 +1,140 @@
+{
+  "schemaVersion": "community-package-v1",
+  "packageId": "cap.openclaw.sop.content-project-file-organize",
+  "type": "sop-pack",
+  "name": "自动整理归档",
+  "version": "0.2.0",
+  "author": {
+    "name": "OpenClaw",
+    "id": "official/openclaw"
+  },
+  "description": "历史资料整理、项目归档",
+  "source": {
+    "kind": "local-export",
+    "createdAt": "2026-03-24T10:52:07Z"
+  },
+  "capabilities": [
+    {
+      "id": "cap.openclaw.sop.content-project-file-organize",
+      "label": "自动整理归档",
+      "summary": "历史资料整理、项目归档",
+      "entrypoint": "python3 /Users/liumobei/.openclaw/workspace/apps/mission-control/scripts/run_project_file_organize.py --target-dir <目标目录> --rule <归档规则说明>"
+    }
+  ],
+  "dependencies": [
+    {
+      "id": "cap.openclaw.foundation.files-repo",
+      "label": "文件与版本管理",
+      "kind": "foundation",
+      "required": true,
+      "installCommand": "read/write/edit/exec + git",
+      "installUrl": "",
+      "bundled": false
+    }
+  ],
+  "compatibility": {
+    "openclawMinVersion": "2026.3.2",
+    "installMode": "local-console",
+    "platforms": [
+      "macos",
+      "linux",
+      "windows"
+    ]
+  },
+  "permissions": [
+    {
+      "key": "filesystem.read",
+      "required": true,
+      "reason": "Read packaged SOP, docs, and supporting local files."
+    },
+    {
+      "key": "process.exec",
+      "required": true,
+      "reason": "Run packaged scripts or workflow commands after local user confirmation."
+    }
+  ],
+  "checksums": {
+    "algorithm": "sha256",
+    "files": [
+      {
+        "path": "OPENCLAW.md",
+        "sha256": "d5a8b046ef5c3f7c34e4f4ed2ce4bcdeb492b08789d042f902953f2019a29717"
+      },
+      {
+        "path": "README.md",
+        "sha256": "2c48206bcc48d645d5d011a812b7baa276a0e21fb85c420e5cd3702c7d0bbadb"
+      },
+      {
+        "path": "capability-manifest.json",
+        "sha256": "a47820b4e4e3eccd017e0f421b29b30e05081da189daa2fda47bc7c00a8d61d4"
+      },
+      {
+        "path": "dependency-hints.json",
+        "sha256": "be6d0881dbd9b9ec8cb3ff06dce7b866d7c4d7fb72fdf91c25877b9758d8c746"
+      },
+      {
+        "path": "healthcheck.py",
+        "sha256": "50743165abcfa8c78c3b9a747effe3a0a40dcf537db5c876d3281ac544c467dd"
+      },
+      {
+        "path": "install.py",
+        "sha256": "8b43197a5121132fd461fdbb00ec4a706917bc941137ac6bca9a4e21ebe6c78c"
+      },
+      {
+        "path": "schemas/community-package-v1.schema.json",
+        "sha256": "fbfce78f0b3bea1bb68dc0d51ca99e2149cb1743fae6f3c4825d1e881e7ec8d8"
+      },
+      {
+        "path": "scripts/run_project_file_organize.py",
+        "sha256": "fac4b6b0549aa1dc1a0892c7432fc07f45ef55885dfcc80db44cd5cb04df9bf9"
+      },
+      {
+        "path": "sops/自动整理归档.md",
+        "sha256": "f58e15ec8f261444226ba57635cbcaea357f2526e96dc0d4a24f284b36743230"
+      }
+    ]
+  },
+  "docs": [
+    {
+      "title": "OPENCLAW",
+      "path": "OPENCLAW.md"
+    },
+    {
+      "title": "README",
+      "path": "README.md"
+    },
+    {
+      "title": "自动整理归档",
+      "path": "sops/自动整理归档.md"
+    }
+  ],
+  "assets": [
+    {
+      "path": "OPENCLAW.md",
+      "kind": "knowledge",
+      "label": "OPENCLAW.md"
+    },
+    {
+      "path": "README.md",
+      "kind": "knowledge",
+      "label": "README.md"
+    },
+    {
+      "path": "schemas/community-package-v1.schema.json",
+      "kind": "document",
+      "label": "community-package-v1.schema.json"
+    },
+    {
+      "path": "scripts/run_project_file_organize.py",
+      "kind": "script",
+      "label": "run_project_file_organize.py"
+    },
+    {
+      "path": "sops/自动整理归档.md",
+      "kind": "knowledge",
+      "label": "自动整理归档.md"
+    }
+  ],
+  "reviewStatus": "draft",
+  "visibility": "private"
+}
